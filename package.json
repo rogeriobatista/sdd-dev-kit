@@ -1,0 +1,20 @@
+{
+  "name": "sdd-dev-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Protocol Kit for Spec-Driven Development — core + Cursor adapter + TypeScript (Cucumber + Playwright)",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @sdd-dev-kit/core && npm run build -w @sdd-dev-kit/adapter-ts",
+    "test": "npm run test -w @sdd-dev-kit/core",
+    "test:core": "npm run test -w @sdd-dev-kit/core",
+    "smoke": "npm run smoke -w coupon-checkout"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

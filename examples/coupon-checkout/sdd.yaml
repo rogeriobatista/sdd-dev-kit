@@ -1,0 +1,31 @@
+version: 1
+adapter: typescript
+paths:
+  specs: specs
+  premises: .sdd/premises.md
+  canonical: .sdd/canonical
+  plan: .sdd/plan
+  runs: .sdd/runs
+  features: tests/features
+  steps: tests/steps
+  e2e: tests/e2e
+  src: src
+runners:
+  cucumber: npm run sdd:verify:cucumber
+  playwright: npm run sdd:verify:playwright
+  all: npm run sdd:verify:all
+triggers:
+  watch: false
+  command: "/sdd run"
+loop:
+  maxDiagnoseIterations: 3
+# Optional ticketing bootstrap — see repo README / ticketing design addendum
+# ticketing:
+#   defaultProvider: linear
+#   providers:
+#     linear:
+#       apiKeyEnv: LINEAR_API_KEY
+#     jira:
+#       baseUrlEnv: JIRA_BASE_URL
+#       emailEnv: JIRA_EMAIL
+#       apiTokenEnv: JIRA_API_TOKEN

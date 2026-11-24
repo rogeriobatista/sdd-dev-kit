@@ -1,0 +1,14 @@
+{
+  "data": {
+    "issue": {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "identifier": "ENG-42",
+      "title": "Checkout — aplicar cupom",
+      "description": "Permitir aplicar um cupom percentual no carrinho antes do pagamento.\nCupons expirados ou inválidos não alteram o total.\n\n## Acceptance Criteria\n\n- Dado um carrinho com total 100\n  E um cupom \"PROMO10\" de 10% válido\n  Quando o usuário aplica o cupom\n  Então o total deve ser 90\n- Cupom expirado é rejeitado e o total permanece 100\n",
+      "url": "https://linear.app/acme/issue/ENG-42",
+      "labels": {
+        "nodes": [{ "name": "checkout" }, { "name": "api" }]
+      }
+    }
+  }
+}

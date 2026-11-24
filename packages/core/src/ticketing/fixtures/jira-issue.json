@@ -1,0 +1,61 @@
+{
+  "key": "SHOP-7",
+  "self": "https://acme.atlassian.net/rest/api/3/issue/10007",
+  "fields": {
+    "summary": "Checkout — aplicar cupom",
+    "description": {
+      "type": "doc",
+      "version": 1,
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Permitir aplicar um cupom percentual no carrinho antes do pagamento."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": { "level": 2 },
+          "content": [{ "type": "text", "text": "Acceptance Criteria" }]
+        },
+        {
+          "type": "bulletList",
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Dado um carrinho com total 100\nQuando o usuário aplica o cupom PROMO10\nEntão o total deve ser 90"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Cupom expirado é rejeitado e o total permanece 100"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "labels": ["checkout", "ui"]
+  }
+}

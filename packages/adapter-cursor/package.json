@@ -1,0 +1,12 @@
+{
+  "name": "@sdd-dev-kit/adapter-cursor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SDD Cursor adapter — /sdd skills, rules, and templates",
+  "files": [
+    "skills",
+    "rules",
+    "templates",
+    "README.md"
+  ]
+}
