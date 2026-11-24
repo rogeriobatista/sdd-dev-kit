@@ -19,3 +19,10 @@ blob-report/
 !.sdd/plan/.gitkeep
 *.log
 .superpowers/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.terraform/
+*.tfstate*
+.terraform.lock.hcl
