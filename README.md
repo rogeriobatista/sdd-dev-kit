@@ -11,9 +11,10 @@ You write natural-language specs (`prosa` + `Dado`/`Quando`/`Então`). The agent
 ### 1. Install
 
 ```bash
-npm install
-npx playwright install chromium
+npm run setup
 ```
+
+Playwright needs browser binaries for `@ui` / `@e2e`; `setup` installs deps + Chromium. If you only run Cucumber / `@api`, `npm install` is enough.
 
 ### 2. Enable a host adapter
 

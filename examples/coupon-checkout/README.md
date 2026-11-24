@@ -38,11 +38,12 @@ Use those for provider unit tests without live APIs. Set `LINEAR_API_KEY` or `JI
 
 ```bash
 # from repo root
-npm install
-npx playwright install chromium
+npm run setup
 npm run sdd:verify:cucumber -w coupon-checkout
 npm run sdd:verify:playwright -w coupon-checkout
 ```
+
+Playwright needs browser binaries for `@ui` / `@e2e`; `setup` installs deps + Chromium. If you only run Cucumber / `@api`, `npm install` is enough.
 
 Smoke (Cucumber + Playwright smoke fixture, no long-lived UI server for smoke):
 

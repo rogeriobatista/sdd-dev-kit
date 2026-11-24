@@ -203,6 +203,7 @@ export async function scaffoldProject(options: ScaffoldOptions): Promise<SddMani
 }
 
 export const SCAFFOLD_PACKAGE_SCRIPTS = {
+  setup: "npm install && npx playwright install chromium",
   "sdd:verify:cucumber": "node scripts/run-cucumber.mjs",
   "sdd:verify:playwright": "playwright test",
   "sdd:verify:all": "npm run sdd:verify:cucumber && npm run sdd:verify:playwright",

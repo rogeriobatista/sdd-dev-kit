@@ -5,6 +5,7 @@
   "type": "module",
   "description": "SDD Dev Kit example — coupon checkout (edit specs only, run /sdd run)",
   "scripts": {
+    "setup": "npm install && npx playwright install chromium",
     "build": "tsc -p tsconfig.json",
     "start:ui": "node --import tsx src/server.ts",
     "sdd:verify:cucumber": "node scripts/run-cucumber.mjs",

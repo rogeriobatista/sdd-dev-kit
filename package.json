@@ -8,6 +8,7 @@
     "examples/*"
   ],
   "scripts": {
+    "setup": "npm install && npx playwright install chromium",
     "build": "npm run build -w @sdd-dev-kit/core && npm run build -w @sdd-dev-kit/adapter-ts",
     "sync:adapters": "npm run render -w @sdd-dev-kit/adapter-shared",
     "test": "npm run test -w @sdd-dev-kit/core && npm run test -w @sdd-dev-kit/adapter-shared",
