@@ -1,0 +1,34 @@
+# @sdd-dev-kit/adapter-claude
+
+Claude Code / Claude-in-VS-Code adapter for the SDD Protocol Kit. Installs project instructions and an `sdd` skill so the same pipeline works outside Cursor.
+
+## Install into a project
+
+1. Copy `project/CLAUDE.md` → repository root `CLAUDE.md` (or merge with an existing one).
+2. Copy `project/.claude/skills/sdd/` → `.claude/skills/sdd/`.
+3. Copy scaffold templates from `@sdd-dev-kit/adapter-shared/templates/` (or ask **SDD: init**), then add Cucumber/Playwright via `@sdd-dev-kit/adapter-ts` if needed.
+
+Instruction body is rendered from `packages/adapter-shared/content/` — edit shared content and run `npm run sync:adapters`, do not diverge by hand.
+
+## Commands (chat intents)
+
+| Say | Purpose |
+|-----|---------|
+| `SDD: init` | Scaffold folders, `sdd.yaml`, premises, example spec, Claude files |
+| `SDD: from-ticket <id>` | Fetch Linear/Jira → draft `specs/*.md` + `.sdd/ticket.json` |
+| `SDD: from-ticket <id> --run` | Same, then full pipeline |
+| `SDD: run` | normalize → executable → plan → implement → verify (diagnose loop) |
+| `SDD: verify` | Run Cucumber + Playwright only |
+| `SDD: status` | Summarize last run / phase status |
+
+`/sdd <subcommand>` is treated the same when typed.
+
+## Ticketing / MCP
+
+- Prefer Linear/Jira **MCP** when configured in Claude.
+- Fallback: `@sdd-dev-kit/core` providers + env vars (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`).
+- Never commit secrets.
+
+## Human boundary
+
+You edit **only** `specs/` (+ `.sdd/premises.md` when changing project rules). Ticket import drafts `specs/`; refine before run. Never hand-edit generated features, steps, e2e, canonical, or plan.

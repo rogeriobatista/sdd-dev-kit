@@ -2,6 +2,8 @@
 
 Cursor adapter for the SDD Protocol Kit. Installs skills, rules, and templates so the agent can run `/sdd init|from-ticket|run|verify|status`.
 
+Pipeline text is rendered from `@sdd-dev-kit/adapter-shared` — edit shared content, then `npm run sync:adapters`.
+
 ## Install into a project
 
 1. Copy `skills/sdd/` into your Cursor skills path (project `.cursor/skills/sdd/` or user skills).
@@ -18,6 +20,10 @@ Cursor adapter for the SDD Protocol Kit. Installs skills, rules, and templates s
 | `/sdd run` | Full pipeline: normalize → executable → plan → implement → verify (diagnose loop) |
 | `/sdd verify` | Run Cucumber + Playwright only |
 | `/sdd status` | Summarize last run / phase status from `.sdd/runs` |
+
+## Ticketing / MCP
+
+Prefer Linear/Jira MCP tools when configured in Cursor; otherwise use `@sdd-dev-kit/core` providers with env vars only.
 
 ## Human boundary
 

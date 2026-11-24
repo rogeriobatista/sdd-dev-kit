@@ -12,7 +12,7 @@ Entregar um kit reutilizável onde o humano só edita `specs/*.md` (prosa + Give
 
 | Topic | Choice |
 |-------|--------|
-| Forma | Híbrido: core + adapters; Cursor primeiro; CLI depois |
+| Forma | Híbrido: core + adapters; hosts Cursor / Claude / Copilot; CLI depois |
 | Specs NL | Formato D: prosa para intenção + blocos Given/When/Then |
 | Stack MVP | TypeScript com Cucumber **e** Playwright já plugados |
 | Trigger | Comando explícito (`/sdd run`); `triggers.watch` no schema com default `false` |
@@ -35,21 +35,30 @@ flowchart TB
   end
 
   subgraph adapters [Adapters]
-    Cursor["Cursor adapter\nskills + rules + templates"]
+    Shared["adapter-shared\npipeline markdown + templates"]
+    Cursor["Cursor adapter\nskills + rules"]
+    Claude["Claude adapter\nCLAUDE.md + skills"]
+    Copilot["Copilot adapter\ninstructions + prompts"]
     Ts["TS adapter\nCucumber + Playwright"]
     Future["Future: CLI / Python / etc."]
   end
 
   Specs --> Protocol
   Manifest --> Protocol
-  Protocol --> Cursor
+  Protocol --> Shared
+  Shared --> Cursor
+  Shared --> Claude
+  Shared --> Copilot
   Protocol --> Ts
   Cursor --> State
+  Claude --> State
+  Copilot --> State
   Ts --> State
 ```
 
-- **Core** defines the contract (folders, phases, artifacts, status). It does not know TypeScript or Cursor.
-- **Cursor adapter** orchestrates the LLM via skills/rules.
+- **Core** defines the contract (folders, phases, artifacts, status). It does not know TypeScript or a specific IDE.
+- **adapter-shared** is the single source of pipeline instructions; host adapters render native packs (see [multi-host design](2026-11-24-sdd-multi-host-adapters-design.md)).
+- **Cursor / Claude / Copilot adapters** orchestrate the LLM via each harness’s instruction format.
 - **TS adapter** materializes Cucumber features/steps + Playwright and runs the suite.
 
 ### Target project tree (after `/sdd init`)

@@ -1,0 +1,24 @@
+## Human vs agent ownership
+
+### Human-owned (edit freely)
+
+- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E)
+- `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
+
+### Agent-owned / regenerable (do not ask the human to edit)
+
+- `tests/features/**` — Cucumber `.feature`
+- `tests/steps/**` — step definitions
+- `tests/e2e/**` — Playwright specs
+- `.sdd/canonical/**` — normalized scenarios
+- `.sdd/plan/**` — SDD task plan
+- `.sdd/runs/**` — run reports
+- `.sdd/ticket.json` — provenance from from-ticket bootstrap
+- `src/**` under the SDD implement phase (agent implements to make tests pass)
+
+### Agent must not
+
+- Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
+- Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
+- Suggest that the human manually fix generated features/steps/e2e to green the suite
+- Put ticketing secrets on argv or in the repo; use env vars only

@@ -1,0 +1,10 @@
+{
+  "name": "@sdd-dev-kit/adapter-vscode-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SDD GitHub Copilot adapter — copilot-instructions.md + .github/prompts for VS Code",
+  "files": [
+    "project",
+    "README.md"
+  ]
+}

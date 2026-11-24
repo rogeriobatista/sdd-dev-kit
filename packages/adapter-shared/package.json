@@ -1,0 +1,23 @@
+{
+  "name": "@sdd-dev-kit/adapter-shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared SDD pipeline instructions and project templates for all AI host adapters",
+  "type": "module",
+  "files": [
+    "content",
+    "templates",
+    "scripts",
+    "README.md"
+  ],
+  "scripts": {
+    "render": "node scripts/render.mjs",
+    "test": "tsx --test src/**/*.test.ts",
+    "pretest": "npm run render"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
