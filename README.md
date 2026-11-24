@@ -45,7 +45,9 @@ Pick the harness you use. Instruction packs live under `packages/`; shared pipel
 
 ### 3. Init by stack
 
-Set `adapter:` in `sdd.yaml` (alias `ts` → `typescript`). Optional: `adapters: { stack: python, hosts: [cursor] }`.
+Stack is identified from **specification docs** (not yaml alone). Order: `.sdd/premises.md` → `specs/**/*.md` (frontmatter / `@stack:<id>`) → optional `.sdd/stack.json` → `sdd.yaml` fallback (warn). Core API: `detectStack(projectRoot)`. If missing/ambiguous, declare stack under `## Stack` in premises — do not invent.
+
+Set `adapter:` in `sdd.yaml` after detection (alias `ts` → `typescript`). Optional: `adapters: { stack: python, hosts: [cursor] }`.
 
 | Stack | `adapter` | Package | Init tip | Verify |
 |-------|-----------|---------|----------|--------|
@@ -101,7 +103,7 @@ Ambiguous ids like `ENG-42` need `ticketing.defaultProvider: linear|jira` or a `
 
 Offline fixtures (no live API): `packages/core/src/ticketing/fixtures/` — fictional coupon-checkout ticket used by unit tests.
 
-Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md)
+Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md)
 
 ## Repository layout
 
@@ -140,7 +142,7 @@ npm run sync:adapters
 | Tags | `@api` → API track; `@ui`/`@e2e` → Playwright when supported |
 | Loop cap | 3 diagnose→implement iterations |
 | Spec language | Portuguese GWT |
-| Stacks | First-class adapters (not roadmap) |
+| Stacks | First-class adapters; detected from premises/specs (`detectStack`) |
 
 Design: [docs/superpowers/specs/2026-11-24-sdd-dev-kit-design.md](docs/superpowers/specs/2026-11-24-sdd-dev-kit-design.md)
 

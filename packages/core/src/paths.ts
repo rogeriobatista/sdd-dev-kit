@@ -7,6 +7,8 @@ export const DEFAULT_PATHS = {
   runs: ".sdd/runs",
   /** Provenance written by `/sdd from-ticket`. */
   ticket: ".sdd/ticket.json",
+  /** Stack detection provenance / optional override (`detectStack`). */
+  stack: ".sdd/stack.json",
   features: "tests/features",
   steps: "tests/steps",
   e2e: "tests/e2e",

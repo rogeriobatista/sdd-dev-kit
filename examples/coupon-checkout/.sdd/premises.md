@@ -4,6 +4,7 @@
 Checkout com aplicação de cupom percentual no carrinho.
 
 ## Stack
+- adapter: typescript
 - TypeScript (Node)
 - Cucumber para cenários `@api` / domínio
 - Playwright para cenários `@ui` / `@e2e`

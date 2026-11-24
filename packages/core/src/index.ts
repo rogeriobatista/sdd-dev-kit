@@ -95,3 +95,16 @@ export {
   formatGherkinTags,
   slugifyScenarioBase,
 } from "./tags.js";
+
+export {
+  detectStack,
+  normalizeStackId,
+  scoreStackKeywords,
+  writeStackProvenance,
+  alignSddYamlAdapter,
+  STACK_JSON_REL,
+  type StackDetectionSource,
+  type StackConfidence,
+  type StackDetectionResult,
+  type StackProvenance,
+} from "./stack.js";

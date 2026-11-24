@@ -15,6 +15,7 @@ const templatesDir = path.join(sharedRoot, "templates");
 
 const CONTENT_FILES = [
   "human-boundary.md",
+  "stack-detection.md",
   "init.md",
   "from-ticket.md",
   "pipeline.md",
@@ -133,10 +134,14 @@ writeFile(
 
 copyTemplates(path.join(packagesRoot, "adapter-cursor", "templates"));
 
-// Sync kit-local Cursor skill used in this repo
+// Sync kit-local Cursor skill + rule used in this repo
 writeFile(
   path.join(packagesRoot, "..", ".cursor", "skills", "sdd", "SKILL.md"),
   cursorSkill,
+);
+writeFile(
+  path.join(packagesRoot, "..", ".cursor", "rules", "sdd-human-edits.mdc"),
+  cursorRule,
 );
 
 // --- Claude ---
@@ -293,7 +298,7 @@ Persist results under \`.sdd/runs/\` when possible and summarize exit codes.
     file: "sdd-status.prompt.md",
     name: "sdd-status",
     description: "Report SDD pipeline status from .sdd/runs",
-    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, and whether \`.sdd/ticket.json\` exists. Do not modify files.
+    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` exist. Do not modify files.
 `,
   },
 ];

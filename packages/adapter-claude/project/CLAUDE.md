@@ -34,6 +34,7 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
+- `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)
 
 ### Agent must not

@@ -1,6 +1,8 @@
 ## Pipeline phases (run)
 
-Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Read `sdd.yaml` `adapter` (or `adapters.stack`) so executable/verify match the stack.
+Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3).
+
+**Before normalize/executable:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 
 ### 1. normalize
 
@@ -52,4 +54,4 @@ Run `runners.all` (or the stack-specific runner the user names). Do not normaliz
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, adapter id, and whether `.sdd/ticket.json` exists.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` exist.

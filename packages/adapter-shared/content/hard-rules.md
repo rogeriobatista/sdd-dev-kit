@@ -5,6 +5,7 @@
 - Specs language: Portuguese keywords `Dado`, `Quando`, `Então`, `E`.
 - Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
 - Stack adapters are first-class: `typescript` | `python` | `react-vite` | `node-graphql` | `terraform` (alias `ts` → `typescript`).
+- **Stack comes from specification docs** (premises → specs → optional stack.json / sdd.yaml fallback). If missing/ambiguous: stop and ask the human — never invent a stack from app source as the primary signal.
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).

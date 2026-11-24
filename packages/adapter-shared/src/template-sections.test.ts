@@ -27,6 +27,9 @@ const REQUIRED_MARKERS = [
   "Dado",
   "Quando",
   "Então",
+  // stack from specs
+  "detectStack",
+  "premises.md",
 ];
 
 function read(relFromPackages: string): string {
@@ -47,17 +50,28 @@ function assertMarkers(label: string, text: string, markers: string[] = REQUIRED
 }
 
 describe("adapter-shared content", () => {
-  it("ships pipeline, from-ticket, human-boundary, hard-rules, init", () => {
+  it("ships pipeline, from-ticket, human-boundary, hard-rules, init, stack-detection", () => {
     for (const name of [
       "pipeline.md",
       "from-ticket.md",
       "human-boundary.md",
       "hard-rules.md",
       "init.md",
+      "stack-detection.md",
     ]) {
       const body = readShared(name);
       assert.ok(body.trim().length > 0, `${name} should be non-empty`);
     }
+  });
+
+  it("stack-detection documents authoritative order and detectStack", () => {
+    assertMarkers("stack-detection", readShared("stack-detection.md"), [
+      "detectStack",
+      "premises.md",
+      "stack.json",
+      "sdd.yaml",
+      "needsClarification",
+    ]);
   });
 
   it("shared pipeline documents all phases", () => {

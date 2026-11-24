@@ -10,6 +10,7 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
 
 ### Steps
 
+0. **Confirm stack** via stack detection (premises + specs) before or as part of continuing into `--run`. If stack is missing/ambiguous, STOP and ask the human to declare it in `.sdd/premises.md` before materialize/verify.
 1. Read `sdd.yaml` `ticketing` (provider configs = **env var names only**, never secrets on argv).
 2. Resolve provider:
    - UUID → Linear

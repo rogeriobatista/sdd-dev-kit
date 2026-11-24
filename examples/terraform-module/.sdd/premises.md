@@ -1,6 +1,7 @@
 # Premises
 
 ## Stack
+- adapter: terraform
 - Terraform >= 1.6
 - null provider only (no cloud apply in verify)
 

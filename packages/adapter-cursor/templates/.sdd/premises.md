@@ -1,6 +1,7 @@
 # Premises do projeto
 
 ## Stack
+- adapter: typescript
 - TypeScript
 - Aceitação/domínio: Cucumber (`@cucumber/cucumber`)
 - UI/E2E: Playwright (`@playwright/test`)

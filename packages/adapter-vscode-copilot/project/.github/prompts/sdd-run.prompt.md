@@ -7,7 +7,9 @@ Run **SDD: run** — full Spec-Driven Development pipeline for this project.
 
 ## Pipeline phases (run)
 
-Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Read `sdd.yaml` `adapter` (or `adapters.stack`) so executable/verify match the stack.
+Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3).
+
+**Before normalize/executable:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 
 ### 1. normalize
 
@@ -59,7 +61,7 @@ Run `runners.all` (or the stack-specific runner the user names). Do not normaliz
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, adapter id, and whether `.sdd/ticket.json` exists.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` exist.
 
 ## Human vs agent ownership
 
@@ -75,6 +77,7 @@ Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
+- `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)
 
 ### Agent must not
@@ -91,6 +94,7 @@ Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase
 - Specs language: Portuguese keywords `Dado`, `Quando`, `Então`, `E`.
 - Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
 - Stack adapters are first-class: `typescript` | `python` | `react-vite` | `node-graphql` | `terraform` (alias `ts` → `typescript`).
+- **Stack comes from specification docs** (premises → specs → optional stack.json / sdd.yaml fallback). If missing/ambiguous: stop and ask the human — never invent a stack from app source as the primary signal.
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
