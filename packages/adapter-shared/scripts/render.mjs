@@ -19,6 +19,7 @@ const CONTENT_FILES = [
   "init.md",
   "from-ticket.md",
   "pipeline.md",
+  "demo.md",
   "hard-rules.md",
 ];
 
@@ -76,7 +77,7 @@ description: >-
   Spec-Driven Development Protocol Kit. Use when the user invokes /sdd, asks to
   init SDD, run the SDD pipeline from natural-language specs, import a Linear or
   Jira ticket into specs, verify Cucumber/ Playwright, or check SDD status.
-  Subcommands: init | from-ticket | run | verify | status.
+  Subcommands: init | from-ticket | run | verify | demo | status.
 ---
 
 # /sdd — Spec-Driven Development
@@ -93,6 +94,7 @@ Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` fr
 | From ticket | \`/sdd from-ticket <id>\` (\`linear:\` / \`jira:\` prefix; optional \`--run\`) |
 | Run pipeline | \`/sdd run\` |
 | Verify only | \`/sdd verify\` |
+| Demo (PO/BO/QA) | \`/sdd demo\` (optional run id) |
 | Status | \`/sdd status\` |
 
 When the user says these commands, follow the shared protocol below (same phases as Claude and Copilot adapters).
@@ -149,7 +151,7 @@ const claudeSkill = `---
 name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user asks for SDD init,
-  from-ticket, run, verify, or status — including natural-language intents like
+  from-ticket, run, verify, demo, or status — including natural-language intents like
   "SDD: run" or "import ticket ENG-42 into specs".
 ---
 
@@ -165,6 +167,7 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | From ticket | \`SDD: from-ticket ENG-42\` / \`linear:ENG-42\` / \`jira:SHOP-7\` (optional \`--run\`) |
 | Run pipeline | \`SDD: run\` |
 | Verify only | \`SDD: verify\` |
+| Demo (PO/BO/QA) | \`SDD: demo\` (optional run id) |
 | Status | \`SDD: status\` |
 
 You may also treat \`/sdd <subcommand>\` the same way when the user types it.
@@ -189,6 +192,7 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 - **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\` (MCP when available; else core REST + env vars)
 - **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
 - **SDD: verify** — stack runners from \`sdd.yaml\` only
+- **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/demo/<runId>/\`
 - **SDD: status** — last run / phase summary
 
 Full procedures live in \`.claude/skills/sdd/SKILL.md\` (invoke the \`sdd\` skill when the user asks for any of the above).
@@ -222,9 +226,10 @@ This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\
 | \`SDD: from-ticket <id>\` | Bootstrap specs from Linear/Jira |
 | \`SDD: run\` | Full pipeline |
 | \`SDD: verify\` | Run test runners only |
+| \`SDD: demo\` | Stakeholder demo pack from test evidence (PO/BO/QA) |
 | \`SDD: status\` | Summarize \`.sdd/runs\` |
 
-Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-verify\`, \`/sdd-status\`.
+Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-verify\`, \`/sdd-demo\`, \`/sdd-status\`.
 
 ${sharedBody}
 
@@ -295,10 +300,22 @@ Persist results under \`.sdd/runs/\` when possible and summarize exit codes.
 `,
   },
   {
+    file: "sdd-demo.prompt.md",
+    name: "sdd-demo",
+    description: "Build a PO/BO/QA demo pack from test evidence (SDD: demo)",
+    argumentHint: "[runId]",
+    body: `Run **SDD: demo** — build a stakeholder demo pack from the latest (or named) verify evidence.
+
+${fs.readFileSync(path.join(contentDir, "demo.md"), "utf8").trim()}
+
+Prefer \`buildDemo({ projectRoot, runId? })\` from \`@sdd-dev-kit/core\`. Report \`.sdd/demo/<runId>/index.html\` and \`SUMMARY.md\` paths.
+`,
+  },
+  {
     file: "sdd-status.prompt.md",
     name: "sdd-status",
     description: "Report SDD pipeline status from .sdd/runs",
-    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` exist. Do not modify files.
+    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket/demo presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` / \`.sdd/demo/\` exist. Do not modify files.
 `,
   },
 ];

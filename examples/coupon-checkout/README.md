@@ -51,6 +51,17 @@ Smoke (Cucumber + Playwright smoke fixture, no long-lived UI server for smoke):
 npm run smoke -w coupon-checkout
 ```
 
+## Demo for PO / BO / QA
+
+After verify, Cucumber writes `reports/cucumber.json` and Playwright writes `playwright-report/` + `reports/playwright.json`. Build a stakeholder pack:
+
+```bash
+npm run sdd:demo -w coupon-checkout
+# or in Cursor: /sdd demo
+```
+
+Output: `.sdd/demo/<runId>/index.html`, `SUMMARY.md`, `manifest.json`, `evidence/`.
+
 ## Specs language
 
 Portuguese GWT: `Dado` / `Quando` / `Então` / `E`. Tags: `@api` → Cucumber, `@ui` → Playwright.

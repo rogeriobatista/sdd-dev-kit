@@ -54,14 +54,19 @@ Materialize from canonical using the stack adapter (regenerate freely; never ask
 ### 7. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
+- Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
 
 ## Verify (tests only)
 
 Run `runners.all` (or the stack-specific runner the user names). Do not normalize or implement.
 
+## Demo (after verify)
+
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` → `.sdd/demo/<runId>/` (`index.html`, `SUMMARY.md`, `manifest.json`). Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`).
+
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` exist.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/demo/` exist.
 
 ## Human vs agent ownership
 
@@ -76,6 +81,7 @@ Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
+- `.sdd/demo/**` — stakeholder demo packs from `/sdd demo` (HTML/MD/manifest + evidence)
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)
@@ -98,4 +104,5 @@ Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
-- Pipeline trigger is explicit (init / from-ticket / run / verify / status) — not file watch.
+- Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
+- Demo packs (`.sdd/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths.

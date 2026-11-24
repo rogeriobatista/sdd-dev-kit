@@ -9,4 +9,5 @@
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
-- Pipeline trigger is explicit (init / from-ticket / run / verify / status) — not file watch.
+- Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
+- Demo packs (`.sdd/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths.

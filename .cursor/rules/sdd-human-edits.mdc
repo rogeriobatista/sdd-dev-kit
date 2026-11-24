@@ -23,6 +23,7 @@ alwaysApply: true
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
+- `.sdd/demo/**` — stakeholder demo packs from `/sdd demo` (HTML/MD/manifest + evidence)
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)

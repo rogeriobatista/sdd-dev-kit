@@ -5,9 +5,9 @@
   "description": "SDD example — Python + pytest hello",
   "scripts": {
     "setup": "python -m pip install -e \".[dev]\"",
-    "sdd:verify:pytest": "pytest -q",
-    "sdd:verify:all": "pytest -q",
-    "smoke": "pytest -q"
+    "sdd:verify:pytest": "pytest -q --junitxml=reports/junit.xml",
+    "sdd:verify:all": "pytest -q --junitxml=reports/junit.xml",
+    "smoke": "pytest -q --junitxml=reports/junit.xml"
   },
   "dependencies": {
     "@sdd-dev-kit/adapter-python": "0.1.0",

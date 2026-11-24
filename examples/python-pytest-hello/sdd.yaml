@@ -11,8 +11,8 @@ paths:
   e2e: tests/e2e
   src: src
 runners:
-  pytest: pytest -q
-  all: pytest -q
+  pytest: pytest -q --junitxml=reports/junit.xml
+  all: pytest -q --junitxml=reports/junit.xml
 triggers:
   watch: false
   command: "/sdd run"

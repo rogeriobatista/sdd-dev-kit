@@ -22,3 +22,13 @@ runners:
 ```
 
 Requires the Terraform CLI locally. Never put cloud secrets in the repo.
+
+## Evidence for `/sdd demo`
+
+Capture `terraform test` stdout into the run folder or a known report path:
+
+| Artifact | Typical path |
+|----------|----------------|
+| Test log | `reports/terraform-test.log` or `.sdd/runs/<id>/terraform-test.log` |
+
+Demo still works from `.sdd/runs/<id>/report.json` + specs when the log is absent.

@@ -8,6 +8,7 @@ This project uses Spec-Driven Development. You edit **only** `specs/*.md` (+ `.s
 - **SDD: from-ticket `<id>`** — Linear/Jira → draft `specs/*.md` (MCP when available; else core REST + env vars)
 - **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
 - **SDD: verify** — stack runners from `sdd.yaml` only
+- **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → `.sdd/demo/<runId>/`
 - **SDD: status** — last run / phase summary
 
 Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill when the user asks for any of the above).
@@ -33,6 +34,7 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
+- `.sdd/demo/**` — stakeholder demo packs from `/sdd demo` (HTML/MD/manifest + evidence)
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)

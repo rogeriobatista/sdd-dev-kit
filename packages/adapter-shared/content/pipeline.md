@@ -47,11 +47,16 @@ Materialize from canonical using the stack adapter (regenerate freely; never ask
 ### 7. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
+- Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
 
 ## Verify (tests only)
 
 Run `runners.all` (or the stack-specific runner the user names). Do not normalize or implement.
 
+## Demo (after verify)
+
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` → `.sdd/demo/<runId>/` (`index.html`, `SUMMARY.md`, `manifest.json`). Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`).
+
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` exist.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/demo/` exist.

@@ -11,6 +11,7 @@
     "sdd:verify:cucumber": "node scripts/run-cucumber.mjs",
     "sdd:verify:playwright": "playwright test",
     "sdd:verify:all": "npm run sdd:verify:cucumber && npm run sdd:verify:playwright",
+    "sdd:demo": "node scripts/build-demo.mjs",
     "smoke": "npm run sdd:verify:cucumber && playwright test --config=playwright.smoke.config.ts"
   },
   "dependencies": {

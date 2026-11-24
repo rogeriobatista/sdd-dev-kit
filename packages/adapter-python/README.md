@@ -21,8 +21,25 @@ runners:
 
 ```bash
 pip install -e ".[dev]"   # or: pip install -r requirements.txt
-pytest -q
+pytest -q --junitxml=reports/junit.xml
 ```
+
+## Evidence for `/sdd demo`
+
+| Artifact | Typical path |
+|----------|----------------|
+| JUnit XML | `reports/junit.xml` |
+| HTML (optional) | `reports/report.html` (`pytest --html=…`) |
+
+Wire runners accordingly:
+
+```yaml
+runners:
+  pytest: pytest -q --junitxml=reports/junit.xml
+  all: pytest -q --junitxml=reports/junit.xml
+```
+
+Then: `/sdd demo` → `.sdd/demo/<runId>/`.
 
 ## Canonical → test mapping
 

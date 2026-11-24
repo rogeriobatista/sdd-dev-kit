@@ -3,8 +3,16 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
+  reporter: [
+    ["list"],
+    ["html", { open: "never", outputFolder: "playwright-report" }],
+    ["json", { outputFile: "reports/playwright.json" }],
+  ],
   use: {
     baseURL: process.env.SDD_BASE_URL ?? "http://127.0.0.1:5173",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
   },
   webServer: process.env.SDD_SKIP_WEBSERVER
     ? undefined

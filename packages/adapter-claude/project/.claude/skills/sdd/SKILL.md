@@ -2,7 +2,7 @@
 name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user asks for SDD init,
-  from-ticket, run, verify, or status — including natural-language intents like
+  from-ticket, run, verify, demo, or status — including natural-language intents like
   "SDD: run" or "import ticket ENG-42 into specs".
 ---
 
@@ -18,6 +18,7 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | From ticket | `SDD: from-ticket ENG-42` / `linear:ENG-42` / `jira:SHOP-7` (optional `--run`) |
 | Run pipeline | `SDD: run` |
 | Verify only | `SDD: verify` |
+| Demo (PO/BO/QA) | `SDD: demo` (optional run id) |
 | Status | `SDD: status` |
 
 You may also treat `/sdd <subcommand>` the same way when the user types it.
@@ -35,6 +36,7 @@ You may also treat `/sdd <subcommand>` the same way when the user types it.
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
+- `.sdd/demo/**` — stakeholder demo packs from `/sdd demo` (HTML/MD/manifest + evidence)
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)
@@ -75,7 +77,7 @@ Use `@sdd-dev-kit/core` `detectStack(projectRoot)` → `{ stack, source, confide
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
 2. Ensure folders appropriate to the stack:
-   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs, stack.json), `src/` (or module root for Terraform)
+   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs, demo, stack.json), `src/` (or module root for Terraform)
    - TS / node-graphql: `tests/features`, `tests/steps`, and e2e when UI applies
    - python: `tests/`
    - react-vite: `tests/e2e` (+ optional `tests/unit`)
@@ -174,14 +176,61 @@ Materialize from canonical using the stack adapter (regenerate freely; never ask
 ### 7. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
+- Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
 
 ## Verify (tests only)
 
 Run `runners.all` (or the stack-specific runner the user names). Do not normalize or implement.
 
+## Demo (after verify)
+
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` → `.sdd/demo/<runId>/` (`index.html`, `SUMMARY.md`, `manifest.json`). Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`).
+
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` exist.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/demo/` exist.
+
+## Demo (stakeholder pack from test evidence)
+
+After **verify** (green or red), build a presentable demo pack for **PO / BO / QA** from run evidence + business wording in specs/canonical.
+
+### Usage (host-agnostic)
+
+- `demo` — use the latest `.sdd/runs/<id>/`
+- `demo <runId>` — use a specific run folder
+- Cursor: `/sdd demo` · Claude / Copilot: `SDD: demo`
+
+### Steps
+
+1. Resolve the run id (latest under `.sdd/runs/`, or the id the human named).
+2. Call `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` (preferred) — or equivalent: collect evidence, map scenarios, write the pack.
+3. Report the output paths to the human (open `index.html` in a browser; paste `SUMMARY.md` into Slack/email).
+
+### Output (agent-owned)
+
+`.sdd/demo/<runId>/`:
+
+| File | Role |
+|------|------|
+| `index.html` | Offline-friendly narrative page in **Portuguese** (intent, scenarios as business language, pass/fail, embeds/links to screenshots/videos) |
+| `SUMMARY.md` | Same story in markdown for Slack/email |
+| `manifest.json` | Machine-readable evidence list |
+| `evidence/` | Copied reports/media so the pack is portable |
+
+### Inputs (graceful if missing)
+
+- `.sdd/runs/<id>/report.json` (or `run.json`)
+- Stack evidence (see adapter READMEs): Playwright `playwright-report/` + `test-results/`, Cucumber `reports/cucumber.json`, pytest `reports/junit.xml`, Vitest JSON, Terraform test log
+- `.sdd/canonical/**` and/or `specs/**/*.md` for intention + Dado/Quando/Então wording
+
+Missing evidence is OK — still produce the narrative from the run report + specs. Never block demo on a red verify.
+
+### Audience rules
+
+- **PO / BO / QA** — business language from specs; **no code dumps**, no IDE required
+- Portuguese stakeholder copy by default
+- **No secrets** in demo output (scrub tokens/keys from stderr snippets)
+- Keep the pack **offline-friendly** (relative paths)
 
 ## Hard rules
 
@@ -194,7 +243,8 @@ Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
-- Pipeline trigger is explicit (init / from-ticket / run / verify / status) — not file watch.
+- Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
+- Demo packs (`.sdd/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths.
 
 ## Template locations in this kit
 

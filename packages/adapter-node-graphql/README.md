@@ -21,3 +21,12 @@ runners:
   vitest: npm run sdd:verify:vitest
   all: npm run sdd:verify:all
 ```
+
+## Evidence for `/sdd demo`
+
+| Artifact | Typical path |
+|----------|----------------|
+| Cucumber JSON | `reports/cucumber.json` (`format: ["progress", "json:reports/cucumber.json"]`) |
+| Vitest JSON | `reports/vitest.json` (Vitest JSON reporter) |
+
+Then: `/sdd demo` → `.sdd/demo/<runId>/`.

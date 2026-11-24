@@ -76,7 +76,33 @@ npm run smoke -w react-vite-playwright            # Playwright + Vite (after set
 | From ticket | `/sdd from-ticket <id>` | `SDD: from-ticket <id>` | `SDD: from-ticket <id>` / `/sdd-from-ticket` |
 | Run | `/sdd run` | `SDD: run` | `SDD: run` / `/sdd-run` |
 | Verify | `/sdd verify` | `SDD: verify` | `SDD: verify` / `/sdd-verify` |
+| Demo (PO/BO/QA) | `/sdd demo` | `SDD: demo` | `SDD: demo` / `/sdd-demo` |
 | Status | `/sdd status` | `SDD: status` | `SDD: status` / `/sdd-status` |
+
+## Demo from test evidence (PO / BO / QA)
+
+After verify (green or red), build a stakeholder pack from run evidence + business wording in specs:
+
+```text
+/sdd demo
+/sdd demo <runId>
+```
+
+Or in code:
+
+```js
+import { buildDemo } from "@sdd-dev-kit/core";
+const pack = buildDemo({ projectRoot: process.cwd() });
+// → .sdd/demo/<runId>/{index.html, SUMMARY.md, manifest.json, evidence/}
+```
+
+| Output | Use |
+|--------|-----|
+| `.sdd/demo/<runId>/index.html` | Open in a browser (offline, relative assets) |
+| `.sdd/demo/<runId>/SUMMARY.md` | Paste into Slack/email |
+| `.sdd/demo/<runId>/manifest.json` | Machine-readable evidence list |
+
+Portuguese copy by default; no secrets; no code dumps. See [demo design](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md).
 
 ## Ticketing (Linear + Jira)
 
@@ -103,7 +129,7 @@ Ambiguous ids like `ENG-42` need `ticketing.defaultProvider: linear|jira` or a `
 
 Offline fixtures (no live API): `packages/core/src/ticketing/fixtures/` — fictional coupon-checkout ticket used by unit tests.
 
-Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md)
+Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md)
 
 ## Repository layout
 
@@ -138,6 +164,7 @@ npm run sync:adapters
 |------|----------|
 | Human edits | `specs/` (+ `.sdd/premises.md`) |
 | Ticket bootstrap | `from-ticket` → draft specs (Linear **and** Jira) |
+| Demo pack | `demo` → `.sdd/demo/<runId>/` for PO/BO/QA from verify evidence |
 | Trigger | Explicit run (`triggers.watch` default `false`) |
 | Tags | `@api` → API track; `@ui`/`@e2e` → Playwright when supported |
 | Loop cap | 3 diagnose→implement iterations |

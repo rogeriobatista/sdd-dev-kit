@@ -18,6 +18,9 @@ const REQUIRED_MARKERS = [
   "verify",
   "diagnose",
   "report",
+  // demo stakeholder pack
+  "demo",
+  "buildDemo",
   // from-ticket bootstrap
   "from-ticket",
   "Linear",
@@ -50,7 +53,7 @@ function assertMarkers(label: string, text: string, markers: string[] = REQUIRED
 }
 
 describe("adapter-shared content", () => {
-  it("ships pipeline, from-ticket, human-boundary, hard-rules, init, stack-detection", () => {
+  it("ships pipeline, from-ticket, human-boundary, hard-rules, init, stack-detection, demo", () => {
     for (const name of [
       "pipeline.md",
       "from-ticket.md",
@@ -58,10 +61,21 @@ describe("adapter-shared content", () => {
       "hard-rules.md",
       "init.md",
       "stack-detection.md",
+      "demo.md",
     ]) {
       const body = readShared(name);
       assert.ok(body.trim().length > 0, `${name} should be non-empty`);
     }
+  });
+
+  it("demo content covers buildDemo and stakeholder audience", () => {
+    assertMarkers("demo", readShared("demo.md"), [
+      "buildDemo",
+      "PO",
+      "index.html",
+      "SUMMARY.md",
+      "manifest.json",
+    ]);
   });
 
   it("stack-detection documents authoritative order and detectStack", () => {
@@ -194,6 +208,7 @@ describe("rendered host adapters include required sections", () => {
       "sdd-from-ticket.prompt.md",
       "sdd-run.prompt.md",
       "sdd-verify.prompt.md",
+      "sdd-demo.prompt.md",
       "sdd-status.prompt.md",
     ]) {
       assert.ok(fs.existsSync(path.join(dir, name)), `missing prompt ${name}`);

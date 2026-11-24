@@ -5,6 +5,8 @@ export const DEFAULT_PATHS = {
   canonical: ".sdd/canonical",
   plan: ".sdd/plan",
   runs: ".sdd/runs",
+  /** Stakeholder demo packs from `/sdd demo` (per run id). */
+  demo: ".sdd/demo",
   /** Provenance written by `/sdd from-ticket`. */
   ticket: ".sdd/ticket.json",
   /** Stack detection provenance / optional override (`detectStack`). */

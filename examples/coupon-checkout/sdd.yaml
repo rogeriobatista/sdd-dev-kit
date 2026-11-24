@@ -6,6 +6,7 @@ paths:
   canonical: .sdd/canonical
   plan: .sdd/plan
   runs: .sdd/runs
+  demo: .sdd/demo
   features: tests/features
   steps: tests/steps
   e2e: tests/e2e
