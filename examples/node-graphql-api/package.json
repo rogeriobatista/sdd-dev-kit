@@ -1,0 +1,28 @@
+{
+  "name": "node-graphql-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SDD example — Node TS GraphQL + Vitest",
+  "scripts": {
+    "setup": "npm install",
+    "start": "tsx src/server.ts",
+    "sdd:verify:vitest": "vitest run",
+    "sdd:verify:cucumber": "node scripts/run-cucumber.mjs",
+    "sdd:verify:all": "npm run sdd:verify:vitest && npm run sdd:verify:cucumber",
+    "smoke": "vitest run"
+  },
+  "dependencies": {
+    "@sdd-dev-kit/adapter-node-graphql": "0.1.0",
+    "@sdd-dev-kit/core": "0.1.0",
+    "graphql": "^16.10.0",
+    "graphql-yoga": "^5.12.0"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.2.0",
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

@@ -4,6 +4,7 @@ import {
   createDefaultManifest,
   parseSddYaml,
   safeParseSddYaml,
+  STACK_ADAPTER_IDS,
 } from "./schema.js";
 import { DEFAULT_MAX_DIAGNOSE_ITERATIONS } from "./phases.js";
 import { DEFAULT_PATHS } from "./paths.js";
@@ -42,11 +43,63 @@ runners:
     assert.equal(manifest.loop.maxDiagnoseIterations, 3);
   });
 
+  it("accepts ts as an alias for typescript", () => {
+    const manifest = parseSddYaml(`adapter: ts`);
+    assert.equal(manifest.adapter, "typescript");
+  });
+
+  it("accepts first-class stack adapter ids", () => {
+    for (const id of [
+      "python",
+      "react-vite",
+      "node-graphql",
+      "terraform",
+    ] as const) {
+      const manifest = parseSddYaml(`adapter: ${id}`);
+      assert.equal(manifest.adapter, id);
+    }
+  });
+
+  it("prefers adapters.stack over top-level adapter", () => {
+    const yaml = `
+adapter: typescript
+adapters:
+  stack: python
+  hosts: [cursor, claude]
+`;
+    const manifest = parseSddYaml(yaml);
+    assert.equal(manifest.adapter, "python");
+    assert.deepEqual(manifest.adapters?.hosts, ["cursor", "claude"]);
+  });
+
+  it("allows stack-specific runner keys", () => {
+    const yaml = `
+adapter: python
+runners:
+  all: pytest
+  pytest: pytest -q
+  fmt: ruff format --check .
+`;
+    const manifest = parseSddYaml(yaml);
+    assert.equal(manifest.runners.all, "pytest");
+    assert.equal(manifest.runners.pytest, "pytest -q");
+    assert.equal(manifest.runners.fmt, "ruff format --check .");
+  });
+
   it("rejects an unknown adapter", () => {
     const result = safeParseSddYaml(`
-adapter: python
+adapter: cobol
 `);
     assert.equal(result.success, false);
+  });
+
+  it("lists expected stack adapter id inputs", () => {
+    assert.ok(STACK_ADAPTER_IDS.includes("python"));
+    assert.ok(STACK_ADAPTER_IDS.includes("react-vite"));
+    assert.ok(STACK_ADAPTER_IDS.includes("node-graphql"));
+    assert.ok(STACK_ADAPTER_IDS.includes("terraform"));
+    assert.ok(STACK_ADAPTER_IDS.includes("typescript"));
+    assert.ok(STACK_ADAPTER_IDS.includes("ts"));
   });
 
   it("rejects non-positive diagnose iterations", () => {

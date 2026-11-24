@@ -1,9 +1,11 @@
 ## Hard rules
 
 - **Never** edit `specs/` unless the human explicitly asks — **exception:** from-ticket may write a **draft** spec from the ticket (bootstrap only).
-- **Never** ask the human to edit features, steps, e2e, or production code for the happy path.
+- **Never** ask the human to edit generated tests, plan, canonical, or production code for the happy path.
 - Specs language: Portuguese keywords `Dado`, `Quando`, `Então`, `E`.
-- Tags: `@api` → Cucumber; `@ui`/`@e2e` → Playwright.
+- Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
+- Stack adapters are first-class: `typescript` | `python` | `react-vite` | `node-graphql` | `terraform` (alias `ts` → `typescript`).
+- Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status) — not file watch.

@@ -1,23 +1,18 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { CanonicalDocument, CanonicalScenario, SddManifest } from "@sdd-dev-kit/core";
-import { resolveSddPath } from "@sdd-dev-kit/core";
-import { formatGherkinTags, usesCucumber, usesPlaywright } from "./tags.js";
+import {
+  formatGherkinTags,
+  resolveSddPath,
+  slugifyScenarioBase,
+  usesCucumber,
+  usesPlaywright,
+} from "@sdd-dev-kit/core";
 
 export interface MaterializeResult {
   featureFiles: string[];
   stepFiles: string[];
   e2eFiles: string[];
-}
-
-function slugify(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 80) || "scenario";
 }
 
 function toFeatureContent(doc: CanonicalDocument, scenarios: CanonicalScenario[]): string {
@@ -120,7 +115,9 @@ export async function materializeCanonical(
   };
 
   for (const doc of documents) {
-    const base = slugify(path.basename(doc.sourceFile, path.extname(doc.sourceFile)));
+    const base = slugifyScenarioBase(
+      path.basename(doc.sourceFile, path.extname(doc.sourceFile)),
+    );
     const cucumberScenarios = doc.scenarios.filter(usesCucumber);
     const playwrightScenarios = doc.scenarios.filter(usesPlaywright);
 

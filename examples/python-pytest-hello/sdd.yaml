@@ -1,0 +1,20 @@
+version: 1
+adapter: python
+paths:
+  specs: specs
+  premises: .sdd/premises.md
+  canonical: .sdd/canonical
+  plan: .sdd/plan
+  runs: .sdd/runs
+  features: tests/features
+  steps: tests/steps
+  e2e: tests/e2e
+  src: src
+runners:
+  pytest: pytest -q
+  all: pytest -q
+triggers:
+  watch: false
+  command: "/sdd run"
+loop:
+  maxDiagnoseIterations: 3

@@ -7,7 +7,7 @@ This project uses Spec-Driven Development. You edit **only** `specs/*.md` (+ `.s
 - **SDD: init** — scaffold folders, `sdd.yaml`, premises, example spec, host instructions
 - **SDD: from-ticket `<id>`** — Linear/Jira → draft `specs/*.md` (MCP when available; else core REST + env vars)
 - **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
-- **SDD: verify** — Cucumber + Playwright only
+- **SDD: verify** — stack runners from `sdd.yaml` only
 - **SDD: status** — last run / phase summary
 
 Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill when the user asks for any of the above).
@@ -29,14 +29,12 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
-- `tests/features/**` — Cucumber `.feature`
-- `tests/steps/**` — step definitions
-- `tests/e2e/**` — Playwright specs
+- Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
-- `src/**` under the SDD implement phase (agent implements to make tests pass)
+- Production code under the SDD implement phase (agent implements to make tests pass)
 
 ### Agent must not
 

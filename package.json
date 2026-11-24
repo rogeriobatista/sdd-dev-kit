@@ -2,16 +2,16 @@
   "name": "sdd-dev-kit",
   "version": "0.1.0",
   "private": true,
-  "description": "Protocol Kit for Spec-Driven Development — core + multi-host adapters (Cursor, Claude, Copilot) + TypeScript (Cucumber + Playwright)",
+  "description": "Protocol Kit for Spec-Driven Development — core + multi-host adapters + stack adapters (TS, Python, React/Vite, Node GraphQL, Terraform)",
   "workspaces": [
     "packages/*",
     "examples/*"
   ],
   "scripts": {
     "setup": "npm install && npx playwright install chromium",
-    "build": "npm run build -w @sdd-dev-kit/core && npm run build -w @sdd-dev-kit/adapter-ts",
+    "build": "npm run build -w @sdd-dev-kit/core && npm run build -w @sdd-dev-kit/adapter-ts && npm run build -w @sdd-dev-kit/adapter-python && npm run build -w @sdd-dev-kit/adapter-react-vite && npm run build -w @sdd-dev-kit/adapter-node-graphql && npm run build -w @sdd-dev-kit/adapter-terraform",
     "sync:adapters": "npm run render -w @sdd-dev-kit/adapter-shared",
-    "test": "npm run test -w @sdd-dev-kit/core && npm run test -w @sdd-dev-kit/adapter-shared",
+    "test": "npm run test -w @sdd-dev-kit/core && npm run test -w @sdd-dev-kit/adapter-shared && npm run test -w @sdd-dev-kit/adapter-ts && npm run test -w @sdd-dev-kit/adapter-python && npm run test -w @sdd-dev-kit/adapter-react-vite && npm run test -w @sdd-dev-kit/adapter-node-graphql && npm run test -w @sdd-dev-kit/adapter-terraform",
     "test:core": "npm run test -w @sdd-dev-kit/core",
     "test:adapters": "npm run test -w @sdd-dev-kit/adapter-shared",
     "smoke": "npm run smoke -w coupon-checkout"

@@ -1,6 +1,6 @@
 ## Pipeline phases (run)
 
-Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3).
+Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Read `sdd.yaml` `adapter` (or `adapters.stack`) so executable/verify match the stack.
 
 ### 1. normalize
 
@@ -11,10 +11,15 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 
 ### 2. executable
 
-- Materialize Cucumber + Playwright from canonical:
-  - `@api` (and untagged) → `tests/features/*.feature` + `tests/steps/*`
-  - `@ui` / `@e2e` → `tests/e2e/*.spec.ts` (and Cucumber too only if premises require)
-- Regenerate freely; never ask the human to edit these files.
+Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files):
+
+| Adapter | Materialize target |
+|---------|-------------------|
+| `typescript` / `ts` | `@api` → Cucumber features/steps; `@ui`/`@e2e` → Playwright |
+| `python` | pytest stubs under `tests/test_*.py` |
+| `react-vite` | `@ui`/`@e2e` → Playwright; `@api` → optional Vitest unit stubs |
+| `node-graphql` | `@api` → Cucumber + Vitest GraphQL stubs |
+| `terraform` | `tests/*.tftest.hcl` with GWT comments / assert stubs |
 
 ### 3. plan
 
@@ -22,12 +27,13 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 
 ### 4. implement
 
-- Implement `src/` (and complete step stubs only when needed) so red tests can go green.
+- Implement production code (and complete step stubs only when needed) so red tests can go green.
 - Follow TDD: keep tests as the source of truth; do not weaken assertions to pass.
 
 ### 5. verify
 
-- Run commands from `sdd.yaml` `runners` (`cucumber`, `playwright`, or `all`).
+- Run commands from `sdd.yaml` `runners` — **keys differ by adapter** (`cucumber`/`playwright`, `pytest`, `vitest`, `fmt`/`validate`/`terraform`, or `all`).
+- Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
 - Persist structured results under `.sdd/runs/<id>/`.
 
 ### 6. diagnose (on failure)
@@ -42,8 +48,8 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 
 ## Verify (tests only)
 
-Run `runners.all` (or cucumber/playwright if the user specifies). Do not normalize or implement.
+Run `runners.all` (or the stack-specific runner the user names). Do not normalize or implement.
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, and whether `.sdd/ticket.json` exists.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, adapter id, and whether `.sdd/ticket.json` exists.

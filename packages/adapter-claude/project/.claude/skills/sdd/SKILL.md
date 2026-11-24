@@ -31,14 +31,12 @@ You may also treat `/sdd <subcommand>` the same way when the user types it.
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
-- `tests/features/**` — Cucumber `.feature`
-- `tests/steps/**` — step definitions
-- `tests/e2e/**` — Playwright specs
+- Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
-- `src/**` under the SDD implement phase (agent implements to make tests pass)
+- Production code under the SDD implement phase (agent implements to make tests pass)
 
 ### Agent must not
 
@@ -49,14 +47,20 @@ You may also treat `/sdd <subcommand>` the same way when the user types it.
 
 ## Init — scaffold the project for SDD
 
-1. Ensure folders: `specs/`, `.sdd/` (premises, canonical, plan, runs), `tests/features`, `tests/steps`, `tests/e2e`, `src/`.
-2. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`, adapter `typescript`). Optionally include a commented `ticketing:` section for Linear/Jira.
-3. Write `.sdd/premises.md` and `specs/_example.md` from shared templates if missing.
-4. Add Cucumber + Playwright configs and npm scripts via `@sdd-dev-kit/adapter-ts` scaffold (or copy equivalent files from the kit example).
-5. Install the **host adapter** instruction files for this project (Cursor skill/rules, Claude `CLAUDE.md` + `.claude/skills`, or Copilot `.github/copilot-instructions.md` + prompts) — do not overwrite existing human specs.
-6. Do **not** overwrite existing human specs.
+1. **Choose the stack adapter** (ask if unclear): `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, or `terraform`. Write it as `adapter:` in `sdd.yaml` (or `adapters.stack:`).
+2. Ensure folders appropriate to the stack:
+   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs), `src/` (or module root for Terraform)
+   - TS / node-graphql: `tests/features`, `tests/steps`, and e2e when UI applies
+   - python: `tests/`
+   - react-vite: `tests/e2e` (+ optional `tests/unit`)
+   - terraform: `tests/` for `*.tftest.hcl`
+3. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`). Set **stack-specific `runners`** (see adapter README). Optionally include a commented `ticketing:` section for Linear/Jira.
+4. Write `.sdd/premises.md` and `specs/_example.md` from shared templates if missing — adjust Stack/Tags for the chosen adapter.
+5. Scaffold via the matching package (`@sdd-dev-kit/adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, or `adapter-terraform`) or copy from `examples/`.
+6. Install the **host adapter** instruction files for this project (Cursor skill/rules, Claude `CLAUDE.md` + `.claude/skills`, or Copilot `.github/copilot-instructions.md` + prompts) — do not overwrite existing human specs.
+7. Do **not** overwrite existing human specs.
 
-Report the tree and tell the user: edit `specs/`, or run from-ticket, then run the full pipeline.
+Report the tree, the chosen `adapter`, and tell the user: edit `specs/`, or run from-ticket, then run the full pipeline.
 
 ## From-ticket — bootstrap NL specs from Linear or Jira
 
@@ -96,7 +100,7 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
 
 ## Pipeline phases (run)
 
-Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3).
+Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Read `sdd.yaml` `adapter` (or `adapters.stack`) so executable/verify match the stack.
 
 ### 1. normalize
 
@@ -107,10 +111,15 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 
 ### 2. executable
 
-- Materialize Cucumber + Playwright from canonical:
-  - `@api` (and untagged) → `tests/features/*.feature` + `tests/steps/*`
-  - `@ui` / `@e2e` → `tests/e2e/*.spec.ts` (and Cucumber too only if premises require)
-- Regenerate freely; never ask the human to edit these files.
+Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files):
+
+| Adapter | Materialize target |
+|---------|-------------------|
+| `typescript` / `ts` | `@api` → Cucumber features/steps; `@ui`/`@e2e` → Playwright |
+| `python` | pytest stubs under `tests/test_*.py` |
+| `react-vite` | `@ui`/`@e2e` → Playwright; `@api` → optional Vitest unit stubs |
+| `node-graphql` | `@api` → Cucumber + Vitest GraphQL stubs |
+| `terraform` | `tests/*.tftest.hcl` with GWT comments / assert stubs |
 
 ### 3. plan
 
@@ -118,12 +127,13 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 
 ### 4. implement
 
-- Implement `src/` (and complete step stubs only when needed) so red tests can go green.
+- Implement production code (and complete step stubs only when needed) so red tests can go green.
 - Follow TDD: keep tests as the source of truth; do not weaken assertions to pass.
 
 ### 5. verify
 
-- Run commands from `sdd.yaml` `runners` (`cucumber`, `playwright`, or `all`).
+- Run commands from `sdd.yaml` `runners` — **keys differ by adapter** (`cucumber`/`playwright`, `pytest`, `vitest`, `fmt`/`validate`/`terraform`, or `all`).
+- Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
 - Persist structured results under `.sdd/runs/<id>/`.
 
 ### 6. diagnose (on failure)
@@ -138,18 +148,20 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 
 ## Verify (tests only)
 
-Run `runners.all` (or cucumber/playwright if the user specifies). Do not normalize or implement.
+Run `runners.all` (or the stack-specific runner the user names). Do not normalize or implement.
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, and whether `.sdd/ticket.json` exists.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase statuses, last exit codes, adapter id, and whether `.sdd/ticket.json` exists.
 
 ## Hard rules
 
 - **Never** edit `specs/` unless the human explicitly asks — **exception:** from-ticket may write a **draft** spec from the ticket (bootstrap only).
-- **Never** ask the human to edit features, steps, e2e, or production code for the happy path.
+- **Never** ask the human to edit generated tests, plan, canonical, or production code for the happy path.
 - Specs language: Portuguese keywords `Dado`, `Quando`, `Então`, `E`.
-- Tags: `@api` → Cucumber; `@ui`/`@e2e` → Playwright.
+- Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
+- Stack adapters are first-class: `typescript` | `python` | `react-vite` | `node-graphql` | `terraform` (alias `ts` → `typescript`).
+- Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status) — not file watch.
@@ -158,6 +170,7 @@ Read the latest `.sdd/runs/*` (and plan/canonical/ticket presence). Report phase
 
 - Shared source: `packages/adapter-shared/content/` (pipeline, from-ticket, human boundary, hard rules)
 - Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`)
-- Reference example: `examples/coupon-checkout/`
+- Stack adapters: `adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, `adapter-terraform`
+- Examples: `coupon-checkout/`, `python-pytest-hello/`, `react-vite-playwright/`, `node-graphql-api/`, `terraform-module/`
 - Offline ticket fixture: `packages/core/src/ticketing/fixtures/`
 

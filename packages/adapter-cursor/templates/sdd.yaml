@@ -1,5 +1,10 @@
 version: 1
+# Stack: typescript | ts | python | react-vite | node-graphql | terraform
 adapter: typescript
+# Optional nested form (adapters.stack overrides adapter when set):
+# adapters:
+#   stack: python
+#   hosts: [cursor]
 paths:
   specs: specs
   premises: .sdd/premises.md

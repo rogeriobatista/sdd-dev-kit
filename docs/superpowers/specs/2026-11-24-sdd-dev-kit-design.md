@@ -40,7 +40,8 @@ flowchart TB
     Claude["Claude adapter\nCLAUDE.md + skills"]
     Copilot["Copilot adapter\ninstructions + prompts"]
     Ts["TS adapter\nCucumber + Playwright"]
-    Future["Future: CLI / Python / etc."]
+    Stacks["python / react-vite\nnode-graphql / terraform"]
+    Future["Future: CLI / more languages"]
   end
 
   Specs --> Protocol
@@ -50,16 +51,18 @@ flowchart TB
   Shared --> Claude
   Shared --> Copilot
   Protocol --> Ts
+  Protocol --> Stacks
   Cursor --> State
   Claude --> State
   Copilot --> State
   Ts --> State
+  Stacks --> State
 ```
 
-- **Core** defines the contract (folders, phases, artifacts, status). It does not know TypeScript or a specific IDE.
+- **Core** defines the contract (folders, phases, artifacts, status, stack adapter ids). It does not know a specific IDE.
 - **adapter-shared** is the single source of pipeline instructions; host adapters render native packs (see [multi-host design](2026-11-24-sdd-multi-host-adapters-design.md)).
 - **Cursor / Claude / Copilot adapters** orchestrate the LLM via each harness’s instruction format.
-- **TS adapter** materializes Cucumber features/steps + Playwright and runs the suite.
+- **Stack adapters** materialize executable tests and run verify (see [stack adapters design](2026-11-24-sdd-stack-adapters-design.md)).
 
 ### Target project tree (after `/sdd init`)
 
@@ -212,8 +215,7 @@ sdd-dev-kit/
 
 - Standalone CLI `sdd`
 - Automatic watch
-- Python / Java adapters
-- Vitest as a third track
+- Additional language adapters (e.g. Java) beyond first-class stacks (TS, Python, React/Vite, Node GraphQL, Terraform)
 - Cloud / CI agent runner
 
 ## Success criteria

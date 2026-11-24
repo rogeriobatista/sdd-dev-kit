@@ -19,14 +19,12 @@ alwaysApply: true
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
-- `tests/features/**` — Cucumber `.feature`
-- `tests/steps/**` — step definitions
-- `tests/e2e/**` — Playwright specs
+- Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
 - `.sdd/runs/**` — run reports
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap
-- `src/**` under the SDD implement phase (agent implements to make tests pass)
+- Production code under the SDD implement phase (agent implements to make tests pass)
 
 ### Agent must not
 

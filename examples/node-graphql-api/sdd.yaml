@@ -1,0 +1,21 @@
+version: 1
+adapter: node-graphql
+paths:
+  specs: specs
+  premises: .sdd/premises.md
+  canonical: .sdd/canonical
+  plan: .sdd/plan
+  runs: .sdd/runs
+  features: tests/features
+  steps: tests/steps
+  e2e: tests/e2e
+  src: src
+runners:
+  cucumber: npm run sdd:verify:cucumber
+  vitest: npm run sdd:verify:vitest
+  all: npm run sdd:verify:all
+triggers:
+  watch: false
+  command: "/sdd run"
+loop:
+  maxDiagnoseIterations: 3

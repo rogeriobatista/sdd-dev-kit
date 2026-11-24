@@ -1,0 +1,18 @@
+{
+  "name": "terraform-module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SDD example — Terraform module with native terraform test (no cloud)",
+  "scripts": {
+    "setup": "terraform version",
+    "sdd:verify:fmt": "terraform fmt -check -recursive",
+    "sdd:verify:validate": "terraform init -backend=false && terraform validate",
+    "sdd:verify:terraform": "terraform test",
+    "sdd:verify:all": "npm run sdd:verify:fmt && npm run sdd:verify:validate && npm run sdd:verify:terraform",
+    "smoke": "npm run sdd:verify:all"
+  },
+  "dependencies": {
+    "@sdd-dev-kit/adapter-terraform": "0.1.0",
+    "@sdd-dev-kit/core": "0.1.0"
+  }
+}

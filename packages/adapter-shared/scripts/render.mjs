@@ -63,7 +63,8 @@ const templateLocations = `## Template locations in this kit
 
 - Shared source: \`packages/adapter-shared/content/\` (pipeline, from-ticket, human boundary, hard rules)
 - Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`)
-- Reference example: \`examples/coupon-checkout/\`
+- Stack adapters: \`adapter-ts\`, \`adapter-python\`, \`adapter-react-vite\`, \`adapter-node-graphql\`, \`adapter-terraform\`
+- Examples: \`coupon-checkout/\`, \`python-pytest-hello/\`, \`react-vite-playwright/\`, \`node-graphql-api/\`, \`terraform-module/\`
 - Offline ticket fixture: \`packages/core/src/ticketing/fixtures/\`
 `;
 
@@ -182,7 +183,7 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 - **SDD: init** — scaffold folders, \`sdd.yaml\`, premises, example spec, host instructions
 - **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\` (MCP when available; else core REST + env vars)
 - **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
-- **SDD: verify** — Cucumber + Playwright only
+- **SDD: verify** — stack runners from \`sdd.yaml\` only
 - **SDD: status** — last run / phase summary
 
 Full procedures live in \`.claude/skills/sdd/SKILL.md\` (invoke the \`sdd\` skill when the user asks for any of the above).
@@ -282,8 +283,8 @@ ${fs.readFileSync(path.join(contentDir, "hard-rules.md"), "utf8").trim()}
   {
     file: "sdd-verify.prompt.md",
     name: "sdd-verify",
-    description: "Run SDD verify only (Cucumber/Playwright)",
-    body: `Run **SDD: verify** only — execute \`sdd.yaml\` runners (all, or cucumber/playwright if specified). Do not normalize or implement.
+    description: "Run SDD verify only (stack runners from sdd.yaml)",
+    body: `Run **SDD: verify** only — execute \`sdd.yaml\` runners (\`all\`, or stack-specific keys such as cucumber/playwright/pytest/vitest/terraform). Do not normalize or implement.
 
 Persist results under \`.sdd/runs/\` when possible and summarize exit codes.
 `,

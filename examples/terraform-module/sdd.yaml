@@ -1,0 +1,22 @@
+version: 1
+adapter: terraform
+paths:
+  specs: specs
+  premises: .sdd/premises.md
+  canonical: .sdd/canonical
+  plan: .sdd/plan
+  runs: .sdd/runs
+  features: tests/features
+  steps: tests/steps
+  e2e: tests/e2e
+  src: .
+runners:
+  fmt: terraform fmt -check -recursive
+  validate: terraform init -backend=false && terraform validate
+  terraform: terraform test
+  all: npm run sdd:verify:all
+triggers:
+  watch: false
+  command: "/sdd run"
+loop:
+  maxDiagnoseIterations: 3

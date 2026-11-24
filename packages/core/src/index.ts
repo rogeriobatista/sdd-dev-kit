@@ -35,6 +35,7 @@ export type {
 } from "./types.js";
 
 export {
+  STACK_ADAPTER_IDS,
   SddManifestSchema,
   SddPathsSchema,
   SddRunnersSchema,
@@ -44,10 +45,15 @@ export {
   SddLinearProviderSchema,
   SddJiraProviderSchema,
   SddTicketingFieldMappingSchema,
+  SddStackAdapterIdSchema,
+  SddHostAdapterIdSchema,
+  SddAdaptersBlockSchema,
   createDefaultManifest,
   parseSddManifest,
   parseSddYaml,
   safeParseSddYaml,
+  type StackAdapterId,
+  type StackAdapterIdInput,
   type SddManifest,
   type SddPaths,
   type SddRunners,
@@ -57,6 +63,8 @@ export {
   type SddLinearProviderConfig,
   type SddJiraProviderConfig,
   type SddTicketingFieldMapping,
+  type SddAdaptersBlock,
+  type SddHostAdapterId,
 } from "./schema.js";
 
 export {
@@ -78,3 +86,12 @@ export {
   type FromTicketOptions,
   type FromTicketResult,
 } from "./ticketing/index.js";
+
+export { runShellCommand, type ShellResult } from "./shell.js";
+
+export {
+  usesCucumber,
+  usesPlaywright,
+  formatGherkinTags,
+  slugifyScenarioBase,
+} from "./tags.js";

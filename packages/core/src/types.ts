@@ -85,7 +85,8 @@ export interface PhaseResult {
 }
 
 export interface RunnerResult {
-  name: "cucumber" | "playwright" | "all";
+  /** Runner key from sdd.yaml (e.g. cucumber, playwright, pytest, terraform, all). */
+  name: string;
   exitCode: number;
   stdout?: string;
   stderr?: string;

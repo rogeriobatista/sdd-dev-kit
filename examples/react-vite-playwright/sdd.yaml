@@ -1,0 +1,20 @@
+version: 1
+adapter: react-vite
+paths:
+  specs: specs
+  premises: .sdd/premises.md
+  canonical: .sdd/canonical
+  plan: .sdd/plan
+  runs: .sdd/runs
+  features: tests/features
+  steps: tests/steps
+  e2e: tests/e2e
+  src: src
+runners:
+  playwright: npm run sdd:verify:playwright
+  all: npm run sdd:verify:all
+triggers:
+  watch: false
+  command: "/sdd run"
+loop:
+  maxDiagnoseIterations: 3

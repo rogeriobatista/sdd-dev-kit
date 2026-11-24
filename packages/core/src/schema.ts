@@ -15,16 +15,69 @@ export const SddPathsSchema = z.object({
   src: z.string().min(1).default(DEFAULT_PATHS.src),
 });
 
-export const SddRunnersSchema = z.object({
-  cucumber: z
-    .string()
-    .min(1)
-    .default("npm run sdd:verify:cucumber"),
-  playwright: z
-    .string()
-    .min(1)
-    .default("npm run sdd:verify:playwright"),
-  all: z.string().min(1).default("npm run sdd:verify:all"),
+/**
+ * Verify commands. `all` is required; cucumber/playwright keep TS defaults.
+ * Stack adapters may set pytest / vitest / terraform / fmt / validate or any
+ * extra string key via catchall.
+ */
+export const SddRunnersSchema = z
+  .object({
+    all: z.string().min(1).default("npm run sdd:verify:all"),
+    cucumber: z
+      .string()
+      .min(1)
+      .default("npm run sdd:verify:cucumber"),
+    playwright: z
+      .string()
+      .min(1)
+      .default("npm run sdd:verify:playwright"),
+    pytest: z.string().min(1).optional(),
+    vitest: z.string().min(1).optional(),
+    terraform: z.string().min(1).optional(),
+    fmt: z.string().min(1).optional(),
+    validate: z.string().min(1).optional(),
+  })
+  .catchall(z.string().min(1));
+
+/** First-class stack adapter ids (portable core; runners live in packages/). */
+export const STACK_ADAPTER_IDS = [
+  "typescript",
+  "ts",
+  "python",
+  "react-vite",
+  "node-graphql",
+  "terraform",
+] as const;
+
+export type StackAdapterIdInput = (typeof STACK_ADAPTER_IDS)[number];
+/** Canonical id after normalizing `ts` → `typescript`. */
+export type StackAdapterId =
+  | "typescript"
+  | "python"
+  | "react-vite"
+  | "node-graphql"
+  | "terraform";
+
+export const SddStackAdapterIdSchema = z
+  .enum(STACK_ADAPTER_IDS)
+  .transform((value): StackAdapterId =>
+    value === "ts" ? "typescript" : value,
+  );
+
+export const SddHostAdapterIdSchema = z.enum([
+  "cursor",
+  "claude",
+  "copilot",
+]);
+
+/**
+ * Optional nested form:
+ * `adapters: { stack: python, hosts: [cursor] }`
+ * When present, `adapters.stack` wins over top-level `adapter`.
+ */
+export const SddAdaptersBlockSchema = z.object({
+  stack: SddStackAdapterIdSchema.optional(),
+  hosts: z.array(SddHostAdapterIdSchema).optional(),
 });
 
 export const SddTriggersSchema = z.object({
@@ -83,15 +136,26 @@ export const SddTicketingSchema = z.object({
     .default({}),
 });
 
-export const SddManifestSchema = z.object({
+const SddManifestObjectSchema = z.object({
   version: z.union([z.string(), z.number()]).transform(String).default("1"),
-  adapter: z.enum(["typescript"]).default("typescript"),
+  /** Stack adapter id. Alias `ts` normalizes to `typescript`. */
+  adapter: SddStackAdapterIdSchema.default("typescript"),
+  /**
+   * Optional nested adapters block. When `adapters.stack` is set, it overrides
+   * top-level `adapter` (backward compatible when omitted).
+   */
+  adapters: SddAdaptersBlockSchema.optional(),
   paths: SddPathsSchema.default(() => SddPathsSchema.parse({})),
   runners: SddRunnersSchema.default(() => SddRunnersSchema.parse({})),
   triggers: SddTriggersSchema.default(() => SddTriggersSchema.parse({})),
   loop: SddLoopSchema.default(() => SddLoopSchema.parse({})),
   /** Optional ticket → specs bootstrap (Linear + Jira). */
   ticketing: SddTicketingSchema.optional(),
+});
+
+export const SddManifestSchema = SddManifestObjectSchema.transform((data) => {
+  const stack = data.adapters?.stack ?? data.adapter;
+  return { ...data, adapter: stack };
 });
 
 export type SddManifest = z.infer<typeof SddManifestSchema>;
@@ -105,6 +169,8 @@ export type SddJiraProviderConfig = z.infer<typeof SddJiraProviderSchema>;
 export type SddTicketingFieldMapping = z.infer<
   typeof SddTicketingFieldMappingSchema
 >;
+export type SddAdaptersBlock = z.infer<typeof SddAdaptersBlockSchema>;
+export type SddHostAdapterId = z.infer<typeof SddHostAdapterIdSchema>;
 
 export function createDefaultManifest(): SddManifest {
   return SddManifestSchema.parse({});

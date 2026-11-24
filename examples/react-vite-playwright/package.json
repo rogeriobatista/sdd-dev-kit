@@ -1,0 +1,30 @@
+{
+  "name": "react-vite-playwright",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SDD example — React + Vite + Playwright",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5173",
+    "sdd:verify:playwright": "playwright test",
+    "sdd:verify:all": "npm run sdd:verify:playwright",
+    "smoke": "playwright test --config=playwright.smoke.config.ts"
+  },
+  "dependencies": {
+    "@sdd-dev-kit/adapter-react-vite": "0.1.0",
+    "@sdd-dev-kit/core": "0.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  }
+}

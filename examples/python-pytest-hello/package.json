@@ -1,0 +1,16 @@
+{
+  "name": "python-pytest-hello",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SDD example — Python + pytest hello",
+  "scripts": {
+    "setup": "python -m pip install -e \".[dev]\"",
+    "sdd:verify:pytest": "pytest -q",
+    "sdd:verify:all": "pytest -q",
+    "smoke": "pytest -q"
+  },
+  "dependencies": {
+    "@sdd-dev-kit/adapter-python": "0.1.0",
+    "@sdd-dev-kit/core": "0.1.0"
+  }
+}
