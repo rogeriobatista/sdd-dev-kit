@@ -136,7 +136,7 @@ describe("adapter-shared content", () => {
     ]);
   });
 
-  it("shared pipeline documents all phases", () => {
+  it("shared pipeline documents all phases and auto-loop semantics", () => {
     assertMarkers("content/pipeline.md", readShared("pipeline.md"), [
       "normalize",
       "executable",
@@ -146,6 +146,22 @@ describe("adapter-shared content", () => {
       "verify",
       "diagnose",
       "report",
+      "Human iteration surface",
+      "Automated loop",
+      "maxDiagnoseIterations",
+    ]);
+  });
+
+  it("hard-rules and human-boundary mark specs as only human gate", () => {
+    assertMarkers("hard-rules", readShared("hard-rules.md"), [
+      "Human iteration surface",
+      "automated loop",
+      "specs/",
+    ]);
+    assertMarkers("human-boundary", readShared("human-boundary.md"), [
+      "only human iteration surface",
+      "auto-loop",
+      "specs/",
     ]);
   });
 

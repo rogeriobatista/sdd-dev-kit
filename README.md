@@ -6,7 +6,7 @@
 
 **Supported stacks:** TypeScript (Cucumber + Playwright) | Python (pytest) | React + Vite (Playwright) | Node GraphQL | Terraform
 
-You write natural-language specs (`prosa` + `Dado`/`Quando`/`Então`). The agent normalizes, generates executable tests, researches market best practices, plans, implements, and verifies until green.
+You iterate on natural-language specs (`prosa` + `Dado`/`Quando`/`Então`) — the **only human gate**. After specs are accepted, the agent runs an **automated loop**: detect stack → normalize → executable tests → research → plan → implement → verify → diagnose until green (or max iterations).
 
 ## Distribution (Mac / PC / Cloud Agents)
 
@@ -54,7 +54,7 @@ npm i -g @rogeriobatista/cli
 
 Optional secrets for ticket bootstrap: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`. Full notes: [docs/cloud-agents.md](docs/cloud-agents.md).
 
-CLI `sdd run` prints status + pipeline guidance; LLM phases stay host-driven (`/sdd run`). Use `sdd verify` / `sdd demo` for local evidence.
+CLI `sdd run` prints status + auto-loop guidance (human gate = `specs/`); LLM phases stay host-driven (`/sdd run`). Use `sdd verify` / `sdd demo` for local evidence.
 
 ## Quickstart
 
@@ -75,7 +75,7 @@ Pick the harness you use. Instruction packs live under `packages/`; shared pipel
 1. Copy `packages/adapter-cursor/skills/sdd` → project `.cursor/skills/sdd/` (or user skills).
 2. Copy `packages/adapter-cursor/rules/sdd-human-edits.mdc` → `.cursor/rules/`.
 3. In the target app: **`/sdd init`** (choose stack when prompted)
-4. Edit only `specs/*.md` — or **`/sdd from-ticket <id>`** — then **`/sdd run`**
+4. Iterate on `specs/*.md` (or **`/sdd from-ticket <id>`** then review) — then **`/sdd run`** for the auto-loop
 
 #### Claude (VS Code / Claude Code)
 
@@ -172,7 +172,7 @@ Portuguese copy by default; no secrets; no code dumps. See [demo design](docs/su
 
 ## Ticketing (Linear + Jira)
 
-`from-ticket` pulls title, description, acceptance criteria, and labels into a draft `specs/*.md` plus `.sdd/ticket.json` provenance, then stops for human review (or continues with `--run`).
+`from-ticket` pulls title, description, acceptance criteria, and labels into a draft `specs/*.md` plus `.sdd/ticket.json` provenance, then **pauses for human spec iteration** (the only human gate). With `--run`, enter the auto-loop only if specs are already complete/testable.
 
 ### Environment variables (never commit secrets)
 
@@ -195,7 +195,7 @@ Ambiguous ids like `ENG-42` need `ticketing.defaultProvider: linear|jira` or a `
 
 Offline fixtures (no live API): `packages/core/src/ticketing/fixtures/` — fictional coupon-checkout ticket used by unit tests.
 
-Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md)
+Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md) · [spec iteration + auto-loop](docs/superpowers/specs/2026-11-25-sdd-spec-iteration-auto-loop-design.md)
 
 ## Repository layout
 
@@ -230,13 +230,14 @@ npm run sync:adapters
 
 | Item | Behavior |
 |------|----------|
-| Human edits | `specs/` (+ `.sdd/premises.md`) |
-| Ticket bootstrap | `from-ticket` → draft specs (Linear **and** Jira) |
+| Human iteration | **Only** `specs/` (+ `.sdd/premises.md`); clarify acceptance here |
+| Ticket bootstrap | `from-ticket` → draft specs → **pause for human** (unless `--run` + complete) |
+| Auto-loop (`run`) | detect → normalize → executable → research → plan → implement → verify → diagnose* until pass |
 | Research | `research` → `.sdd/research/<key>/` from curated best-practices catalog |
-| Demo pack | `demo` → `.sdd/demo/<runId>/` for PO/BO/QA from verify evidence |
+| Demo pack | After green / loop report → `.sdd/evidence/<key>/latest/demo/` for PO/BO/QA |
 | Trigger | Explicit run (`triggers.watch` default `false`) |
 | Tags | `@api` → API track; `@ui`/`@e2e` → Playwright when supported |
-| Loop cap | 3 diagnose→implement iterations |
+| Loop cap | 3 diagnose→implement iterations; on cap → report; point to specs if requirement gaps |
 | Spec language | Portuguese GWT |
 | Stacks | First-class adapters; detected from premises/specs (`detectStack`) |
 

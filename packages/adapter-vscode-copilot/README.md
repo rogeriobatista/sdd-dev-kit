@@ -16,8 +16,8 @@ Instruction body is rendered from `packages/adapter-shared/content/` — edit sh
 | Chat / prompt | Purpose |
 |---------------|---------|
 | `SDD: init` or `/sdd-init` | Scaffold project + Copilot files |
-| `SDD: from-ticket <id>` or `/sdd-from-ticket` | Linear/Jira → draft specs |
-| `SDD: run` or `/sdd-run` | Full pipeline |
+| `SDD: from-ticket <id>` or `/sdd-from-ticket` | Linear/Jira → draft specs (pause for human iteration) |
+| `SDD: run` or `/sdd-run` | Auto-loop until spec tests pass |
 | `SDD: verify` or `/sdd-verify` | Tests only |
 | `SDD: status` or `/sdd-status` | Last run summary |
 
@@ -29,4 +29,4 @@ Instruction body is rendered from `packages/adapter-shared/content/` — edit sh
 
 ## Human boundary
 
-You edit **only** `specs/` (+ `.sdd/premises.md` when changing project rules). Never hand-edit generated features, steps, e2e, canonical, or plan.
+You iterate **only** on `specs/` (+ `.sdd/premises.md` when changing project rules). After specs are accepted, `SDD: run` auto-loops until tests pass — never hand-edit generated features, steps, e2e, canonical, plan, or code mid-loop.

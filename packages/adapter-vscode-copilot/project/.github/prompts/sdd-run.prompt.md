@@ -7,7 +7,17 @@ Run **SDD: run** — full Spec-Driven Development pipeline for this project.
 
 ## Pipeline phases (run)
 
-Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3).
+**Human iteration surface (ONLY):** creating/adjusting NL specs in `specs/` (and clarifying acceptance). Optional review that generated executable tests match intent — if they do not, fix `specs/` and re-materialize; **never** hand-patch generated tests or production code to green the suite.
+
+**Automated loop (no human mid-loop):** after specs are accepted/written, `/sdd run` / `SDD: run` runs:
+
+```text
+detect stack → normalize → executable → research → plan → implement → verify
+                                                      ↑_________________|
+                                                      diagnose → implement*
+```
+
+Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Do **not** stop mid-loop to ask the human to fix code. If failures look like **wrong/ambiguous specs**, exit the loop and ask the human to iterate on `specs/` (the only human gate). On green (or after the loop ends with a report), remind about **demo** / evidence update.
 
 **Before normalize/executable:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 
@@ -16,11 +26,11 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 - Read all `specs/*.md` (ignore `_example.md` unless it is the only content and user intends to use it).
 - Read `.sdd/premises.md`.
 - Produce `.sdd/canonical/*.json` with stable scenario ids, Portuguese steps (`Dado`/`Quando`/`Então`/`E`), and tags.
-- **If ambiguous:** stop. Ask the human to clarify in `specs/`. Do **not** invent business rules.
+- **If ambiguous:** stop the auto-loop. Ask the human to clarify in `specs/`. Do **not** invent business rules.
 
 ### 2. executable
 
-Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files):
+Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files to green the suite):
 
 | Adapter | Materialize target |
 |---------|-------------------|
@@ -57,16 +67,18 @@ Consult market / standards best practices for the detected stack **plus security
 - Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
 - Persist structured results under `.sdd/runs/<id>/`.
 
-### 7. diagnose (on failure)
+### 7. diagnose (on failure) — auto-loop
 
-- Fix implementation against failing tests only.
-- If the **spec** is wrong, stop and ask the human to edit `specs/` — do not silently change specs.
-- Loop back to implement until green or iteration cap.
+- Fix **implementation** against failing tests only; loop back to implement → verify.
+- **Do not** ask the human to fix code mid-loop.
+- If the **spec** is wrong/ambiguous (requirement gap), **exit the loop** and ask the human to edit `specs/` — do not silently change specs.
+- Continue until green or `loop.maxDiagnoseIterations` (default 3).
 
 ### 8. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
-- Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
+- **Cap exceeded:** write the run report. If failures look like requirement gaps / ambiguous acceptance, point the human back to `specs/` (only human gate). Otherwise report remaining test failures for the next auto-loop after any needed spec fix.
+- After green (or after the loop ends with a report), prefer `updateEvidencePack` and optionally remind the human to run **demo** for the PO/BO/QA pack.
 
 ## Verify (tests only)
 
@@ -74,7 +86,7 @@ Run `runners.all` (or the stack-specific runner the user names). Do not normaliz
 
 ## Demo (after verify)
 
-Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Runs **after** green (or after the auto-loop ends with a report) — not mid-loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
 
 ## Status
 
@@ -148,10 +160,11 @@ Example key `linear:ENG-42` → `.sdd/research/linear_ENG-42/`.
 
 ## Human vs agent ownership
 
-### Human-owned (edit freely)
+### Human-owned (edit freely) — **only human iteration surface**
 
-- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E)
+- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here
 - `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
+- Optional: review that generated executable tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
@@ -171,13 +184,16 @@ Example key `linear:ENG-42` → `.sdd/research/linear_ENG-42/`.
 
 - Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
 - Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
-- Suggest that the human manually fix generated features/steps/e2e to green the suite
+- Suggest that the human manually fix generated features/steps/e2e or production code to green the suite
+- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until pass or cap; only exit early for **spec** gaps
 - Put ticketing secrets on argv or in the repo; use env vars only
 
 ## Hard rules
 
 - **Never** edit `specs/` unless the human explicitly asks — **exception:** from-ticket may write a **draft** spec from the ticket (bootstrap only).
 - **Never** ask the human to edit generated tests, plan, canonical, or production code for the happy path.
+- **Human iteration surface (ONLY):** `specs/` (+ clarifying acceptance; optional review that executable tests match intent). All other `/sdd run` phases are an **automated loop** until spec tests pass or the diagnose cap — do **not** stop mid-loop to ask the human to fix code.
+- If failures look like **wrong/ambiguous specs**, exit the auto-loop and ask the human to iterate on `specs/` — the only human gate.
 - Specs language: Portuguese keywords `Dado`, `Quando`, `Então`, `E`.
 - Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
 - Stack adapters are first-class: `typescript` | `python` | `react-vite` | `node-graphql` | `terraform` (alias `ts` → `typescript`).
@@ -186,5 +202,5 @@ Example key `linear:ENG-42` → `.sdd/research/linear_ENG-42/`.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
-- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses.
+- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses. Demo/evidence update runs **after** green or after the auto-loop ends with a report.
 - **Research / best practices:** before `plan`/`implement`, open the curated catalog (`best-practices-catalog`) for the detected stack **plus security**. Cite sources in plan tasks; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.

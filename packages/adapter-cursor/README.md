@@ -16,8 +16,8 @@ Pipeline text is rendered from `@rogeriobatista/adapter-shared` — edit shared 
 |---------|---------|
 | `/sdd init` | Scaffold folders, `sdd.yaml`, premises, example spec, TS test configs |
 | `/sdd from-ticket <id>` | Fetch Linear/Jira ticket → draft `specs/*.md` + `.sdd/ticket.json` |
-| `/sdd from-ticket <id> --run` | Same, then continue with the full `/sdd run` pipeline |
-| `/sdd run` | Full pipeline: normalize → executable → research → plan → implement → verify (diagnose loop) |
+| `/sdd from-ticket <id> --run` | Same; enter auto-loop only if specs are already complete |
+| `/sdd run` | Auto-loop after specs: detect → normalize → executable → research → plan → implement → verify (diagnose until pass) |
 | `/sdd research` | Best-practices pack from curated catalog (also runs inside `/sdd run`) |
 | `/sdd verify` | Run Cucumber + Playwright only |
 | `/sdd status` | Summarize last run / phase status from `.sdd/runs` |
@@ -28,4 +28,4 @@ Prefer Linear/Jira MCP tools when configured in Cursor; otherwise use `@rogeriob
 
 ## Human boundary
 
-You edit **only** `specs/` (+ `.sdd/premises.md` when changing project rules). Ticket import drafts `specs/`; you may refine them before run. Never hand-edit generated features, steps, e2e, canonical, or plan.
+You iterate **only** on `specs/` (+ `.sdd/premises.md` when changing project rules). Ticket import drafts `specs/` then pauses for review. After specs are accepted, `/sdd run` auto-loops until tests pass — never hand-edit generated features, steps, e2e, canonical, plan, or code mid-loop.

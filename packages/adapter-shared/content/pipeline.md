@@ -1,6 +1,16 @@
 ## Pipeline phases (run)
 
-Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3).
+**Human iteration surface (ONLY):** creating/adjusting NL specs in `specs/` (and clarifying acceptance). Optional review that generated executable tests match intent — if they do not, fix `specs/` and re-materialize; **never** hand-patch generated tests or production code to green the suite.
+
+**Automated loop (no human mid-loop):** after specs are accepted/written, `/sdd run` / `SDD: run` runs:
+
+```text
+detect stack → normalize → executable → research → plan → implement → verify
+                                                      ↑_________________|
+                                                      diagnose → implement*
+```
+
+Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Do **not** stop mid-loop to ask the human to fix code. If failures look like **wrong/ambiguous specs**, exit the loop and ask the human to iterate on `specs/` (the only human gate). On green (or after the loop ends with a report), remind about **demo** / evidence update.
 
 **Before normalize/executable:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 
@@ -9,11 +19,11 @@ Execute the full pipeline. Cap diagnose→implement at `loop.maxDiagnoseIteratio
 - Read all `specs/*.md` (ignore `_example.md` unless it is the only content and user intends to use it).
 - Read `.sdd/premises.md`.
 - Produce `.sdd/canonical/*.json` with stable scenario ids, Portuguese steps (`Dado`/`Quando`/`Então`/`E`), and tags.
-- **If ambiguous:** stop. Ask the human to clarify in `specs/`. Do **not** invent business rules.
+- **If ambiguous:** stop the auto-loop. Ask the human to clarify in `specs/`. Do **not** invent business rules.
 
 ### 2. executable
 
-Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files):
+Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files to green the suite):
 
 | Adapter | Materialize target |
 |---------|-------------------|
@@ -50,16 +60,18 @@ Consult market / standards best practices for the detected stack **plus security
 - Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
 - Persist structured results under `.sdd/runs/<id>/`.
 
-### 7. diagnose (on failure)
+### 7. diagnose (on failure) — auto-loop
 
-- Fix implementation against failing tests only.
-- If the **spec** is wrong, stop and ask the human to edit `specs/` — do not silently change specs.
-- Loop back to implement until green or iteration cap.
+- Fix **implementation** against failing tests only; loop back to implement → verify.
+- **Do not** ask the human to fix code mid-loop.
+- If the **spec** is wrong/ambiguous (requirement gap), **exit the loop** and ask the human to edit `specs/` — do not silently change specs.
+- Continue until green or `loop.maxDiagnoseIterations` (default 3).
 
 ### 8. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
-- Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
+- **Cap exceeded:** write the run report. If failures look like requirement gaps / ambiguous acceptance, point the human back to `specs/` (only human gate). Otherwise report remaining test failures for the next auto-loop after any needed spec fix.
+- After green (or after the loop ends with a report), prefer `updateEvidencePack` and optionally remind the human to run **demo** for the PO/BO/QA pack.
 
 ## Verify (tests only)
 
@@ -67,7 +79,7 @@ Run `runners.all` (or the stack-specific runner the user names). Do not normaliz
 
 ## Demo (after verify)
 
-Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Runs **after** green (or after the auto-loop ends with a report) — not mid-loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
 
 ## Status
 

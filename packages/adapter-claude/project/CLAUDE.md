@@ -5,8 +5,8 @@ This project uses Spec-Driven Development. You edit **only** `specs/*.md` (+ `.s
 ## Commands (say these in chat)
 
 - **SDD: init** — scaffold folders, `sdd.yaml`, premises, example spec, host instructions
-- **SDD: from-ticket `<id>`** — Linear/Jira → draft `specs/*.md` (MCP when available; else core REST + env vars)
-- **SDD: run** — full pipeline: normalize → executable → research → plan → implement → verify (diagnose loop)
+- **SDD: from-ticket `<id>`** — Linear/Jira → draft `specs/*.md`, then pause for human spec iteration (unless `--run` + complete specs)
+- **SDD: run** — auto-loop after specs: detect → normalize → executable → research → plan → implement → verify (diagnose→implement until pass)
 - **SDD: research** — best-practices research pack (catalog + sources) before plan; optional standalone
 - **SDD: verify** — stack runners from `sdd.yaml` only
 - **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → `.sdd/evidence/<key>/latest/demo/`
@@ -24,10 +24,11 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 
 ## Human vs agent ownership
 
-### Human-owned (edit freely)
+### Human-owned (edit freely) — **only human iteration surface**
 
-- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E)
+- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here
 - `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
+- Optional: review that generated executable tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
@@ -47,5 +48,6 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 
 - Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
 - Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
-- Suggest that the human manually fix generated features/steps/e2e to green the suite
+- Suggest that the human manually fix generated features/steps/e2e or production code to green the suite
+- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until pass or cap; only exit early for **spec** gaps
 - Put ticketing secrets on argv or in the repo; use env vars only

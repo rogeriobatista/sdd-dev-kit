@@ -12,10 +12,11 @@ alwaysApply: true
 
 ## Human vs agent ownership
 
-### Human-owned (edit freely)
+### Human-owned (edit freely) — **only human iteration surface**
 
-- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E)
+- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here
 - `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
+- Optional: review that generated executable tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
@@ -35,10 +36,12 @@ alwaysApply: true
 
 - Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
 - Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
-- Suggest that the human manually fix generated features/steps/e2e to green the suite
+- Suggest that the human manually fix generated features/steps/e2e or production code to green the suite
+- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until pass or cap; only exit early for **spec** gaps
 - Put ticketing secrets on argv or in the repo; use env vars only
 
 ## Pipeline trigger
 
 - MVP: explicit `/sdd run` (and optional `/sdd from-ticket` bootstrap)
+- Human iterates only on `specs/`; `/sdd run` is an automated loop until spec tests pass (or diagnose cap)
 - Do not enable file watch as the default workflow

@@ -1,12 +1,12 @@
 ## From-ticket — bootstrap NL specs from Linear or Jira
 
-Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continue with the full pipeline.
+Bootstrap NL specs from a **Linear** or **Jira** ticket, then **pause for human spec iteration** (the only human gate) before the automated `/sdd run` loop — unless `--run` and the draft specs are already complete enough to enter the auto-loop.
 
 ### Usage (host-agnostic intents)
 
 - `from-ticket ENG-123` — auto-detect when possible; for ambiguous `KEY-123` use `sdd.yaml` `ticketing.defaultProvider` or a prefix
 - `from-ticket linear:ENG-123` or `from-ticket jira:SHOP-7`
-- `from-ticket ENG-123 --run` — after writing the draft, continue with the full pipeline run
+- `from-ticket ENG-123 --run` — after writing the draft, continue into the full auto-loop **only if** specs are complete/testable; otherwise still pause for human enrichment
 
 ### Steps
 
@@ -21,7 +21,7 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
    - Jira: `JIRA_BASE_URL` + `JIRA_API_TOKEN` (+ `JIRA_EMAIL` for Cloud basic auth; Bearer if email unset)
 4. Map title/description/acceptance criteria/labels → Portuguese NL draft (`## Intenção` + `## Cenários` with `Dado`/`Quando`/`Então`).
 5. Write `specs/<id>-<slug>.md` and provenance `.sdd/ticket.json`.
-6. **Default:** stop and ask the human to review/edit `specs/` (enrich weak AC). **With `--run`:** continue into the full pipeline.
+6. **Default:** stop and ask the human to review/edit `specs/` (enrich weak AC) — this is the **human iteration surface**. **With `--run`:** if specs are already complete/testable, enter the automated run loop; if not, still pause for human enrichment first.
 
 ### Hard rules for from-ticket
 

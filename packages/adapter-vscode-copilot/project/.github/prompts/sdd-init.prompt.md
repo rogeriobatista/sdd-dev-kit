@@ -26,4 +26,4 @@ Follow the Init section of the SDD protocol (shared pipeline instructions). Crea
 6. Install the **host adapter** instruction files for this project (Cursor skill/rules, Claude `CLAUDE.md` + `.claude/skills`, or Copilot `.github/copilot-instructions.md` + prompts) — do not overwrite existing human specs.
 7. Do **not** overwrite existing human specs.
 
-Report the tree, the chosen `adapter` (and detection `source`), and tell the user: edit `specs/`, or run from-ticket, then run the full pipeline.
+Report the tree, the chosen `adapter` (and detection `source`), and tell the user: edit `specs/` (the **only human iteration surface**), or run from-ticket and pause for spec review, then `/sdd run` / `SDD: run` for the **automated loop** (detect → normalize → executable → research → plan → implement → verify → diagnose*) until spec tests pass.

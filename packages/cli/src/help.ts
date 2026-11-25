@@ -15,7 +15,7 @@ Uso / Usage:
 Comandos:
   init          Scaffold host adapters + sdd.yaml + premises + stack
   from-ticket   Bootstrap specs/ from Linear or Jira (env vars)
-  run           Status + pipeline guidance (LLM stays host-driven; includes research)
+  run           Status + auto-loop guidance (human gate = specs/; LLM host-driven)
   verify        Run sdd.yaml runners (via @rogeriobatista/core)
   demo          Build PO/BO/QA evidence pack
   status        Report stack, runs, ticket, evidence
@@ -57,15 +57,25 @@ export function printCommandHelp(command: string): void {
   sdd from-ticket linear:ENG-42
   sdd from-ticket jira:SHOP-7 --run
 
+  Default: draft specs/ then pause for human spec iteration (only human gate).
+  --run: enter the auto-loop only if specs are already complete/testable.
   Requires env vars (see sdd --help). Does not invent acceptance criteria.
 `);
       break;
     case "run":
-      console.log(`sdd run — orchestration / status (LLM phases are host-driven)
+      console.log(`sdd run — orchestration / status (host-driven auto-loop)
 
-  Prints stack detection + status and reminds you to use Cursor/Claude/Copilot
-  for normalize → executable → research → plan → implement. Use sdd verify /
-  sdd demo for local test evidence. Standalone research: /sdd research (host).
+  Human iteration surface (ONLY): specs/ (create/adjust NL scenarios + acceptance).
+  After specs are accepted, /sdd run / SDD: run is an automated loop:
+    detect stack → normalize → executable → research → plan → implement → verify
+      → (diagnose → implement)* until green or loop.maxDiagnoseIterations.
+
+  Do not stop mid-loop to ask the human to fix code. If specs are wrong/ambiguous,
+  exit and ask the human to edit specs/. demo/evidence after green or loop report.
+
+  This CLI command prints stack detection + status + the above guidance.
+  LLM work stays on the host adapter. Use sdd verify / sdd demo for local evidence.
+  Standalone research: /sdd research (host).
 `);
       break;
     case "verify":

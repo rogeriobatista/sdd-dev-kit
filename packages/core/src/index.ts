@@ -7,15 +7,21 @@ export {
 
 export {
   PHASES,
+  AUTO_LOOP_PHASES,
   ALL_PHASES,
+  HUMAN_ITERATIVE_PHASES,
+  SPECS_PHASE,
   FROM_TICKET_PHASE,
   RESEARCH_PHASE,
   DEMO_PHASE,
   DEFAULT_MAX_DIAGNOSE_ITERATIONS,
   isPhaseName,
   isAnyPhaseName,
+  isHumanIterativePhase,
+  isAutoLoopPhase,
   type PhaseName,
   type AnyPhaseName,
+  type HumanIterativePhaseName,
 } from "./phases.js";
 
 export type {

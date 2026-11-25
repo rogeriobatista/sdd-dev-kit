@@ -16,8 +16,8 @@ Instruction body is rendered from `packages/adapter-shared/content/` — edit sh
 |-----|---------|
 | `SDD: init` | Scaffold folders, `sdd.yaml`, premises, example spec, Claude files |
 | `SDD: from-ticket <id>` | Fetch Linear/Jira → draft `specs/*.md` + `.sdd/ticket.json` |
-| `SDD: from-ticket <id> --run` | Same, then full pipeline |
-| `SDD: run` | normalize → executable → plan → implement → verify (diagnose loop) |
+| `SDD: from-ticket <id> --run` | Same; enter auto-loop only if specs are already complete |
+| `SDD: run` | Auto-loop after specs: detect → normalize → executable → research → plan → implement → verify (diagnose until pass) |
 | `SDD: verify` | Run Cucumber + Playwright only |
 | `SDD: status` | Summarize last run / phase status |
 
@@ -31,4 +31,4 @@ Instruction body is rendered from `packages/adapter-shared/content/` — edit sh
 
 ## Human boundary
 
-You edit **only** `specs/` (+ `.sdd/premises.md` when changing project rules). Ticket import drafts `specs/`; refine before run. Never hand-edit generated features, steps, e2e, canonical, or plan.
+You iterate **only** on `specs/` (+ `.sdd/premises.md` when changing project rules). Ticket import drafts `specs/` then pauses for review. After specs are accepted, `SDD: run` auto-loops until tests pass — never hand-edit generated artifacts or code mid-loop.

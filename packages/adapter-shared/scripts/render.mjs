@@ -87,7 +87,7 @@ description: >-
 
 Protocol Kit orchestration for **Cursor**. The human edits **only** \`specs/*.md\` (prosa + Dado/Quando/Então) and optionally \`.sdd/premises.md\`. Everything else is generated or agent-owned.
 
-Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` from Linear or Jira. After import, the human may still edit \`specs/\` (still the only human surface) before \`/sdd run\`.
+Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` from Linear or Jira, then **pauses for human spec iteration** (unless \`--run\` and specs are already complete). After specs are accepted, \`/sdd run\` is an **automated loop** until spec tests pass — do not stop mid-loop to ask the human to fix code.
 
 ## Cursor command map
 
@@ -163,6 +163,7 @@ ${fs.readFileSync(path.join(contentDir, "human-boundary.md"), "utf8").trim()}
 ## Pipeline trigger
 
 - MVP: explicit \`/sdd run\` (and optional \`/sdd from-ticket\` bootstrap)
+- Human iterates only on \`specs/\`; \`/sdd run\` is an automated loop until spec tests pass (or diagnose cap)
 - Do not enable file watch as the default workflow
 `;
 
@@ -198,7 +199,7 @@ description: >-
 
 # SDD — Spec-Driven Development (Claude)
 
-Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human edits only \`specs/\`; agent runs the pipeline.
+Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on \`specs/\`; after specs are accepted, \`SDD: run\` is an automated loop until spec tests pass (no mid-loop human code fixes).
 
 ## Claude command map (natural-language intents)
 
@@ -232,8 +233,8 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 ## Commands (say these in chat)
 
 - **SDD: init** — scaffold folders, \`sdd.yaml\`, premises, example spec, host instructions
-- **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\` (MCP when available; else core REST + env vars)
-- **SDD: run** — full pipeline: normalize → executable → research → plan → implement → verify (diagnose loop)
+- **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\`, then pause for human spec iteration (unless \`--run\` + complete specs)
+- **SDD: run** — auto-loop after specs: detect → normalize → executable → research → plan → implement → verify (diagnose→implement until pass)
 - **SDD: research** — best-practices research pack (catalog + sources) before plan; optional standalone
 - **SDD: verify** — stack runners from \`sdd.yaml\` only
 - **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/evidence/<key>/latest/demo/\`
@@ -267,8 +268,8 @@ This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\
 | Say in Copilot Chat | Meaning |
 |---------------------|---------|
 | \`SDD: init\` | Scaffold project + install Copilot instruction/prompt files |
-| \`SDD: from-ticket <id>\` | Bootstrap specs from Linear/Jira |
-| \`SDD: run\` | Full pipeline (includes research before plan) |
+| \`SDD: from-ticket <id>\` | Bootstrap specs → pause for human iteration (unless \`--run\`) |
+| \`SDD: run\` | Auto-loop until spec tests pass (research before plan; diagnose cap) |
 | \`SDD: research\` | Best-practices research pack (catalog + sources) |
 | \`SDD: verify\` | Run test runners only |
 | \`SDD: demo\` | Stakeholder demo pack from test evidence (PO/BO/QA) |

@@ -15,8 +15,10 @@ User ask: *“Quero que o processo de desenvolvimento busque referencias de boas
 `research` is an **ordered phase** of `/sdd run` / `SDD: run`, after stack detection + `executable`, **before** `plan`:
 
 ```text
-stack detect → normalize → executable → research → plan → implement → verify → diagnose → report
+[human: specs/] → stack detect → normalize → executable → research → plan → implement → verify → (diagnose → implement)* → report
 ```
+
+(`research` sits inside the post-specs **auto-loop**; humans do not iterate mid-loop — see [spec-iteration + auto-loop](./2026-11-25-sdd-spec-iteration-auto-loop-design.md).)
 
 | Host | Invoke (standalone) |
 |------|---------------------|

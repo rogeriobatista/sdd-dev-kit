@@ -50,14 +50,15 @@ export function formatFromTicketReport(r: FromTicketCommandResult): string {
     `provenance: ${result.provenancePath}`,
     `title: ${result.ticket.title}`,
     "",
-    "Review/edit the draft in specs/ before the full pipeline.",
+    "Human gate: review/edit the draft in specs/ (only iteration surface).",
     "Do not invent acceptance criteria missing from the ticket.",
   ];
   if (continueRun) {
     lines.push(
       "",
-      "Flag --run set: continue with your AI host (`/sdd run` / `SDD: run`).",
-      "CLI does not execute LLM phases (normalize → implement); use sdd verify after the host implements.",
+      "Flag --run set: if specs are complete/testable, enter the host auto-loop",
+      "(`/sdd run` / `SDD: run`). Otherwise still pause for human enrichment first.",
+      "CLI does not execute LLM phases; use sdd verify after the host implements.",
     );
   }
   return lines.join("\n");
