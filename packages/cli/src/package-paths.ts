@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 
-/** Absolute package root for an installed `@sdd-dev-kit/*` dependency. */
+/** Absolute package root for an installed `@rogeriobatista/*` dependency. */
 export function resolvePackageRoot(packageName: string): string {
   const pkgJson = require.resolve(`${packageName}/package.json`);
   return path.dirname(pkgJson);
@@ -17,9 +17,9 @@ export function cliPackageRoot(): string {
 export type HostId = "cursor" | "claude" | "copilot";
 
 const HOST_PACKAGES: Record<HostId, string> = {
-  cursor: "@sdd-dev-kit/adapter-cursor",
-  claude: "@sdd-dev-kit/adapter-claude",
-  copilot: "@sdd-dev-kit/adapter-vscode-copilot",
+  cursor: "@rogeriobatista/adapter-cursor",
+  claude: "@rogeriobatista/adapter-claude",
+  copilot: "@rogeriobatista/adapter-vscode-copilot",
 };
 
 export function hostPackageRoot(host: HostId): string {
@@ -27,7 +27,7 @@ export function hostPackageRoot(host: HostId): string {
 }
 
 export function sharedPackageRoot(): string {
-  return resolvePackageRoot("@sdd-dev-kit/adapter-shared");
+  return resolvePackageRoot("@rogeriobatista/adapter-shared");
 }
 
 export type StackId =
@@ -38,11 +38,11 @@ export type StackId =
   | "terraform";
 
 const STACK_PACKAGES: Record<StackId, string> = {
-  typescript: "@sdd-dev-kit/adapter-ts",
-  python: "@sdd-dev-kit/adapter-python",
-  "react-vite": "@sdd-dev-kit/adapter-react-vite",
-  "node-graphql": "@sdd-dev-kit/adapter-node-graphql",
-  terraform: "@sdd-dev-kit/adapter-terraform",
+  typescript: "@rogeriobatista/adapter-ts",
+  python: "@rogeriobatista/adapter-python",
+  "react-vite": "@rogeriobatista/adapter-react-vite",
+  "node-graphql": "@rogeriobatista/adapter-node-graphql",
+  terraform: "@rogeriobatista/adapter-terraform",
 };
 
 export function stackPackageRoot(stack: StackId): string {

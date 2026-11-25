@@ -16,7 +16,7 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 ## Ticketing / MCP
 
 - Prefer Linear/Jira **MCP** tools when this host has them configured.
-- Otherwise use `@sdd-dev-kit/core` providers with env vars only: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`.
+- Otherwise use `@rogeriobatista/core` providers with env vars only: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`.
 - Never commit secrets or put tokens on the command line.
 
 ## Human boundary (summary)

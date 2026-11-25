@@ -1,4 +1,4 @@
-# `@sdd-dev-kit/cli`
+# `@rogeriobatista/cli`
 
 CLI for the SDD Protocol Kit (`sdd`).
 
@@ -8,12 +8,12 @@ GitHub Packages (default):
 
 ```bash
 # ~/.npmrc or project .npmrc
-@sdd-dev-kit:registry=https://npm.pkg.github.com
+@rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 
-npm i -g @sdd-dev-kit/cli
+npm i -g @rogeriobatista/cli
 # or
-npx @sdd-dev-kit/cli init
+npx @rogeriobatista/cli init
 ```
 
 ## Commands

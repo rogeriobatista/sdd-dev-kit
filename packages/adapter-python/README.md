@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-python
+# @rogeriobatista/adapter-python
 
 Stack adapter for **Python + pytest**.
 

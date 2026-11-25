@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { CanonicalScenario } from "@sdd-dev-kit/core";
+import type { CanonicalScenario } from "@rogeriobatista/core";
 import { usesCucumber, usesPlaywright } from "./tags.js";
 
 function scenario(tags: CanonicalScenario["tags"]): CanonicalScenario {

@@ -1,6 +1,6 @@
 # Adapter Terraform scaffold
 
-Scaffolded by `@sdd-dev-kit/adapter-terraform`.
+Scaffolded by `@rogeriobatista/adapter-terraform`.
 
 - Requires Terraform CLI (no cloud credentials for default verify)
 - Edit only `specs/` (+ `.sdd/premises.md`)

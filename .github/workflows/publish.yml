@@ -22,7 +22,7 @@ jobs:
           node-version: "20"
           cache: npm
           registry-url: https://npm.pkg.github.com
-          scope: "@sdd-dev-kit"
+          scope: "@rogeriobatista"
 
       - name: Install
         run: npm ci
@@ -34,7 +34,7 @@ jobs:
         run: npm test
 
       # Prefer repo secret NODE_AUTH_TOKEN (PAT with write:packages) when the
-      # default GITHUB_TOKEN cannot publish under the @sdd-dev-kit scope.
+      # default GITHUB_TOKEN cannot publish under the @rogeriobatista scope.
       # Never commit tokens — Actions secrets only.
       - name: Publish to GitHub Packages
         env:
@@ -42,17 +42,17 @@ jobs:
         run: |
           set -euo pipefail
           for name in \
-            @sdd-dev-kit/core \
-            @sdd-dev-kit/adapter-shared \
-            @sdd-dev-kit/adapter-ts \
-            @sdd-dev-kit/adapter-python \
-            @sdd-dev-kit/adapter-react-vite \
-            @sdd-dev-kit/adapter-node-graphql \
-            @sdd-dev-kit/adapter-terraform \
-            @sdd-dev-kit/adapter-cursor \
-            @sdd-dev-kit/adapter-claude \
-            @sdd-dev-kit/adapter-vscode-copilot \
-            @sdd-dev-kit/cli
+            @rogeriobatista/core \
+            @rogeriobatista/adapter-shared \
+            @rogeriobatista/adapter-ts \
+            @rogeriobatista/adapter-python \
+            @rogeriobatista/adapter-react-vite \
+            @rogeriobatista/adapter-node-graphql \
+            @rogeriobatista/adapter-terraform \
+            @rogeriobatista/adapter-cursor \
+            @rogeriobatista/adapter-claude \
+            @rogeriobatista/adapter-vscode-copilot \
+            @rogeriobatista/cli
           do
             echo "::group::npm publish $name"
             npm publish -w "$name"

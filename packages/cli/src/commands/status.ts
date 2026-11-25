@@ -6,7 +6,7 @@ import {
   listRunIds,
   resolveEvidenceKey,
   resolveSddPath,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 import { pathExists } from "../fs-utils.js";
 import { loadManifest, resolveProjectRoot } from "../project.js";
 

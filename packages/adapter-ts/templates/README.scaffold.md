@@ -1,6 +1,6 @@
 # Adapter TS scaffold
 
-This project was scaffolded by `@sdd-dev-kit/adapter-ts`.
+This project was scaffolded by `@rogeriobatista/adapter-ts`.
 
 - Install: `npm run setup` (deps + Playwright Chromium for `@ui`/`@e2e`; `npm install` alone is enough for Cucumber/`@api` only)
 - Edit only `specs/` (+ `.sdd/premises.md` when needed)

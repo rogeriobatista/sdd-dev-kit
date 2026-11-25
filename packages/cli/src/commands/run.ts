@@ -1,4 +1,4 @@
-import { PHASES } from "@sdd-dev-kit/core";
+import { PHASES } from "@rogeriobatista/core";
 import { formatStatusReport, runStatus } from "./status.js";
 
 export type RunOptions = {

@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-node-graphql
+# @rogeriobatista/adapter-node-graphql
 
 Stack adapter for **Node + TypeScript + GraphQL** (Yoga/Apollo-style minimal scaffold).
 

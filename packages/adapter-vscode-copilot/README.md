@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-vscode-copilot
+# @rogeriobatista/adapter-vscode-copilot
 
 GitHub Copilot (VS Code) adapter for the SDD Protocol Kit. Ships repository custom instructions and reusable prompt files — **not** a VS Code extension.
 
@@ -7,7 +7,7 @@ GitHub Copilot (VS Code) adapter for the SDD Protocol Kit. Ships repository cust
 1. Copy `project/.github/copilot-instructions.md` → `.github/copilot-instructions.md`.
 2. Copy `project/.github/prompts/*.prompt.md` → `.github/prompts/`.
 3. Ensure Copilot custom instructions are enabled in VS Code.
-4. Copy scaffold templates from `@sdd-dev-kit/adapter-shared/templates/` (or ask **SDD: init**), then add Cucumber/Playwright via `@sdd-dev-kit/adapter-ts` if needed.
+4. Copy scaffold templates from `@rogeriobatista/adapter-shared/templates/` (or ask **SDD: init**), then add Cucumber/Playwright via `@rogeriobatista/adapter-ts` if needed.
 
 Instruction body is rendered from `packages/adapter-shared/content/` — edit shared content and run `npm run sync:adapters`.
 
@@ -24,7 +24,7 @@ Instruction body is rendered from `packages/adapter-shared/content/` — edit sh
 ## Ticketing gap (important)
 
 - Cursor and Claude often use **MCP** for Linear/Jira.
-- Copilot may lack the same MCP surface — use `@sdd-dev-kit/core` REST/GraphQL providers with env vars only (`LINEAR_API_KEY`, `JIRA_*`).
+- Copilot may lack the same MCP surface — use `@rogeriobatista/core` REST/GraphQL providers with env vars only (`LINEAR_API_KEY`, `JIRA_*`).
 - Do not paste tokens into chat.
 
 ## Human boundary

@@ -6,7 +6,7 @@ import {
   DEFAULT_PATHS,
   resolveSddPath,
   type SddManifest,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 
 function manifestToYaml(manifest: SddManifest): string {
   return [

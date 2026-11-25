@@ -25,7 +25,7 @@ Colon in the logical key is encoded as `_` in path segments (Windows-safe).
 ### Steps
 
 1. Resolve the run id (latest under `.sdd/runs/`, or the id the human named).
-2. Resolve `evidenceKey` via `@sdd-dev-kit/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
+2. Resolve `evidenceKey` via `@rogeriobatista/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
 3. Call `buildDemo({ projectRoot, runId?, evidenceKey? })` — writes/updates the pack and calls `updateEvidencePack`.
 4. Report the **stable stakeholder path** (same path updates over time).
 

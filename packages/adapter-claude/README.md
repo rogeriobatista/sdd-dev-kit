@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-claude
+# @rogeriobatista/adapter-claude
 
 Claude Code / Claude-in-VS-Code adapter for the SDD Protocol Kit. Installs project instructions and an `sdd` skill so the same pipeline works outside Cursor.
 
@@ -6,7 +6,7 @@ Claude Code / Claude-in-VS-Code adapter for the SDD Protocol Kit. Installs proje
 
 1. Copy `project/CLAUDE.md` → repository root `CLAUDE.md` (or merge with an existing one).
 2. Copy `project/.claude/skills/sdd/` → `.claude/skills/sdd/`.
-3. Copy scaffold templates from `@sdd-dev-kit/adapter-shared/templates/` (or ask **SDD: init**), then add Cucumber/Playwright via `@sdd-dev-kit/adapter-ts` if needed.
+3. Copy scaffold templates from `@rogeriobatista/adapter-shared/templates/` (or ask **SDD: init**), then add Cucumber/Playwright via `@rogeriobatista/adapter-ts` if needed.
 
 Instruction body is rendered from `packages/adapter-shared/content/` — edit shared content and run `npm run sync:adapters`, do not diverge by hand.
 
@@ -26,7 +26,7 @@ Instruction body is rendered from `packages/adapter-shared/content/` — edit sh
 ## Ticketing / MCP
 
 - Prefer Linear/Jira **MCP** when configured in Claude.
-- Fallback: `@sdd-dev-kit/core` providers + env vars (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`).
+- Fallback: `@rogeriobatista/core` providers + env vars (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`).
 - Never commit secrets.
 
 ## Human boundary

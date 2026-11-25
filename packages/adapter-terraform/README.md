@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-terraform
+# @rogeriobatista/adapter-terraform
 
 Stack adapter for **Terraform**. Default verify uses local **`terraform fmt`**, **`terraform validate`**, and native **`terraform test`** (`.tftest.hcl`). **No cloud apply** and no cloud credentials required.
 

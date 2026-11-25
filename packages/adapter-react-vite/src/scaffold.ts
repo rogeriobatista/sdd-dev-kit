@@ -6,7 +6,7 @@ import {
   DEFAULT_PATHS,
   resolveSddPath,
   type SddManifest,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = path.resolve(__dirname, "../templates");

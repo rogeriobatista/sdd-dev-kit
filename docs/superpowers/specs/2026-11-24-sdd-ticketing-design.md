@@ -56,7 +56,7 @@ interface TicketProvider {
 }
 ```
 
-Implemented in `@sdd-dev-kit/core` (`LinearProvider`, `JiraProvider`) with injectable `fetch` for tests.
+Implemented in `@rogeriobatista/core` (`LinearProvider`, `JiraProvider`) with injectable `fetch` for tests.
 
 ### ID resolution
 

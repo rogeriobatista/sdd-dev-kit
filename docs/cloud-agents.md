@@ -4,7 +4,7 @@ Use the published CLI so Cursor Cloud Agents (Mac/PC workers or cloud VMs) can s
 
 ## Install
 
-Default registry is **GitHub Packages** for scope `@sdd-dev-kit`.
+Default registry is **GitHub Packages** for scope `@rogeriobatista`.
 
 ### Auth
 
@@ -13,7 +13,7 @@ Default registry is **GitHub Packages** for scope `@sdd-dev-kit`.
 
 ```bash
 # .npmrc (never commit the token value)
-@sdd-dev-kit:registry=https://npm.pkg.github.com
+@rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
@@ -22,18 +22,18 @@ Default registry is **GitHub Packages** for scope `@sdd-dev-kit`.
 ### Global or npx
 
 ```bash
-npm i -g @sdd-dev-kit/cli
+npm i -g @rogeriobatista/cli
 sdd init --host cursor --stack typescript
 
 # or one-shot
-npx @sdd-dev-kit/cli init --host cursor --stack typescript
+npx @rogeriobatista/cli init --host cursor --stack typescript
 ```
 
 From a local clone of this repo (dev):
 
 ```bash
 npm run setup
-npm run build -w @sdd-dev-kit/cli
+npm run build -w @rogeriobatista/cli
 npx sdd init --cwd /path/to/app --stack typescript
 ```
 
@@ -52,8 +52,8 @@ Configure **names only** under `ticketing:` in `sdd.yaml`. Never put secrets on 
 ## Suggested Cloud Agent install snippet
 
 ```bash
-npm config set @sdd-dev-kit:registry https://npm.pkg.github.com
-npm i -g @sdd-dev-kit/cli
+npm config set @rogeriobatista:registry https://npm.pkg.github.com
+npm i -g @rogeriobatista/cli
 sdd status || sdd init --host cursor
 ```
 
@@ -63,4 +63,4 @@ Heavy LLM phases (`normalize` → `implement`) stay host-driven (`/sdd run`). Th
 
 Tag `v*` or run workflow **Publish packages** (`.github/workflows/publish.yml`).
 
-Repo secret `NODE_AUTH_TOKEN` (PAT with `write:packages`) is preferred when `GITHUB_TOKEN` cannot publish under the `@sdd-dev-kit` scope. See `.npmrc.example`.
+Repo secret `NODE_AUTH_TOKEN` (PAT with `write:packages`) is preferred when `GITHUB_TOKEN` cannot publish under the `@rogeriobatista` scope. See `.npmrc.example`.

@@ -194,7 +194,7 @@ describe("rendered host adapters include required sections", () => {
       assert.equal(
         cursor,
         shared,
-        `adapter-cursor/templates/${rel} must match adapter-shared/templates/${rel} (run npm run render -w @sdd-dev-kit/adapter-shared)`,
+        `adapter-cursor/templates/${rel} must match adapter-shared/templates/${rel} (run npm run render -w @rogeriobatista/adapter-shared)`,
       );
     }
   });

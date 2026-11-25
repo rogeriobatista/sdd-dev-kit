@@ -22,7 +22,7 @@ User requirement: *“A stack do projeto deve ser identificada de acordo com os 
 
 Do **not** treat application source heuristics as primary.
 
-## Core API (`@sdd-dev-kit/core`)
+## Core API (`@rogeriobatista/core`)
 
 ```ts
 detectStack(projectRoot): {

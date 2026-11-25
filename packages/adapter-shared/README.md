@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-shared
+# @rogeriobatista/adapter-shared
 
 Single source of SDD **pipeline instructions** and **project scaffold templates** used by every AI host adapter (Cursor, Claude, GitHub Copilot).
 
@@ -17,7 +17,7 @@ Init content asks the agent to **choose a stack** (`typescript` / `python` / `re
 After editing `content/` or `templates/`:
 
 ```bash
-npm run render -w @sdd-dev-kit/adapter-shared
+npm run render -w @rogeriobatista/adapter-shared
 # or
 npm run sync:adapters
 ```
@@ -27,7 +27,7 @@ Do not hand-edit rendered host instruction files; change shared content and re-r
 ## Tests
 
 ```bash
-npm test -w @sdd-dev-kit/adapter-shared
+npm test -w @rogeriobatista/adapter-shared
 ```
 
 Asserts required sections (pipeline phases, from-ticket, human edit boundary) exist in shared content and in each host’s rendered pack.

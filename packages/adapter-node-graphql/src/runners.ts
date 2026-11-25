@@ -2,7 +2,7 @@ import {
   runShellCommand,
   type RunnerResult,
   type SddManifest,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 
 export interface RunOptions {
   projectRoot: string;

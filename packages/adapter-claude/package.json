@@ -1,6 +1,6 @@
 {
-  "name": "@sdd-dev-kit/adapter-claude",
-  "version": "0.1.0",
+  "name": "@rogeriobatista/adapter-claude",
+  "version": "0.1.1",
   "description": "SDD Claude adapter — CLAUDE.md + .claude/skills for Claude Code / Claude in VS Code",
   "files": [
     "project",

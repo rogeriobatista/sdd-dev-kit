@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
-import { createDefaultManifest, type CanonicalDocument } from "@sdd-dev-kit/core";
+import { createDefaultManifest, type CanonicalDocument } from "@rogeriobatista/core";
 import { materializeCanonical } from "./materialize.js";
 
 describe("adapter-node-graphql materialize", () => {

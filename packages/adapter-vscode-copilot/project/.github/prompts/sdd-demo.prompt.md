@@ -33,7 +33,7 @@ Colon in the logical key is encoded as `_` in path segments (Windows-safe).
 ### Steps
 
 1. Resolve the run id (latest under `.sdd/runs/`, or the id the human named).
-2. Resolve `evidenceKey` via `@sdd-dev-kit/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
+2. Resolve `evidenceKey` via `@rogeriobatista/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
 3. Call `buildDemo({ projectRoot, runId?, evidenceKey? })` — writes/updates the pack and calls `updateEvidencePack`.
 4. Report the **stable stakeholder path** (same path updates over time).
 
@@ -78,4 +78,4 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 - **No secrets** in demo/evidence output (scrub tokens/keys from stderr snippets)
 - Keep the pack **offline-friendly** (relative paths)
 
-Prefer `buildDemo({ projectRoot, runId?, evidenceKey? })` from `@sdd-dev-kit/core`. Report the stable path `.sdd/evidence/<key>/latest/demo/index.html` (and `SUMMARY.md`).
+Prefer `buildDemo({ projectRoot, runId?, evidenceKey? })` from `@rogeriobatista/core`. Report the stable path `.sdd/evidence/<key>/latest/demo/index.html` (and `SUMMARY.md`).

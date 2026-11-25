@@ -16,7 +16,7 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
    - UUID → Linear
    - `linear:` / `jira:` prefix → that provider
    - Ambiguous `KEY-123` → `ticketing.defaultProvider`, else ask the human
-3. Fetch via `@sdd-dev-kit/core` (`fromTicket` / `LinearProvider` / `JiraProvider`):
+3. Fetch via `@rogeriobatista/core` (`fromTicket` / `LinearProvider` / `JiraProvider`):
    - Linear: `LINEAR_API_KEY` (GraphQL)
    - Jira: `JIRA_BASE_URL` + `JIRA_API_TOKEN` (+ `JIRA_EMAIL` for Cloud basic auth; Bearer if email unset)
 4. Map title/description/acceptance criteria/labels → Portuguese NL draft (`## Intenção` + `## Cenários` with `Dado`/`Quando`/`Então`).
@@ -33,4 +33,4 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
 ### Ticketing access by host
 
 - **Cursor / Claude:** prefer MCP Linear/Jira tools when configured; otherwise use core REST/GraphQL providers with env vars.
-- **GitHub Copilot (VS Code):** MCP may be unavailable or limited — use `@sdd-dev-kit/core` providers / REST with env vars (`LINEAR_API_KEY`, `JIRA_*`). Document env setup; never put secrets in chat or repo files.
+- **GitHub Copilot (VS Code):** MCP may be unavailable or limited — use `@rogeriobatista/core` providers / REST with env vars (`LINEAR_API_KEY`, `JIRA_*`). Document env setup; never put secrets in chat or repo files.

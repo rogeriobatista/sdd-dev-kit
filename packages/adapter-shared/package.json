@@ -1,6 +1,6 @@
 {
-  "name": "@sdd-dev-kit/adapter-shared",
-  "version": "0.1.0",
+  "name": "@rogeriobatista/adapter-shared",
+  "version": "0.1.1",
   "description": "Shared SDD pipeline instructions and project templates for all AI host adapters",
   "type": "module",
   "files": [

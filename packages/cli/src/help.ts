@@ -1,4 +1,4 @@
-export const CLI_VERSION = "0.1.0";
+export const CLI_VERSION = "0.1.1";
 
 export function printRootHelp(): void {
   console.log(`sdd — SDD Protocol Kit CLI (v${CLI_VERSION})
@@ -16,7 +16,7 @@ Comandos:
   init          Scaffold host adapters + sdd.yaml + premises + stack
   from-ticket   Bootstrap specs/ from Linear or Jira (env vars)
   run           Status + pipeline guidance (LLM stays host-driven)
-  verify        Run sdd.yaml runners (via @sdd-dev-kit/core)
+  verify        Run sdd.yaml runners (via @rogeriobatista/core)
   demo          Build PO/BO/QA evidence pack
   status        Report stack, runs, ticket, evidence
 
@@ -28,7 +28,7 @@ Ticketing env (never on argv):
   JIRA_BASE_URL  JIRA_API_TOKEN  [JIRA_EMAIL]
 
 Registry (GitHub Packages):
-  @sdd-dev-kit:registry=https://npm.pkg.github.com
+  @rogeriobatista:registry=https://npm.pkg.github.com
 
 Ajuda por comando: sdd <comando> --help
 `);
@@ -74,7 +74,7 @@ export function printCommandHelp(command: string): void {
     case "demo":
       console.log(`sdd demo [runId] [--id <evidenceKey>]
 
-  Builds .sdd/evidence/<key>/latest/demo/ via @sdd-dev-kit/core buildDemo.
+  Builds .sdd/evidence/<key>/latest/demo/ via @rogeriobatista/core buildDemo.
 `);
       break;
     case "status":

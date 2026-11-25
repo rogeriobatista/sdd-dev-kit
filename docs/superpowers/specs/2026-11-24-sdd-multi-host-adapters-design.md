@@ -75,7 +75,7 @@ Scaffold (`sdd.yaml`, premises, example spec) always comes from `adapter-shared/
 
 | Host | Preferred | Fallback |
 |------|-----------|----------|
-| Cursor | MCP Linear/Jira | `@sdd-dev-kit/core` providers + env vars |
+| Cursor | MCP Linear/Jira | `@rogeriobatista/core` providers + env vars |
 | Claude | MCP Linear/Jira | same core providers |
 | Copilot | Often **no** MCP parity | **REST/GraphQL via core + env vars** — document as a known gap |
 

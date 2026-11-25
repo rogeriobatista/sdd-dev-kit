@@ -1,6 +1,6 @@
 # Adapter Python scaffold
 
-This project was scaffolded by `@sdd-dev-kit/adapter-python`.
+This project was scaffolded by `@rogeriobatista/adapter-python`.
 
 - Install: `pip install -e ".[dev]"` or `pip install -r requirements.txt`
 - Edit only `specs/` (+ `.sdd/premises.md` when needed)

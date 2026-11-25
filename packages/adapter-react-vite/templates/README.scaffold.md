@@ -1,6 +1,6 @@
 # Adapter React + Vite scaffold
 
-Scaffolded by `@sdd-dev-kit/adapter-react-vite`.
+Scaffolded by `@rogeriobatista/adapter-react-vite`.
 
 - Install: `npm run setup` (deps + Playwright Chromium)
 - Edit only `specs/` (+ `.sdd/premises.md`)

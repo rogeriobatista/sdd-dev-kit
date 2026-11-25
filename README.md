@@ -10,33 +10,33 @@ You write natural-language specs (`prosa` + `Dado`/`Quando`/`Então`). The agent
 
 ## Distribution (Mac / PC / Cloud Agents)
 
-Packages publish to **GitHub Packages** under [`rogeriobatista/sdd-dev-kit`](https://github.com/rogeriobatista/sdd-dev-kit) with scope `@sdd-dev-kit`.
+Packages publish to **GitHub Packages** under [`rogeriobatista/sdd-dev-kit`](https://github.com/rogeriobatista/sdd-dev-kit) with scope `@rogeriobatista`.
 
 | Package | Role |
 |---------|------|
-| `@sdd-dev-kit/cli` | Bin `sdd` — init / run / verify / demo / status / from-ticket |
-| `@sdd-dev-kit/core` | Schema, stack detect, ticketing, demo, shell |
-| `@sdd-dev-kit/adapter-*` | Host (cursor/claude/copilot) + stack (ts/python/…) packs |
+| `@rogeriobatista/cli` | Bin `sdd` — init / run / verify / demo / status / from-ticket |
+| `@rogeriobatista/core` | Schema, stack detect, ticketing, demo, shell |
+| `@rogeriobatista/adapter-*` | Host (cursor/claude/copilot) + stack (ts/python/…) packs |
 
 ### Install locally
 
 ```bash
 # ~/.npmrc — see .npmrc.example (token via env, never commit)
-@sdd-dev-kit:registry=https://npm.pkg.github.com
+@rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 
-npm i -g @sdd-dev-kit/cli
+npm i -g @rogeriobatista/cli
 sdd init --host cursor --stack typescript
 
 # or
-npx @sdd-dev-kit/cli init --host all --stack python
+npx @rogeriobatista/cli init --host all --stack python
 ```
 
 ### Cursor Cloud Agents
 
 ```bash
-npm i -g @sdd-dev-kit/cli   # after registry auth
-# or: npx @sdd-dev-kit/cli init --host cursor
+npm i -g @rogeriobatista/cli   # after registry auth
+# or: npx @rogeriobatista/cli init --host cursor
 ```
 
 Optional secrets for ticket bootstrap: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`. Full notes: [docs/cloud-agents.md](docs/cloud-agents.md).
@@ -78,7 +78,7 @@ Pick the harness you use. Instruction packs live under `packages/`; shared pipel
 2. Copy `packages/adapter-vscode-copilot/project/.github/prompts/` → `.github/prompts/`.
 3. In Copilot Chat: **`SDD: init`** (or `/sdd-init`), then **`SDD: run`** / `/sdd-run`, etc.
 
-> **Copilot ticketing gap:** Cursor/Claude can use Linear/Jira **MCP** when configured. Copilot often cannot — use `@sdd-dev-kit/core` REST/GraphQL providers with env vars (`LINEAR_API_KEY`, `JIRA_*`). Never paste secrets into chat.
+> **Copilot ticketing gap:** Cursor/Claude can use Linear/Jira **MCP** when configured. Copilot often cannot — use `@rogeriobatista/core` REST/GraphQL providers with env vars (`LINEAR_API_KEY`, `JIRA_*`). Never paste secrets into chat.
 
 ### 3. Init by stack
 
@@ -88,11 +88,11 @@ Set `adapter:` in `sdd.yaml` after detection (alias `ts` → `typescript`). Opti
 
 | Stack | `adapter` | Package | Init tip | Verify |
 |-------|-----------|---------|----------|--------|
-| TypeScript | `typescript` / `ts` | `@sdd-dev-kit/adapter-ts` | Cucumber + Playwright scaffold | `npm run sdd:verify:all` |
-| Python | `python` | `@sdd-dev-kit/adapter-python` | `pyproject.toml` + pytest | `pytest -q` |
-| React + Vite | `react-vite` | `@sdd-dev-kit/adapter-react-vite` | Vite app + Playwright | `npm run sdd:verify:playwright` |
-| Node GraphQL | `node-graphql` | `@sdd-dev-kit/adapter-node-graphql` | Yoga-style schema + Vitest/Cucumber | `npm run sdd:verify:all` |
-| Terraform | `terraform` | `@sdd-dev-kit/adapter-terraform` | Module + `.tftest.hcl` | `terraform fmt/validate/test` (no apply) |
+| TypeScript | `typescript` / `ts` | `@rogeriobatista/adapter-ts` | Cucumber + Playwright scaffold | `npm run sdd:verify:all` |
+| Python | `python` | `@rogeriobatista/adapter-python` | `pyproject.toml` + pytest | `pytest -q` |
+| React + Vite | `react-vite` | `@rogeriobatista/adapter-react-vite` | Vite app + Playwright | `npm run sdd:verify:playwright` |
+| Node GraphQL | `node-graphql` | `@rogeriobatista/adapter-node-graphql` | Yoga-style schema + Vitest/Cucumber | `npm run sdd:verify:all` |
+| Terraform | `terraform` | `@rogeriobatista/adapter-terraform` | Module + `.tftest.hcl` | `terraform fmt/validate/test` (no apply) |
 
 ### 4. Try the examples
 
@@ -128,7 +128,7 @@ After verify (green or red), build a stakeholder pack from run evidence + busine
 Or in code:
 
 ```js
-import { buildDemo } from "@sdd-dev-kit/core";
+import { buildDemo } from "@rogeriobatista/core";
 const pack = buildDemo({ projectRoot: process.cwd() });
 // → .sdd/demo/<runId>/{index.html, SUMMARY.md, manifest.json, evidence/}
 ```
@@ -171,7 +171,7 @@ Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-a
 ## Repository layout
 
 ```text
-packages/cli/                  # @sdd-dev-kit/cli — bin `sdd`
+packages/cli/                  # @rogeriobatista/cli — bin `sdd`
 packages/core/                 # sdd.yaml schema, phases, ticketing, shared tags/shell
 packages/adapter-shared/       # DRY pipeline markdown + scaffold templates + render
 packages/adapter-ts/           # TypeScript — Cucumber + Playwright

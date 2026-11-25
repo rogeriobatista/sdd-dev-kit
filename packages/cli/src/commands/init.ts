@@ -6,7 +6,7 @@ import {
   normalizeStackId,
   writeStackProvenance,
   type StackAdapterId,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 import {
   copyDirIfMissing,
   copyFileIfMissing,
@@ -279,7 +279,7 @@ async function scaffoldStack(
   const written: string[] = [];
   switch (stack) {
     case "typescript": {
-      const { scaffoldProject } = await import("@sdd-dev-kit/adapter-ts");
+      const { scaffoldProject } = await import("@rogeriobatista/adapter-ts");
       await scaffoldProject({
         projectRoot,
         manifest: { adapter: "typescript" },
@@ -289,7 +289,7 @@ async function scaffoldStack(
       break;
     }
     case "python": {
-      const { scaffoldProject } = await import("@sdd-dev-kit/adapter-python");
+      const { scaffoldProject } = await import("@rogeriobatista/adapter-python");
       await scaffoldProject({
         projectRoot,
         manifest: { adapter: "python" },
@@ -300,7 +300,7 @@ async function scaffoldStack(
     }
     case "react-vite": {
       const { scaffoldProject } = await import(
-        "@sdd-dev-kit/adapter-react-vite"
+        "@rogeriobatista/adapter-react-vite"
       );
       await scaffoldProject({
         projectRoot,
@@ -312,7 +312,7 @@ async function scaffoldStack(
     }
     case "node-graphql": {
       const { scaffoldProject } = await import(
-        "@sdd-dev-kit/adapter-node-graphql"
+        "@rogeriobatista/adapter-node-graphql"
       );
       await scaffoldProject({
         projectRoot,
@@ -324,7 +324,7 @@ async function scaffoldStack(
     }
     case "terraform": {
       const { scaffoldProject } = await import(
-        "@sdd-dev-kit/adapter-terraform"
+        "@rogeriobatista/adapter-terraform"
       );
       await scaffoldProject({
         projectRoot,

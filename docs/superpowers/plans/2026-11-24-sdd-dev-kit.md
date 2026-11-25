@@ -34,7 +34,7 @@
 ### Task 2: `packages/core`
 
 **Files:**
-- `packages/core/package.json` — name `@sdd-dev-kit/core`
+- `packages/core/package.json` — name `@rogeriobatista/core`
 - `packages/core/src/schema.ts` — Zod schema for `sdd.yaml`
 - `packages/core/src/types.ts` — canonical scenario, plan task, run report, phase status
 - `packages/core/src/paths.ts` — canonical folder constants + helpers
@@ -57,7 +57,7 @@
 ### Task 3: `packages/adapter-ts`
 
 **Files:**
-- `packages/adapter-ts/package.json` — `@sdd-dev-kit/adapter-ts`, deps cucumber + playwright + core
+- `packages/adapter-ts/package.json` — `@rogeriobatista/adapter-ts`, deps cucumber + playwright + core
 - `packages/adapter-ts/src/scaffold.ts` — write project template (configs, folders, scripts)
 - `packages/adapter-ts/src/materialize.ts` — canonical → `.feature` + step stubs + Playwright specs by tag
 - `packages/adapter-ts/src/runners.ts` — spawn cucumber / playwright / all

@@ -62,7 +62,7 @@ The stack adapter is identified from **specification documents**, not by inventi
 4. **`sdd.yaml`** `adapter` / `adapters.stack` — **fallback** when premises/specs omit stack (**warn** in status).
 5. **Last resort (weak):** `package.json` / `pyproject.toml` / `*.tf` — low confidence; still ask the human to declare stack in premises.
 
-Use `@sdd-dev-kit/core` `detectStack(projectRoot)` → `{ stack, source, confidence, candidates, warnings, needsClarification }`.
+Use `@rogeriobatista/core` `detectStack(projectRoot)` → `{ stack, source, confidence, candidates, warnings, needsClarification }`.
 
 ### On init / run / from-ticket
 
@@ -86,7 +86,7 @@ Use `@sdd-dev-kit/core` `detectStack(projectRoot)` → `{ stack, source, confide
    - terraform: `tests/` for `*.tftest.hcl`
 3. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`). Set **stack-specific `runners`** (see adapter README). Optionally include a commented `ticketing:` section for Linear/Jira.
 4. Write `.sdd/premises.md` and `specs/_example.md` from shared templates if missing — **declare Stack explicitly** (adapter id + tech) so detection is demonstrable.
-5. Scaffold via the matching package (`@sdd-dev-kit/adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, or `adapter-terraform`) or copy from `examples/`.
+5. Scaffold via the matching package (`@rogeriobatista/adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, or `adapter-terraform`) or copy from `examples/`.
 6. Install the **host adapter** instruction files for this project (Cursor skill/rules, Claude `CLAUDE.md` + `.claude/skills`, or Copilot `.github/copilot-instructions.md` + prompts) — do not overwrite existing human specs.
 7. Do **not** overwrite existing human specs.
 
@@ -110,7 +110,7 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
    - UUID → Linear
    - `linear:` / `jira:` prefix → that provider
    - Ambiguous `KEY-123` → `ticketing.defaultProvider`, else ask the human
-3. Fetch via `@sdd-dev-kit/core` (`fromTicket` / `LinearProvider` / `JiraProvider`):
+3. Fetch via `@rogeriobatista/core` (`fromTicket` / `LinearProvider` / `JiraProvider`):
    - Linear: `LINEAR_API_KEY` (GraphQL)
    - Jira: `JIRA_BASE_URL` + `JIRA_API_TOKEN` (+ `JIRA_EMAIL` for Cloud basic auth; Bearer if email unset)
 4. Map title/description/acceptance criteria/labels → Portuguese NL draft (`## Intenção` + `## Cenários` with `Dado`/`Quando`/`Então`).
@@ -127,7 +127,7 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then optionally continu
 ### Ticketing access by host
 
 - **Cursor / Claude:** prefer MCP Linear/Jira tools when configured; otherwise use core REST/GraphQL providers with env vars.
-- **GitHub Copilot (VS Code):** MCP may be unavailable or limited — use `@sdd-dev-kit/core` providers / REST with env vars (`LINEAR_API_KEY`, `JIRA_*`). Document env setup; never put secrets in chat or repo files.
+- **GitHub Copilot (VS Code):** MCP may be unavailable or limited — use `@rogeriobatista/core` providers / REST with env vars (`LINEAR_API_KEY`, `JIRA_*`). Document env setup; never put secrets in chat or repo files.
 
 ## Pipeline phases (run)
 
@@ -186,7 +186,7 @@ Run `runners.all` (or the stack-specific runner the user names). Do not normaliz
 
 ## Demo (after verify)
 
-Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
 
 ## Status
 
@@ -219,7 +219,7 @@ Colon in the logical key is encoded as `_` in path segments (Windows-safe).
 ### Steps
 
 1. Resolve the run id (latest under `.sdd/runs/`, or the id the human named).
-2. Resolve `evidenceKey` via `@sdd-dev-kit/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
+2. Resolve `evidenceKey` via `@rogeriobatista/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
 3. Call `buildDemo({ projectRoot, runId?, evidenceKey? })` — writes/updates the pack and calls `updateEvidencePack`.
 4. Report the **stable stakeholder path** (same path updates over time).
 

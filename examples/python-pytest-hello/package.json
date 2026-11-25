@@ -1,6 +1,6 @@
 {
   "name": "python-pytest-hello",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "SDD example — Python + pytest hello",
   "scripts": {
@@ -10,7 +10,7 @@
     "smoke": "pytest -q --junitxml=reports/junit.xml"
   },
   "dependencies": {
-    "@sdd-dev-kit/adapter-python": "0.1.0",
-    "@sdd-dev-kit/core": "0.1.0"
+    "@rogeriobatista/adapter-python": "0.1.1",
+    "@rogeriobatista/core": "0.1.1"
   }
 }

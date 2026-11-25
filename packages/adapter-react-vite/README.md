@@ -1,8 +1,8 @@
-# @sdd-dev-kit/adapter-react-vite
+# @rogeriobatista/adapter-react-vite
 
 Stack adapter for **React + Vite + Playwright**.
 
-Reuses Playwright tag routing and materialize patterns from `@sdd-dev-kit/adapter-ts`.
+Reuses Playwright tag routing and materialize patterns from `@rogeriobatista/adapter-ts`.
 
 ## Role
 

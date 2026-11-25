@@ -1,4 +1,4 @@
-import { buildDemo, type BuildDemoResult } from "@sdd-dev-kit/core";
+import { buildDemo, type BuildDemoResult } from "@rogeriobatista/core";
 import { resolveProjectRoot } from "../project.js";
 
 export type DemoOptions = {

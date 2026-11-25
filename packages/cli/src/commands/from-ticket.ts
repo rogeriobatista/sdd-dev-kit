@@ -1,7 +1,7 @@
 import {
   fromTicket,
   type FromTicketResult,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 import { loadManifest, resolveProjectRoot } from "../project.js";
 
 export type FromTicketOptions = {

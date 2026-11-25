@@ -5,7 +5,7 @@ import {
   parseSddYaml,
   resolveSddPath,
   type SddManifest,
-} from "@sdd-dev-kit/core";
+} from "@rogeriobatista/core";
 import { pathExists } from "./fs-utils.js";
 
 export function resolveProjectRoot(cwdFlag?: string): string {

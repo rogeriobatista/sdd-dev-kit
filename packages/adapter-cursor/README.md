@@ -1,8 +1,8 @@
-# @sdd-dev-kit/adapter-cursor
+# @rogeriobatista/adapter-cursor
 
 Cursor adapter for the SDD Protocol Kit. Installs skills, rules, and templates so the agent can run `/sdd init|from-ticket|run|verify|status`.
 
-Pipeline text is rendered from `@sdd-dev-kit/adapter-shared` — edit shared content, then `npm run sync:adapters`.
+Pipeline text is rendered from `@rogeriobatista/adapter-shared` — edit shared content, then `npm run sync:adapters`.
 
 ## Install into a project
 
@@ -23,7 +23,7 @@ Pipeline text is rendered from `@sdd-dev-kit/adapter-shared` — edit shared con
 
 ## Ticketing / MCP
 
-Prefer Linear/Jira MCP tools when configured in Cursor; otherwise use `@sdd-dev-kit/core` providers with env vars only.
+Prefer Linear/Jira MCP tools when configured in Cursor; otherwise use `@rogeriobatista/core` providers with env vars only.
 
 ## Human boundary
 

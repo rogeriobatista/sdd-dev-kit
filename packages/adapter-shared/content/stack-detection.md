@@ -10,7 +10,7 @@ The stack adapter is identified from **specification documents**, not by inventi
 4. **`sdd.yaml`** `adapter` / `adapters.stack` — **fallback** when premises/specs omit stack (**warn** in status).
 5. **Last resort (weak):** `package.json` / `pyproject.toml` / `*.tf` — low confidence; still ask the human to declare stack in premises.
 
-Use `@sdd-dev-kit/core` `detectStack(projectRoot)` → `{ stack, source, confidence, candidates, warnings, needsClarification }`.
+Use `@rogeriobatista/core` `detectStack(projectRoot)` → `{ stack, source, confidence, candidates, warnings, needsClarification }`.
 
 ### On init / run / from-ticket
 

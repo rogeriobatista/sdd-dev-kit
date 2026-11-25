@@ -12,11 +12,11 @@ Support the user’s real project types with the same Spec-Driven Development co
 
 | Id (`sdd.yaml` `adapter`) | Package | Verify path |
 |---------------------------|---------|-------------|
-| `typescript` (alias `ts`) | `@sdd-dev-kit/adapter-ts` | Cucumber + Playwright |
-| `python` | `@sdd-dev-kit/adapter-python` | pytest |
-| `react-vite` | `@sdd-dev-kit/adapter-react-vite` | Playwright (+ optional Vitest) |
-| `node-graphql` | `@sdd-dev-kit/adapter-node-graphql` | Cucumber and/or Vitest |
-| `terraform` | `@sdd-dev-kit/adapter-terraform` | `terraform fmt` / `validate` / `test` (no apply) |
+| `typescript` (alias `ts`) | `@rogeriobatista/adapter-ts` | Cucumber + Playwright |
+| `python` | `@rogeriobatista/adapter-python` | pytest |
+| `react-vite` | `@rogeriobatista/adapter-react-vite` | Playwright (+ optional Vitest) |
+| `node-graphql` | `@rogeriobatista/adapter-node-graphql` | Cucumber and/or Vitest |
+| `terraform` | `@rogeriobatista/adapter-terraform` | `terraform fmt` / `validate` / `test` (no apply) |
 
 Optional nested form (backward compatible):
 
@@ -34,7 +34,7 @@ When `adapters.stack` is set, it overrides top-level `adapter`.
 
 ```mermaid
 flowchart LR
-  Specs["specs/*.md"] --> Core["@sdd-dev-kit/core\nschema + tags + shell"]
+  Specs["specs/*.md"] --> Core["@rogeriobatista/core\nschema + tags + shell"]
   Core --> Shared["adapter-shared\npipeline / init"]
   Shared --> Hosts["Cursor / Claude / Copilot"]
   Core --> TS["adapter-ts"]

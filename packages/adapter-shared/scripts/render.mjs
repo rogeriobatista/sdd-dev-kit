@@ -200,7 +200,7 @@ Full procedures live in \`.claude/skills/sdd/SKILL.md\` (invoke the \`sdd\` skil
 ## Ticketing / MCP
 
 - Prefer Linear/Jira **MCP** tools when this host has them configured.
-- Otherwise use \`@sdd-dev-kit/core\` providers with env vars only: \`LINEAR_API_KEY\`, \`JIRA_BASE_URL\`, \`JIRA_API_TOKEN\`, \`JIRA_EMAIL\`.
+- Otherwise use \`@rogeriobatista/core\` providers with env vars only: \`LINEAR_API_KEY\`, \`JIRA_BASE_URL\`, \`JIRA_API_TOKEN\`, \`JIRA_EMAIL\`.
 - Never commit secrets or put tokens on the command line.
 
 ## Human boundary (summary)
@@ -236,7 +236,7 @@ ${sharedBody}
 ## Ticketing note (Copilot gap)
 
 - Cursor and Claude often use **MCP** for Linear/Jira.
-- Copilot in VS Code may **not** expose the same MCP tools — use \`@sdd-dev-kit/core\` REST/GraphQL providers with environment variables (\`LINEAR_API_KEY\`, \`JIRA_BASE_URL\`, \`JIRA_API_TOKEN\`, \`JIRA_EMAIL\`).
+- Copilot in VS Code may **not** expose the same MCP tools — use \`@rogeriobatista/core\` REST/GraphQL providers with environment variables (\`LINEAR_API_KEY\`, \`JIRA_BASE_URL\`, \`JIRA_API_TOKEN\`, \`JIRA_EMAIL\`).
 - Never paste API tokens into chat or commit them.
 
 ${templateLocations}
@@ -260,7 +260,7 @@ const prompts = [
     description: "Scaffold the project for Spec-Driven Development (SDD: init)",
     body: `Run **SDD: init** for this workspace.
 
-Follow the Init section of the SDD protocol (shared pipeline instructions). Create folders, \`sdd.yaml\`, premises, example spec, and ensure Copilot instruction/prompt files from \`@sdd-dev-kit/adapter-vscode-copilot\` are present. Do not overwrite existing human specs.
+Follow the Init section of the SDD protocol (shared pipeline instructions). Create folders, \`sdd.yaml\`, premises, example spec, and ensure Copilot instruction/prompt files from \`@rogeriobatista/adapter-vscode-copilot\` are present. Do not overwrite existing human specs.
 
 ${fs.readFileSync(path.join(contentDir, "init.md"), "utf8").trim()}
 `,
@@ -296,7 +296,7 @@ ${fs.readFileSync(path.join(contentDir, "hard-rules.md"), "utf8").trim()}
     description: "Run SDD verify only (stack runners from sdd.yaml)",
     body: `Run **SDD: verify** only — execute \`sdd.yaml\` runners (\`all\`, or stack-specific keys such as cucumber/playwright/pytest/vitest/terraform). Do not normalize or implement.
 
-Persist results under \`.sdd/runs/\` when possible and summarize exit codes. After verify, call \`updateEvidencePack({ projectRoot, runId })\` from \`@sdd-dev-kit/core\` so \`.sdd/evidence/<key>/latest/raw\` stays current for the ticket (or stable local) evidence key.
+Persist results under \`.sdd/runs/\` when possible and summarize exit codes. After verify, call \`updateEvidencePack({ projectRoot, runId })\` from \`@rogeriobatista/core\` so \`.sdd/evidence/<key>/latest/raw\` stays current for the ticket (or stable local) evidence key.
 `,
   },
   {
@@ -308,7 +308,7 @@ Persist results under \`.sdd/runs/\` when possible and summarize exit codes. Aft
 
 ${fs.readFileSync(path.join(contentDir, "demo.md"), "utf8").trim()}
 
-Prefer \`buildDemo({ projectRoot, runId?, evidenceKey? })\` from \`@sdd-dev-kit/core\`. Report the stable path \`.sdd/evidence/<key>/latest/demo/index.html\` (and \`SUMMARY.md\`).
+Prefer \`buildDemo({ projectRoot, runId?, evidenceKey? })\` from \`@rogeriobatista/core\`. Report the stable path \`.sdd/evidence/<key>/latest/demo/index.html\` (and \`SUMMARY.md\`).
 `,
   },
   {

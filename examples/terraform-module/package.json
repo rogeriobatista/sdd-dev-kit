@@ -1,6 +1,6 @@
 {
   "name": "terraform-module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "SDD example — Terraform module with native terraform test (no cloud)",
   "scripts": {
@@ -12,7 +12,7 @@
     "smoke": "npm run sdd:verify:all"
   },
   "dependencies": {
-    "@sdd-dev-kit/adapter-terraform": "0.1.0",
-    "@sdd-dev-kit/core": "0.1.0"
+    "@rogeriobatista/adapter-terraform": "0.1.1",
+    "@rogeriobatista/core": "0.1.1"
   }
 }

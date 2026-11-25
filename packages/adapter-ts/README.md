@@ -1,4 +1,4 @@
-# @sdd-dev-kit/adapter-ts
+# @rogeriobatista/adapter-ts
 
 Stack adapter for **TypeScript** — Cucumber (`@api`) + Playwright (`@ui` / `@e2e`).
 

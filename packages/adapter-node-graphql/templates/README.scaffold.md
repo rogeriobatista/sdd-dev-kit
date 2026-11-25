@@ -1,6 +1,6 @@
 # Adapter Node GraphQL scaffold
 
-Scaffolded by `@sdd-dev-kit/adapter-node-graphql`.
+Scaffolded by `@rogeriobatista/adapter-node-graphql`.
 
 - Install: `npm run setup`
 - Edit only `specs/` (+ `.sdd/premises.md`)

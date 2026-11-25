@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildDemo } from "@sdd-dev-kit/core";
+import { buildDemo } from "@rogeriobatista/core";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const runIdArg = process.argv[2];
