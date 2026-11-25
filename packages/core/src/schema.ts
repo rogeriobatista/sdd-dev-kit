@@ -10,6 +10,7 @@ export const SddPathsSchema = z.object({
   plan: z.string().min(1).default(DEFAULT_PATHS.plan),
   runs: z.string().min(1).default(DEFAULT_PATHS.runs),
   demo: z.string().min(1).default(DEFAULT_PATHS.demo),
+  evidence: z.string().min(1).default(DEFAULT_PATHS.evidence),
   features: z.string().min(1).default(DEFAULT_PATHS.features),
   steps: z.string().min(1).default(DEFAULT_PATHS.steps),
   e2e: z.string().min(1).default(DEFAULT_PATHS.e2e),
@@ -137,6 +138,20 @@ export const SddTicketingSchema = z.object({
     .default({}),
 });
 
+/**
+ * Evidence pack identity — ties demos/verify artifacts to a ticket or stable local id.
+ * Override via `evidence.key` or CLI `/sdd demo --id <key>`.
+ */
+export const SddEvidenceSchema = z.object({
+  /**
+   * Explicit evidence key (e.g. `linear:ENG-42`, `jira:SHOP-7`, `local:<uuid>`).
+   * Wins over ticket provenance / auto-generated id.
+   */
+  key: z.string().min(1).optional(),
+  /** How many prior run snapshots to keep under `history/` (default 5). */
+  historyLimit: z.number().int().min(0).max(50).default(5),
+});
+
 const SddManifestObjectSchema = z.object({
   version: z.union([z.string(), z.number()]).transform(String).default("1"),
   /** Stack adapter id. Alias `ts` normalizes to `typescript`. */
@@ -152,6 +167,8 @@ const SddManifestObjectSchema = z.object({
   loop: SddLoopSchema.default(() => SddLoopSchema.parse({})),
   /** Optional ticket → specs bootstrap (Linear + Jira). */
   ticketing: SddTicketingSchema.optional(),
+  /** Optional evidence pack key / history retention. */
+  evidence: SddEvidenceSchema.optional(),
 });
 
 export const SddManifestSchema = SddManifestObjectSchema.transform((data) => {
@@ -165,6 +182,7 @@ export type SddRunners = z.infer<typeof SddRunnersSchema>;
 export type SddTriggers = z.infer<typeof SddTriggersSchema>;
 export type SddLoop = z.infer<typeof SddLoopSchema>;
 export type SddTicketing = z.infer<typeof SddTicketingSchema>;
+export type SddEvidence = z.infer<typeof SddEvidenceSchema>;
 export type SddLinearProviderConfig = z.infer<typeof SddLinearProviderSchema>;
 export type SddJiraProviderConfig = z.infer<typeof SddJiraProviderSchema>;
 export type SddTicketingFieldMapping = z.infer<

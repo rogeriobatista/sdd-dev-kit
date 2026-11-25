@@ -38,9 +38,11 @@ When the user says these commands, follow the shared protocol below (same phases
 - Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
-- `.sdd/runs/**` — run reports
-- `.sdd/demo/**` — stakeholder demo packs from `/sdd demo` (HTML/MD/manifest + evidence)
-- `.sdd/ticket.json` — provenance from from-ticket bootstrap
+- `.sdd/runs/**` — run reports (internal; linked from evidence meta)
+- `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
+- `.sdd/evidence-id.json` — stable local evidence id when no ticket
+- `.sdd/demo/**` — legacy per-run demo copies (prefer `.sdd/evidence/<key>/latest/demo/`)
+- `.sdd/ticket.json` — provenance from from-ticket bootstrap (includes `evidenceKey` / `evidencePath`)
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)
 
@@ -80,7 +82,7 @@ Use `@sdd-dev-kit/core` `detectStack(projectRoot)` → `{ stack, source, confide
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
 2. Ensure folders appropriate to the stack:
-   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs, demo, stack.json), `src/` (or module root for Terraform)
+   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs, evidence, demo, stack.json), `src/` (or module root for Terraform)
    - TS / node-graphql: `tests/features`, `tests/steps`, and e2e when UI applies
    - python: `tests/`
    - react-vite: `tests/e2e` (+ optional `tests/unit`)
@@ -187,38 +189,68 @@ Run `runners.all` (or the stack-specific runner the user names). Do not normaliz
 
 ## Demo (after verify)
 
-Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` → `.sdd/demo/<runId>/` (`index.html`, `SUMMARY.md`, `manifest.json`). Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`).
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Not part of the automatic run loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/demo/` exist.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket/evidence/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, resolved `evidenceKey`, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/evidence/` exist.
 
 ## Demo (stakeholder pack from test evidence)
 
 After **verify** (green or red), build a presentable demo pack for **PO / BO / QA** from run evidence + business wording in specs/canonical.
 
+Evidence is keyed by the **Jira/Linear task id** (or a stable local id when there is no ticket) so the **same pack is updated in place** as development progresses.
+
 ### Usage (host-agnostic)
 
-- `demo` — use the latest `.sdd/runs/<id>/`
+- `demo` — use the latest `.sdd/runs/<id>/` and update the evidence pack for the resolved key
 - `demo <runId>` — use a specific run folder
+- `demo --id <key>` — override the evidence key (also: `sdd.yaml` `evidence.key`)
 - Cursor: `/sdd demo` · Claude / Copilot: `SDD: demo`
+
+### Evidence key (`evidenceKey`)
+
+| Source (priority) | Example key | On-disk folder |
+|-------------------|-------------|----------------|
+| CLI `--id` / `buildDemo({ evidenceKey })` | `linear:ENG-42` | `.sdd/evidence/linear_ENG-42/` |
+| `sdd.yaml` `evidence.key` | `jira:SHOP-7` | `.sdd/evidence/jira_SHOP-7/` |
+| `.sdd/ticket.json` (from-ticket) | `linear:ENG-42` | `.sdd/evidence/linear_ENG-42/` |
+| Auto `.sdd/evidence-id.json` (once) | `local:<uuid>` | `.sdd/evidence/local_<uuid>/` |
+
+Colon in the logical key is encoded as `_` in path segments (Windows-safe).
 
 ### Steps
 
 1. Resolve the run id (latest under `.sdd/runs/`, or the id the human named).
-2. Call `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` (preferred) — or equivalent: collect evidence, map scenarios, write the pack.
-3. Report the output paths to the human (open `index.html` in a browser; paste `SUMMARY.md` into Slack/email).
+2. Resolve `evidenceKey` via `@sdd-dev-kit/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
+3. Call `buildDemo({ projectRoot, runId?, evidenceKey? })` — writes/updates the pack and calls `updateEvidencePack`.
+4. Report the **stable stakeholder path** (same path updates over time).
 
-### Output (agent-owned)
+### Output (agent-owned) — open this
 
-`.sdd/demo/<runId>/`:
+**PO / BO / QA always open:**
 
-| File | Role |
-|------|------|
-| `index.html` | Offline-friendly narrative page in **Portuguese** (intent, scenarios as business language, pass/fail, embeds/links to screenshots/videos) |
-| `SUMMARY.md` | Same story in markdown for Slack/email |
-| `manifest.json` | Machine-readable evidence list |
-| `evidence/` | Copied reports/media so the pack is portable |
+`.sdd/evidence/<encodedKey>/latest/demo/index.html`
+
+Layout (updated in place):
+
+```
+.sdd/evidence/<encodedKey>/
+  meta.json          # ticket url/title, updatedAt, lastRunId, status, runPath
+  latest/
+    run-report.json
+    demo/            # index.html, SUMMARY.md, manifest.json, evidence/
+    raw/             # copied cucumber/playwright/pytest artifacts from last verify
+  history/           # optional last N run snapshots by runId
+```
+
+Internal runs stay under `.sdd/runs/<runId>/` and are linked from `meta.json`. A legacy copy may also exist under `.sdd/demo/<runId>/` — prefer the evidence path above.
+
+### Core API
+
+- `resolveEvidenceKey(projectRoot)` → `{ evidenceKey, source, evidencePath, … }`
+- `updateEvidencePack({ projectRoot, runId, evidenceKey? })` — called from `buildDemo` and verify post-hooks
+- `buildDemo({ projectRoot, runId?, evidenceKey? })`
 
 ### Inputs (graceful if missing)
 
@@ -232,7 +264,7 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 
 - **PO / BO / QA** — business language from specs; **no code dumps**, no IDE required
 - Portuguese stakeholder copy by default
-- **No secrets** in demo output (scrub tokens/keys from stderr snippets)
+- **No secrets** in demo/evidence output (scrub tokens/keys from stderr snippets)
 - Keep the pack **offline-friendly** (relative paths)
 
 ## Hard rules
@@ -247,7 +279,7 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
-- Demo packs (`.sdd/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths.
+- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses.
 
 ## Template locations in this kit
 

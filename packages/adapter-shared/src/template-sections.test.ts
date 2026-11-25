@@ -68,9 +68,13 @@ describe("adapter-shared content", () => {
     }
   });
 
-  it("demo content covers buildDemo and stakeholder audience", () => {
+  it("demo content covers buildDemo, evidence key, and stakeholder audience", () => {
     assertMarkers("demo", readShared("demo.md"), [
       "buildDemo",
+      "resolveEvidenceKey",
+      "updateEvidencePack",
+      "evidenceKey",
+      ".sdd/evidence/",
       "PO",
       "index.html",
       "SUMMARY.md",

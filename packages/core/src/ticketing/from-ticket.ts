@@ -101,11 +101,19 @@ export async function fromTicket(
   await mkdir(specsDir, { recursive: true });
   await mkdir(path.dirname(provenancePathAbs), { recursive: true });
 
+  const evidenceKey = `${providerName}:${
+    /^[0-9a-f-]{36}$/i.test(ref.id) ? ref.id.toLowerCase() : ref.id.toUpperCase()
+  }`;
+  const encodedKey = evidenceKey.replace(/[:<>"|?*\\/]/g, "_");
+  const evidencePath = `${DEFAULT_PATHS.evidence}/${encodedKey}`;
+
   const provenance: TicketProvenance = {
     fetchedAt: new Date().toISOString(),
     ref: { id: ref.id, provider: providerName },
     ticket,
     draftSpecPath,
+    evidenceKey,
+    evidencePath,
   };
 
   // Avoid clobbering human-edited specs unless overwrite is set

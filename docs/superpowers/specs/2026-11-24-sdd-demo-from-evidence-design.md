@@ -36,7 +36,9 @@ Missing evidence is **graceful** — still emit narrative from run report + spec
 
 ## Output
 
-`.sdd/demo/<runId>/` (agent-owned):
+**Primary (keyed, updated in place)** — see also [evidence-keyed-by-task design](./2026-11-24-sdd-evidence-keyed-by-task-design.md):
+
+`.sdd/evidence/<encodedKey>/latest/demo/` (agent-owned):
 
 | File | Role |
 |------|------|
@@ -45,15 +47,21 @@ Missing evidence is **graceful** — still emit narrative from run report + spec
 | `manifest.json` | Machine-readable evidence list |
 | `evidence/` | Copied artifacts (portable pack; relative links) |
 
+Legacy copy may also land under `.sdd/demo/<runId>/`. Stakeholders should open the evidence path.
+
 ## Core API
 
 ```ts
 buildDemo({
   projectRoot: string;
   runId?: string;
+  evidenceKey?: string;     // /sdd demo --id <key>
   copyEvidence?: boolean; // default true
   locale?: "pt-BR" | "en";  // default pt-BR
 }): BuildDemoResult
+
+resolveEvidenceKey(projectRoot)
+updateEvidencePack({ projectRoot, runId, evidenceKey? })
 ```
 
 Also exported: `collectEvidence`, `EVIDENCE_CANDIDATES`, parsers for cucumber/junit/playwright, `scrubSecrets`.

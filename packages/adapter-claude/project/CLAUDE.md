@@ -8,7 +8,7 @@ This project uses Spec-Driven Development. You edit **only** `specs/*.md` (+ `.s
 - **SDD: from-ticket `<id>`** — Linear/Jira → draft `specs/*.md` (MCP when available; else core REST + env vars)
 - **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
 - **SDD: verify** — stack runners from `sdd.yaml` only
-- **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → `.sdd/demo/<runId>/`
+- **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → `.sdd/evidence/<key>/latest/demo/`
 - **SDD: status** — last run / phase summary
 
 Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill when the user asks for any of the above).
@@ -33,9 +33,11 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 - Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
-- `.sdd/runs/**` — run reports
-- `.sdd/demo/**` — stakeholder demo packs from `/sdd demo` (HTML/MD/manifest + evidence)
-- `.sdd/ticket.json` — provenance from from-ticket bootstrap
+- `.sdd/runs/**` — run reports (internal; linked from evidence meta)
+- `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
+- `.sdd/evidence-id.json` — stable local evidence id when no ticket
+- `.sdd/demo/**` — legacy per-run demo copies (prefer `.sdd/evidence/<key>/latest/demo/`)
+- `.sdd/ticket.json` — provenance from from-ticket bootstrap (includes `evidenceKey` / `evidencePath`)
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
 - Production code under the SDD implement phase (agent implements to make tests pass)
 

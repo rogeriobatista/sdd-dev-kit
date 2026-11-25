@@ -12,6 +12,7 @@ paths:
   plan: .sdd/plan
   runs: .sdd/runs
   demo: .sdd/demo
+  evidence: .sdd/evidence
   features: tests/features
   steps: tests/steps
   e2e: tests/e2e
@@ -25,6 +26,10 @@ triggers:
   command: "/sdd run"
 loop:
   maxDiagnoseIterations: 3
+# Optional: pin the stakeholder evidence pack key (else ticket / auto local id)
+# evidence:
+#   key: linear:ENG-42
+#   historyLimit: 5
 # Optional: bootstrap specs from Linear / Jira via `/sdd from-ticket <id>`
 # Secrets stay in env vars — only variable *names* belong here.
 # ticketing:

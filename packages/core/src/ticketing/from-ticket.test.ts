@@ -72,9 +72,13 @@ describe("fromTicket", () => {
     const provenance = JSON.parse(provenanceRaw) as {
       ticket: TicketPayload;
       draftSpecPath: string;
+      evidenceKey?: string;
+      evidencePath?: string;
     };
     assert.equal(provenance.ticket.id, "ENG-42");
     assert.equal(provenance.draftSpecPath, result.draftSpecPath);
+    assert.equal(provenance.evidenceKey, "linear:ENG-42");
+    assert.equal(provenance.evidencePath, ".sdd/evidence/linear_ENG-42");
   });
 
   it("refuses to overwrite an existing draft without overwrite flag", async () => {

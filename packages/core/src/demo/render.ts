@@ -41,6 +41,7 @@ function mediaHref(file: EvidenceFile): string {
 
 export interface RenderInput {
   runId: string;
+  evidenceKey?: string;
   generatedAt: string;
   overallStatus: ScenarioDemoStatus | PhaseStatus;
   features: DemoFeature[];
@@ -377,6 +378,7 @@ export function buildManifest(input: RenderInput & { projectRoot: string }): Dem
     version: 1,
     generatedAt: input.generatedAt,
     runId: input.runId,
+    evidenceKey: input.evidenceKey,
     projectRoot: input.projectRoot,
     locale: input.locale,
     overallStatus: normalizeOverall(input.overallStatus) as PhaseStatus | "unknown",

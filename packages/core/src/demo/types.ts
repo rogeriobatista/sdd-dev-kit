@@ -59,18 +59,32 @@ export interface BuildDemoOptions {
   /** Specific run id under `.sdd/runs/<id>/`. Defaults to latest. */
   runId?: string;
   /**
-   * Copy (or hardlink when possible) evidence into `.sdd/demo/<runId>/evidence/`.
+   * Evidence key override (`/sdd demo --id <key>`).
+   * When omitted, resolved from sdd.yaml / ticket / `.sdd/evidence-id.json`.
+   */
+  evidenceKey?: string;
+  /**
+   * Copy (or hardlink when possible) evidence into the demo pack `evidence/`.
    * Default: true — keeps the pack portable / offline-friendly.
    */
   copyEvidence?: boolean;
+  /**
+   * Also write a legacy copy under `.sdd/demo/<runId>/` for backward compatibility.
+   * Default: true.
+   */
+  writeLegacyDemo?: boolean;
   /** Stakeholder copy locale. Default: `pt-BR`. */
   locale?: "pt-BR" | "en";
+  /** Skip updating `.sdd/evidence/<key>/` (tests / advanced). Default: false. */
+  skipEvidencePack?: boolean;
 }
 
 export interface DemoManifest {
   version: 1;
   generatedAt: string;
   runId: string;
+  /** Stable evidence key (ticket or local id). */
+  evidenceKey?: string;
   projectRoot: string;
   locale: "pt-BR" | "en";
   overallStatus: PhaseStatus | "unknown";
@@ -102,10 +116,20 @@ export interface DemoManifest {
 
 export interface BuildDemoResult {
   runId: string;
+  /** Stable evidence key used for the stakeholder pack. */
+  evidenceKey: string;
+  /** Relative POSIX path to pack root (`.sdd/evidence/<encoded>/`). */
+  evidencePath: string;
+  /**
+   * Primary stakeholder demo directory:
+   * `.sdd/evidence/<key>/latest/demo/` (preferred) or legacy `.sdd/demo/<runId>/`.
+   */
   demoDir: string;
   indexHtmlPath: string;
   summaryMdPath: string;
   manifestPath: string;
   manifest: DemoManifest;
   missingEvidence: string[];
+  /** Absolute path to evidence pack `meta.json` when pack was updated. */
+  evidenceMetaPath?: string;
 }

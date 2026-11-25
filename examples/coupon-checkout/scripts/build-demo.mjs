@@ -51,6 +51,8 @@ console.log(
   JSON.stringify(
     {
       runId: result.runId,
+      evidenceKey: result.evidenceKey,
+      evidencePath: result.evidencePath,
       demoDir: path.relative(projectRoot, result.demoDir),
       indexHtml: path.relative(projectRoot, result.indexHtmlPath),
       summaryMd: path.relative(projectRoot, result.summaryMdPath),

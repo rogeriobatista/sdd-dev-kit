@@ -5,8 +5,18 @@ export const DEFAULT_PATHS = {
   canonical: ".sdd/canonical",
   plan: ".sdd/plan",
   runs: ".sdd/runs",
-  /** Stakeholder demo packs from `/sdd demo` (per run id). */
+  /**
+   * Legacy per-run demo packs (`.sdd/demo/<runId>/`).
+   * Prefer stakeholder path under `evidence` (keyed by ticket / stable id).
+   */
   demo: ".sdd/demo",
+  /**
+   * Stakeholder evidence packs keyed by ticket or stable local id:
+   * `.sdd/evidence/<evidenceKey>/latest/demo/`.
+   */
+  evidence: ".sdd/evidence",
+  /** Stable local evidence id when no ticket provenance exists. */
+  evidenceId: ".sdd/evidence-id.json",
   /** Provenance written by `/sdd from-ticket`. */
   ticket: ".sdd/ticket.json",
   /** Stack detection provenance / optional override (`detectStack`). */

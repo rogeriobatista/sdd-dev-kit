@@ -38,6 +38,13 @@ export interface TicketProvenance {
   ref: TicketRef;
   ticket: TicketPayload;
   draftSpecPath: string;
+  /**
+   * Provider-normalized evidence key (e.g. `linear:ENG-42`).
+   * Stakeholder packs live under `.sdd/evidence/<encodedKey>/`.
+   */
+  evidenceKey?: string;
+  /** Relative path to the evidence pack root (POSIX). */
+  evidencePath?: string;
 }
 
 export interface CanonicalStep {

@@ -192,7 +192,7 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 - **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\` (MCP when available; else core REST + env vars)
 - **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
 - **SDD: verify** — stack runners from \`sdd.yaml\` only
-- **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/demo/<runId>/\`
+- **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/evidence/<key>/latest/demo/\`
 - **SDD: status** — last run / phase summary
 
 Full procedures live in \`.claude/skills/sdd/SKILL.md\` (invoke the \`sdd\` skill when the user asks for any of the above).
@@ -296,26 +296,26 @@ ${fs.readFileSync(path.join(contentDir, "hard-rules.md"), "utf8").trim()}
     description: "Run SDD verify only (stack runners from sdd.yaml)",
     body: `Run **SDD: verify** only — execute \`sdd.yaml\` runners (\`all\`, or stack-specific keys such as cucumber/playwright/pytest/vitest/terraform). Do not normalize or implement.
 
-Persist results under \`.sdd/runs/\` when possible and summarize exit codes.
+Persist results under \`.sdd/runs/\` when possible and summarize exit codes. After verify, call \`updateEvidencePack({ projectRoot, runId })\` from \`@sdd-dev-kit/core\` so \`.sdd/evidence/<key>/latest/raw\` stays current for the ticket (or stable local) evidence key.
 `,
   },
   {
     file: "sdd-demo.prompt.md",
     name: "sdd-demo",
     description: "Build a PO/BO/QA demo pack from test evidence (SDD: demo)",
-    argumentHint: "[runId]",
+    argumentHint: "[runId] [--id <evidenceKey>]",
     body: `Run **SDD: demo** — build a stakeholder demo pack from the latest (or named) verify evidence.
 
 ${fs.readFileSync(path.join(contentDir, "demo.md"), "utf8").trim()}
 
-Prefer \`buildDemo({ projectRoot, runId? })\` from \`@sdd-dev-kit/core\`. Report \`.sdd/demo/<runId>/index.html\` and \`SUMMARY.md\` paths.
+Prefer \`buildDemo({ projectRoot, runId?, evidenceKey? })\` from \`@sdd-dev-kit/core\`. Report the stable path \`.sdd/evidence/<key>/latest/demo/index.html\` (and \`SUMMARY.md\`).
 `,
   },
   {
     file: "sdd-status.prompt.md",
     name: "sdd-status",
     description: "Report SDD pipeline status from .sdd/runs",
-    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket/demo presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` / \`.sdd/demo/\` exist. Do not modify files.
+    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket/evidence/demo presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, resolved evidenceKey, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` / \`.sdd/evidence/\` exist. Do not modify files.
 `,
   },
 ];

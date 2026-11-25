@@ -6,6 +6,10 @@ import {
   copyEvidenceIntoDemo,
 } from "./evidence.js";
 import {
+  resolveEvidenceKey,
+  updateEvidencePack,
+} from "./evidence-pack.js";
+import {
   buildManifest,
   renderIndexHtml,
   renderSummaryMarkdown,
@@ -19,6 +23,21 @@ import type { BuildDemoOptions, BuildDemoResult } from "./types.js";
 
 function toPosix(p: string): string {
   return p.replace(/\\/g, "/");
+}
+
+function copyRecursive(src: string, dest: string): void {
+  if (!fs.existsSync(src)) return;
+  const st = fs.statSync(src);
+  if (st.isFile()) {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+    return;
+  }
+  if (!st.isDirectory()) return;
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    copyRecursive(path.join(src, entry.name), path.join(dest, entry.name));
+  }
 }
 
 /** List run directories under `.sdd/runs/` (excluding dotfiles / .gitkeep). */
@@ -82,17 +101,28 @@ export function resolveRunId(
 /**
  * Build a stakeholder demo pack from verify evidence + NL/canonical scenarios.
  *
- * Output: `.sdd/demo/<runId>/{index.html,SUMMARY.md,manifest.json,evidence/}`
+ * Primary output (updated in place as development evolves):
+ * `.sdd/evidence/<evidenceKey>/latest/demo/{index.html,SUMMARY.md,manifest.json,evidence/}`
+ *
+ * Also writes a legacy copy under `.sdd/demo/<runId>/` unless `writeLegacyDemo: false`.
+ * Internal run artifacts remain under `.sdd/runs/<runId>/` and are linked from meta.json.
  */
 export function buildDemo(options: BuildDemoOptions): BuildDemoResult {
   const projectRoot = path.resolve(options.projectRoot);
   const locale = options.locale ?? "pt-BR";
   const copyEvidence = options.copyEvidence !== false;
+  const writeLegacy = options.writeLegacyDemo !== false;
+  const skipPack = options.skipEvidencePack === true;
 
   const { runId, runDir, createdPlaceholder } = resolveRunId(
     projectRoot,
     options.runId,
   );
+
+  const keyInfo = resolveEvidenceKey({
+    projectRoot,
+    evidenceKey: options.evidenceKey,
+  });
 
   const collected = collectEvidence({ projectRoot, runDir });
   const runReport = loadRunReport(collected.runReportPath);
@@ -103,18 +133,23 @@ export function buildDemo(options: BuildDemoOptions): BuildDemoResult {
     runReport,
   );
 
-  const demoDir = path.join(projectRoot, DEFAULT_PATHS.demo, runId);
-  fs.mkdirSync(demoDir, { recursive: true });
+  // Build into a staging dir, then promote into evidence pack + optional legacy
+  const stagingDir = path.join(
+    projectRoot,
+    DEFAULT_PATHS.evidence,
+    ".staging",
+    runId,
+  );
+  rmrf(stagingDir);
+  fs.mkdirSync(stagingDir, { recursive: true });
 
   const evidenceFiles = copyEvidence
-    ? copyEvidenceIntoDemo(collected.files, demoDir)
+    ? copyEvidenceIntoDemo(collected.files, stagingDir)
     : collected.files.map((f) => ({
         ...f,
-        // Relative from demo dir up to project evidence
-        demoRelativePath: toPosix(path.relative(demoDir, f.absolutePath)),
+        demoRelativePath: toPosix(path.relative(stagingDir, f.absolutePath)),
       }));
 
-  // Re-attach demo-relative media onto scenarios
   const mediaByAbs = new Map(
     evidenceFiles.map((f) => [toPosix(f.absolutePath), f]),
   );
@@ -138,9 +173,13 @@ export function buildDemo(options: BuildDemoOptions): BuildDemoResult {
       "Nenhuma evidência de relatório encontrada; narrativa montada a partir das specs/canonical.",
     );
   }
+  notes.push(
+    `Pacote de evidências: chave \`${keyInfo.evidenceKey}\` (${keyInfo.source}) → \`${keyInfo.evidencePath}/latest/demo/\`.`,
+  );
 
   const renderInput = {
     runId,
+    evidenceKey: keyInfo.evidenceKey,
     generatedAt,
     overallStatus: applied.overallStatus,
     features: applied.features,
@@ -155,21 +194,67 @@ export function buildDemo(options: BuildDemoOptions): BuildDemoResult {
   const summaryMd = renderSummaryMarkdown(renderInput);
   const manifest = buildManifest(renderInput);
 
-  const indexHtmlPath = path.join(demoDir, "index.html");
-  const summaryMdPath = path.join(demoDir, "SUMMARY.md");
-  const manifestPath = path.join(demoDir, "manifest.json");
+  const indexHtmlPath = path.join(stagingDir, "index.html");
+  const summaryMdPath = path.join(stagingDir, "SUMMARY.md");
+  const manifestPath = path.join(stagingDir, "manifest.json");
 
   fs.writeFileSync(indexHtmlPath, indexHtml, "utf8");
   fs.writeFileSync(summaryMdPath, summaryMd, "utf8");
   fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
+  let demoDir = stagingDir;
+  let evidenceMetaPath: string | undefined;
+  let evidencePath = keyInfo.evidencePath;
+
+  if (!skipPack) {
+    const pack = updateEvidencePack({
+      projectRoot,
+      runId,
+      evidenceKey: keyInfo.evidenceKey,
+      demoDir: stagingDir,
+      status:
+        typeof applied.overallStatus === "string"
+          ? applied.overallStatus
+          : "unknown",
+    });
+    demoDir = pack.demoDir;
+    evidenceMetaPath = pack.metaPath;
+    evidencePath = pack.evidencePath;
+  }
+
+  if (writeLegacy) {
+    const legacyDir = path.join(projectRoot, DEFAULT_PATHS.demo, runId);
+    rmrf(legacyDir);
+    copyRecursive(stagingDir, legacyDir);
+    if (skipPack) {
+      demoDir = legacyDir;
+    }
+  }
+
+  // Drop staging after promotion (never leave `.staging` as the public path)
+  if (demoDir !== stagingDir) {
+    rmrf(path.join(projectRoot, DEFAULT_PATHS.evidence, ".staging"));
+  }
+
+  const finalIndex = path.join(demoDir, "index.html");
+  const finalSummary = path.join(demoDir, "SUMMARY.md");
+  const finalManifest = path.join(demoDir, "manifest.json");
+
   return {
     runId,
+    evidenceKey: keyInfo.evidenceKey,
+    evidencePath,
     demoDir,
-    indexHtmlPath,
-    summaryMdPath,
-    manifestPath,
+    indexHtmlPath: finalIndex,
+    summaryMdPath: finalSummary,
+    manifestPath: finalManifest,
     manifest,
     missingEvidence: collected.missing,
+    evidenceMetaPath,
   };
+}
+
+function rmrf(target: string): void {
+  if (!fs.existsSync(target)) return;
+  fs.rmSync(target, { recursive: true, force: true });
 }

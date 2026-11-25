@@ -2,7 +2,7 @@
 name: sdd-demo
 description: Build a PO/BO/QA demo pack from test evidence (SDD: demo)
 agent: agent
-argument-hint: [runId]
+argument-hint: [runId] [--id <evidenceKey>]
 ---
 Run **SDD: demo** — build a stakeholder demo pack from the latest (or named) verify evidence.
 
@@ -10,28 +10,58 @@ Run **SDD: demo** — build a stakeholder demo pack from the latest (or named) v
 
 After **verify** (green or red), build a presentable demo pack for **PO / BO / QA** from run evidence + business wording in specs/canonical.
 
+Evidence is keyed by the **Jira/Linear task id** (or a stable local id when there is no ticket) so the **same pack is updated in place** as development progresses.
+
 ### Usage (host-agnostic)
 
-- `demo` — use the latest `.sdd/runs/<id>/`
+- `demo` — use the latest `.sdd/runs/<id>/` and update the evidence pack for the resolved key
 - `demo <runId>` — use a specific run folder
+- `demo --id <key>` — override the evidence key (also: `sdd.yaml` `evidence.key`)
 - Cursor: `/sdd demo` · Claude / Copilot: `SDD: demo`
+
+### Evidence key (`evidenceKey`)
+
+| Source (priority) | Example key | On-disk folder |
+|-------------------|-------------|----------------|
+| CLI `--id` / `buildDemo({ evidenceKey })` | `linear:ENG-42` | `.sdd/evidence/linear_ENG-42/` |
+| `sdd.yaml` `evidence.key` | `jira:SHOP-7` | `.sdd/evidence/jira_SHOP-7/` |
+| `.sdd/ticket.json` (from-ticket) | `linear:ENG-42` | `.sdd/evidence/linear_ENG-42/` |
+| Auto `.sdd/evidence-id.json` (once) | `local:<uuid>` | `.sdd/evidence/local_<uuid>/` |
+
+Colon in the logical key is encoded as `_` in path segments (Windows-safe).
 
 ### Steps
 
 1. Resolve the run id (latest under `.sdd/runs/`, or the id the human named).
-2. Call `@sdd-dev-kit/core` `buildDemo({ projectRoot, runId? })` (preferred) — or equivalent: collect evidence, map scenarios, write the pack.
-3. Report the output paths to the human (open `index.html` in a browser; paste `SUMMARY.md` into Slack/email).
+2. Resolve `evidenceKey` via `@sdd-dev-kit/core` `resolveEvidenceKey(projectRoot)` (or pass `--id`).
+3. Call `buildDemo({ projectRoot, runId?, evidenceKey? })` — writes/updates the pack and calls `updateEvidencePack`.
+4. Report the **stable stakeholder path** (same path updates over time).
 
-### Output (agent-owned)
+### Output (agent-owned) — open this
 
-`.sdd/demo/<runId>/`:
+**PO / BO / QA always open:**
 
-| File | Role |
-|------|------|
-| `index.html` | Offline-friendly narrative page in **Portuguese** (intent, scenarios as business language, pass/fail, embeds/links to screenshots/videos) |
-| `SUMMARY.md` | Same story in markdown for Slack/email |
-| `manifest.json` | Machine-readable evidence list |
-| `evidence/` | Copied reports/media so the pack is portable |
+`.sdd/evidence/<encodedKey>/latest/demo/index.html`
+
+Layout (updated in place):
+
+```
+.sdd/evidence/<encodedKey>/
+  meta.json          # ticket url/title, updatedAt, lastRunId, status, runPath
+  latest/
+    run-report.json
+    demo/            # index.html, SUMMARY.md, manifest.json, evidence/
+    raw/             # copied cucumber/playwright/pytest artifacts from last verify
+  history/           # optional last N run snapshots by runId
+```
+
+Internal runs stay under `.sdd/runs/<runId>/` and are linked from `meta.json`. A legacy copy may also exist under `.sdd/demo/<runId>/` — prefer the evidence path above.
+
+### Core API
+
+- `resolveEvidenceKey(projectRoot)` → `{ evidenceKey, source, evidencePath, … }`
+- `updateEvidencePack({ projectRoot, runId, evidenceKey? })` — called from `buildDemo` and verify post-hooks
+- `buildDemo({ projectRoot, runId?, evidenceKey? })`
 
 ### Inputs (graceful if missing)
 
@@ -45,7 +75,7 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 
 - **PO / BO / QA** — business language from specs; **no code dumps**, no IDE required
 - Portuguese stakeholder copy by default
-- **No secrets** in demo output (scrub tokens/keys from stderr snippets)
+- **No secrets** in demo/evidence output (scrub tokens/keys from stderr snippets)
 - Keep the pack **offline-friendly** (relative paths)
 
-Prefer `buildDemo({ projectRoot, runId? })` from `@sdd-dev-kit/core`. Report `.sdd/demo/<runId>/index.html` and `SUMMARY.md` paths.
+Prefer `buildDemo({ projectRoot, runId?, evidenceKey? })` from `@sdd-dev-kit/core`. Report the stable path `.sdd/evidence/<key>/latest/demo/index.html` (and `SUMMARY.md`).
