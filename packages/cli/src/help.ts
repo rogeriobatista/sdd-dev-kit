@@ -1,4 +1,4 @@
-export const CLI_VERSION = "0.1.1";
+export const CLI_VERSION = "0.1.2";
 
 export function printRootHelp(): void {
   console.log(`sdd — SDD Protocol Kit CLI (v${CLI_VERSION})

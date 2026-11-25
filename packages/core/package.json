@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "SDD Protocol Kit core — sdd.yaml schema, phases, artifacts, paths",
   "type": "module",
   "main": "./dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "coupon-checkout",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "description": "SDD Dev Kit example — coupon checkout (edit specs only, run /sdd run)",
@@ -15,8 +15,8 @@
     "smoke": "npm run sdd:verify:cucumber && playwright test --config=playwright.smoke.config.ts"
   },
   "dependencies": {
-    "@rogeriobatista/adapter-ts": "0.1.1",
-    "@rogeriobatista/core": "0.1.1"
+    "@rogeriobatista/adapter-ts": "0.1.2",
+    "@rogeriobatista/core": "0.1.2"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.2.0",

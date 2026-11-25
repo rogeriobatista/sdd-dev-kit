@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/adapter-node-graphql",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "SDD Node + TypeScript GraphQL adapter (Cucumber/Vitest)",
   "type": "module",
   "main": "./dist/index.js",
@@ -23,7 +23,7 @@
     "pretest": "npm run build"
   },
   "dependencies": {
-    "@rogeriobatista/core": "0.1.1"
+    "@rogeriobatista/core": "0.1.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
