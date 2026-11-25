@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/adapter-ts",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "SDD TypeScript adapter — Cucumber + Playwright scaffold, materialize, runners",
   "type": "module",
   "main": "./dist/index.js",
@@ -23,7 +23,7 @@
     "pretest": "npm run build"
   },
   "dependencies": {
-    "@rogeriobatista/core": "0.1.5"
+    "@rogeriobatista/core": "0.1.6"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.2.0",

@@ -2,6 +2,8 @@
 
 Use the published CLI so Cursor Cloud Agents (Mac/PC workers or cloud VMs) can scaffold and verify SDD projects without cloning this monorepo.
 
+Guia técnico completo (fluxo, exemplos, outputs): **[guia-de-uso.md](./guia-de-uso.md)**.
+
 ## Install
 
 To **download** `@rogeriobatista/*` from **GitHub Packages** you **must** configure registry + auth. Without both, `npm i` / `npx` fails with **404** (scope not resolved on npmjs) or **401** (private package, no token).

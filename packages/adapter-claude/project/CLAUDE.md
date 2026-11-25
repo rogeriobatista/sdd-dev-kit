@@ -15,6 +15,7 @@ This project uses Spec-Driven Development. You edit **only** `specs/*.md` (+ `.s
 - **SDD: bug report** / **reproduce** / **debug** / **qa** / **fix** — client-reported error workflow (TDD: no fix without red regression)
 
 Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill when the user asks for any of the above).
+User guide (PT, passo a passo + exemplos): `docs/guia-de-uso.md`.
 
 ## Ticketing / MCP
 

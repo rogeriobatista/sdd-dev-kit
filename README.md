@@ -8,6 +8,12 @@
 
 You iterate on natural-language specs (`prosa` + `Dado`/`Quando`/`Então`) — **step 1, the only human gate**. After specs are accepted, `/sdd run` automates **steps 2–10** (Spec Tests → Dev Spec → Implementation Plan → Design & Approach → unit → integration → e2e → implement/verify loop → evidence) until all test levels pass. **Step 11** is continuous market best practices (not a separate stop).
 
+## Comece aqui
+
+Guia técnico em português (passo a passo, exemplos de specs e outputs): **[docs/guia-de-uso.md](docs/guia-de-uso.md)**
+
+Fixtures de exemplo: [`docs/exemplos/`](docs/exemplos/) · app de referência: [`examples/coupon-checkout`](examples/coupon-checkout/)
+
 ## Distribution (Mac / PC / Cloud Agents)
 
 Packages publish to **GitHub Packages** under [`rogeriobatista/sdd-dev-kit`](https://github.com/rogeriobatista/sdd-dev-kit) with scope `@rogeriobatista`.
@@ -282,6 +288,8 @@ examples/python-pytest-hello/  # Python + pytest
 examples/react-vite-playwright/
 examples/node-graphql-api/
 examples/terraform-module/     # null provider, no cloud
+docs/guia-de-uso.md            # Guia técnico PT (comece aqui)
+docs/exemplos/                 # Fixtures referenciadas pelo guia
 docs/cloud-agents.md           # Cloud Agent install + secrets
 docs/superpowers/              # design + implementation plan
 ```

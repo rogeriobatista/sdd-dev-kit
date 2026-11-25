@@ -66,6 +66,7 @@ const sharedBody = readContent();
 
 const templateLocations = `## Template locations in this kit
 
+- **User guide (PT):** \`docs/guia-de-uso.md\` — passo a passo, exemplos de specs e outputs; fixtures em \`docs/exemplos/\`
 - Shared source: \`packages/adapter-shared/content/\` (pipeline, research, from-ticket, docs, bugfix, human boundary, hard rules, best-practices catalog)
 - Best-practices catalog: \`packages/adapter-shared/content/best-practices-catalog.md\` (+ \`.json\`)
 - Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`, \`.sdd/dev-spec.md\`, \`.sdd/implementation-plan.md\`, \`.sdd/design-approach.md\`, \`docs/sdd/\`, \`.sdd/bugs/_templates/\`)
@@ -263,6 +264,7 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 - **SDD: bug report** / **reproduce** / **debug** / **qa** / **fix** — client-reported error workflow (TDD: no fix without red regression)
 
 Full procedures live in \`.claude/skills/sdd/SKILL.md\` (invoke the \`sdd\` skill when the user asks for any of the above).
+User guide (PT, passo a passo + exemplos): \`docs/guia-de-uso.md\`.
 
 ## Ticketing / MCP
 
@@ -284,6 +286,8 @@ writeFile(
 const copilotInstructions = `# SDD Protocol Kit (GitHub Copilot)
 
 This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\` (+ \`.sdd/premises.md\` when changing project rules). Copilot runs the SDD pipeline; do not ask the human to hand-edit generated Spec/unit/integration/e2e tests, Dev Spec, Implementation Plan, Design Approach, or canonical.
+
+User guide (PT, passo a passo + exemplos): \`docs/guia-de-uso.md\`.
 
 ## Chat intents (= \`/sdd\` elsewhere)
 

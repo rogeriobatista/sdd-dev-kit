@@ -1,4 +1,4 @@
-export const CLI_VERSION = "0.1.5";
+export const CLI_VERSION = "0.1.6";
 
 export function printRootHelp(): void {
   console.log(`sdd — SDD Protocol Kit CLI (v${CLI_VERSION})
@@ -17,6 +17,8 @@ Uso / Usage:
   sdd debug <id> [--cwd <dir>]
   sdd qa <id> [--cwd <dir>]
   sdd fix <id> [--cwd <dir>]
+
+Guia técnico (PT): docs/guia-de-uso.md
 
 Comandos:
   init          Scaffold host adapters + sdd.yaml + premises + stack

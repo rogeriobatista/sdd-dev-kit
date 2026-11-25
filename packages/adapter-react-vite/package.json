@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/adapter-react-vite",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "SDD React + Vite adapter with Playwright e2e",
   "type": "module",
   "main": "./dist/index.js",
@@ -23,7 +23,7 @@
     "pretest": "npm run build"
   },
   "dependencies": {
-    "@rogeriobatista/core": "0.1.5"
+    "@rogeriobatista/core": "0.1.6"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

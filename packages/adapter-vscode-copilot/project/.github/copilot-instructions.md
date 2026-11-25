@@ -2,6 +2,8 @@
 
 This repository uses Spec-Driven Development. Humans edit **only** `specs/*.md` (+ `.sdd/premises.md` when changing project rules). Copilot runs the SDD pipeline; do not ask the human to hand-edit generated Spec/unit/integration/e2e tests, Dev Spec, Implementation Plan, Design Approach, or canonical.
 
+User guide (PT, passo a passo + exemplos): `docs/guia-de-uso.md`.
+
 ## Chat intents (= `/sdd` elsewhere)
 
 | Say in Copilot Chat | Meaning |
@@ -537,6 +539,7 @@ Templates PT (cliente/QA): `packages/adapter-shared/templates/.sdd/bugs/_templat
 
 ## Template locations in this kit
 
+- **User guide (PT):** `docs/guia-de-uso.md` — passo a passo, exemplos de specs e outputs; fixtures em `docs/exemplos/`
 - Shared source: `packages/adapter-shared/content/` (pipeline, research, from-ticket, docs, bugfix, human boundary, hard rules, best-practices catalog)
 - Best-practices catalog: `packages/adapter-shared/content/best-practices-catalog.md` (+ `.json`)
 - Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`, `docs/sdd/`, `.sdd/bugs/_templates/`)
