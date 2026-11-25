@@ -15,7 +15,7 @@ Follow the Init section of the SDD protocol (shared pipeline instructions). Crea
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
 2. Ensure folders appropriate to the stack:
-   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs, evidence, demo, stack.json), `src/` (or module root for Terraform)
+   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, research, runs, evidence, demo, stack.json), `src/` (or module root for Terraform)
    - TS / node-graphql: `tests/features`, `tests/steps`, and e2e when UI applies
    - python: `tests/`
    - react-vite: `tests/e2e` (+ optional `tests/unit`)

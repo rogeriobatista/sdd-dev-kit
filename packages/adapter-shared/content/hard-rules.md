@@ -11,3 +11,4 @@
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
 - Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses.
+- **Research / best practices:** before `plan`/`implement`, open the curated catalog (`best-practices-catalog`) for the detected stack **plus security**. Cite sources in plan tasks; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.

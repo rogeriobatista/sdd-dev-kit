@@ -2,8 +2,8 @@
 name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user asks for SDD init,
-  from-ticket, run, verify, demo, or status — including natural-language intents like
-  "SDD: run" or "import ticket ENG-42 into specs".
+  from-ticket, run, research, verify, demo, or status — including natural-language
+  intents like "SDD: run" or "import ticket ENG-42 into specs".
 ---
 
 # SDD — Spec-Driven Development (Claude)
@@ -17,11 +17,13 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | Init | `SDD: init` or "scaffold this project for SDD" |
 | From ticket | `SDD: from-ticket ENG-42` / `linear:ENG-42` / `jira:SHOP-7` (optional `--run`) |
 | Run pipeline | `SDD: run` |
+| Research (best practices) | `SDD: research` (also inside `SDD: run` before plan) |
 | Verify only | `SDD: verify` |
 | Demo (PO/BO/QA) | `SDD: demo` (optional run id) |
 | Status | `SDD: status` |
 
 You may also treat `/sdd <subcommand>` the same way when the user types it.
+On `run` / `plan` / `implement` / `research`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
 
 ## Human vs agent ownership
 
@@ -35,6 +37,7 @@ You may also treat `/sdd <subcommand>` the same way when the user types it.
 - Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
+- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) keyed like evidence
 - `.sdd/runs/**` — run reports (internal; linked from evidence meta)
 - `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
 - `.sdd/evidence-id.json` — stable local evidence id when no ticket
@@ -79,7 +82,7 @@ Use `@rogeriobatista/core` `detectStack(projectRoot)` → `{ stack, source, conf
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
 2. Ensure folders appropriate to the stack:
-   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, runs, evidence, demo, stack.json), `src/` (or module root for Terraform)
+   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, research, runs, evidence, demo, stack.json), `src/` (or module root for Terraform)
    - TS / node-graphql: `tests/features`, `tests/steps`, and e2e when UI applies
    - python: `tests/`
    - react-vite: `tests/e2e` (+ optional `tests/unit`)
@@ -154,28 +157,40 @@ Materialize from canonical using the stack adapter (regenerate freely; never ask
 | `node-graphql` | `@api` → Cucumber + Vitest GraphQL stubs |
 | `terraform` | `tests/*.tftest.hcl` with GWT comments / assert stubs |
 
-### 3. plan
+### 3. research
+
+Consult market / standards best practices for the detected stack **plus security** before planning.
+
+- Open `packages/adapter-shared/content/best-practices-catalog.md` (and/or `.json`) for the stack domains; prefer MCP WebSearch / fetch of catalog URLs when available.
+- Write `.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md` + `sources.json` (urls, what was applied, premises conflicts).
+- **Must cite sources** in subsequent plan tasks; do not invent “best practice” without a catalog source or premises override.
+- Premises win on conflict — note the conflict in `BEST_PRACTICES.md`.
+- Full procedure: **Research (best practices)** section. Optional standalone: `research` / `/sdd research` / `SDD: research`.
+
+### 4. plan
 
 - Write `.sdd/plan/` with small, ordered, testable tasks under premises constraints.
+- Each task that applies a market practice **must cite** a research/`sources.json` id or URL (or an explicit premises override).
 
-### 4. implement
+### 5. implement
 
 - Implement production code (and complete step stubs only when needed) so red tests can go green.
 - Follow TDD: keep tests as the source of truth; do not weaken assertions to pass.
+- Follow `.sdd/research/.../BEST_PRACTICES.md` (and re-open catalog/security sources as needed). Premises still win on conflict.
 
-### 5. verify
+### 6. verify
 
 - Run commands from `sdd.yaml` `runners` — **keys differ by adapter** (`cucumber`/`playwright`, `pytest`, `vitest`, `fmt`/`validate`/`terraform`, or `all`).
 - Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
 - Persist structured results under `.sdd/runs/<id>/`.
 
-### 6. diagnose (on failure)
+### 7. diagnose (on failure)
 
 - Fix implementation against failing tests only.
 - If the **spec** is wrong, stop and ask the human to edit `specs/` — do not silently change specs.
 - Loop back to implement until green or iteration cap.
 
-### 7. report
+### 8. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
 - Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
@@ -190,7 +205,73 @@ Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogerio
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket/evidence/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, resolved `evidenceKey`, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/evidence/` exist.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket/evidence/demo/research presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, resolved `evidenceKey`, whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/evidence/` / `.sdd/research/` exist, and research catalog citations when present.
+
+## Research (best practices)
+
+Consult **market / standards best practices** for the detected stack before writing the plan and before implementing. Do **not** invent “best practice” claims without a catalog/source citation or an explicit `.sdd/premises.md` override.
+
+### When to run
+
+| Trigger | Behavior |
+|---------|----------|
+| `/sdd run` / `SDD: run` | **Required** phase after `executable`, before `plan` (also re-check relevant sources during `implement`) |
+| `/sdd research` / `SDD: research` | **Optional standalone** — refresh research pack without running the full pipeline |
+| `plan` / `implement` | Must open research output (or run research first if missing) |
+
+### Steps
+
+1. **Confirm stack** via stack detection (premises → specs → stack.json / sdd.yaml). If missing/ambiguous, STOP — do not research against an invented stack.
+2. **Resolve evidence key** with `@rogeriobatista/core` `resolveEvidenceKey(projectRoot)` (ticket / `evidence.key` / stable local id). Encode path segments the same way as evidence packs (`:` → `_`).
+3. **Open the catalog** for this kit:
+   - `packages/adapter-shared/content/best-practices-catalog.md` (and/or `.json`)
+   - In an installed project, prefer the copy shipped with the host adapter / skill path, or the workspace kit path when developing the kit itself.
+4. **Select domains:** stack-mapped section(s) **plus Security (always)**.
+5. **Consult sources:** Prefer MCP **WebSearch** / fetch of the official catalog URLs when available. Otherwise use the curated catalog URLs and short guidance as-is. Do **not** scrape paywalled or copyrighted full documents into the repo.
+6. **Write agent-owned outputs** under `.sdd/research/<encodedEvidenceKey>/`:
+   - `BEST_PRACTICES.md` — stakeholder-friendly summary (Portuguese OK) of practices **applied** to this work, conflicts with premises, and source citations
+   - `sources.json` — machine list of `{ id, url, title, domain, applied: true|false, note? }` plus `catalogVersion`, `stack`, `evidenceKey`, `researchedAt`
+7. **Cite in plan:** every plan task that relies on a practice must reference a source `id` or URL from `sources.json` / the catalog. Premises overrides must be noted as such.
+8. **Conflicts:** if a catalog practice conflicts with `.sdd/premises.md`, **premises win**. Record the conflict in `BEST_PRACTICES.md` (do not silently ignore premises).
+
+### Output layout
+
+```
+.sdd/research/<encodedEvidenceKey>/
+  BEST_PRACTICES.md
+  sources.json
+```
+
+Example key `linear:ENG-42` → `.sdd/research/linear_ENG-42/`.
+
+### `sources.json` shape (minimum)
+
+```json
+{
+  "catalogVersion": 1,
+  "stack": "react-vite",
+  "evidenceKey": "linear:ENG-42",
+  "researchedAt": "2026-11-25T22:00:00.000Z",
+  "sources": [
+    {
+      "id": "fe-playwright",
+      "url": "https://playwright.dev/docs/best-practices",
+      "title": "Playwright best practices",
+      "domain": "frontend",
+      "applied": true,
+      "note": "Role/label locators for checkout CTA"
+    }
+  ],
+  "premisesConflicts": []
+}
+```
+
+### Hard rules for research
+
+- Links + short applied guidance only — **no** pasting substantial copyrighted doc text into the repo.
+- No secrets in research output.
+- Quality over quantity: stick to the curated catalog; add an extra official URL only when the catalog lacks a needed topic, and still record it in `sources.json`.
+- Inventing uncited practices is forbidden.
 
 ## Demo (stakeholder pack from test evidence)
 
@@ -277,10 +358,12 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
 - Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses.
+- **Research / best practices:** before `plan`/`implement`, open the curated catalog (`best-practices-catalog`) for the detected stack **plus security**. Cite sources in plan tasks; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.
 
 ## Template locations in this kit
 
-- Shared source: `packages/adapter-shared/content/` (pipeline, from-ticket, human boundary, hard rules)
+- Shared source: `packages/adapter-shared/content/` (pipeline, research, from-ticket, human boundary, hard rules, best-practices catalog)
+- Best-practices catalog: `packages/adapter-shared/content/best-practices-catalog.md` (+ `.json`)
 - Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`)
 - Stack adapters: `adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, `adapter-terraform`
 - Examples: `coupon-checkout/`, `python-pytest-hello/`, `react-vite-playwright/`, `node-graphql-api/`, `terraform-module/`

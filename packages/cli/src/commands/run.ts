@@ -29,8 +29,9 @@ export async function runPipelineCommand(options: RunOptions = {}): Promise<{
     "  - sdd demo                   (PO/BO/QA evidence pack)",
     "  - sdd status                 (this report)",
     "",
-    "For normalize → executable → plan → implement → diagnose, invoke the",
+    "For normalize → executable → research → plan → implement → diagnose, invoke the",
     "host adapter in Cursor/Claude/Copilot (`/sdd run` or `SDD: run`).",
+    "Optional standalone research: `/sdd research` / `SDD: research`.",
   ].join("\n");
 
   const exitCode = status.stack.needsClarification ? 2 : 0;

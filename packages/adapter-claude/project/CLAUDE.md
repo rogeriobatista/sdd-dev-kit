@@ -6,7 +6,8 @@ This project uses Spec-Driven Development. You edit **only** `specs/*.md` (+ `.s
 
 - **SDD: init** — scaffold folders, `sdd.yaml`, premises, example spec, host instructions
 - **SDD: from-ticket `<id>`** — Linear/Jira → draft `specs/*.md` (MCP when available; else core REST + env vars)
-- **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
+- **SDD: run** — full pipeline: normalize → executable → research → plan → implement → verify (diagnose loop)
+- **SDD: research** — best-practices research pack (catalog + sources) before plan; optional standalone
 - **SDD: verify** — stack runners from `sdd.yaml` only
 - **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → `.sdd/evidence/<key>/latest/demo/`
 - **SDD: status** — last run / phase summary
@@ -33,6 +34,7 @@ Full procedures live in `.claude/skills/sdd/SKILL.md` (invoke the `sdd` skill wh
 - Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
+- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) keyed like evidence
 - `.sdd/runs/**` — run reports (internal; linked from evidence meta)
 - `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
 - `.sdd/evidence-id.json` — stable local evidence id when no ticket

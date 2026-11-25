@@ -23,28 +23,40 @@ Materialize from canonical using the stack adapter (regenerate freely; never ask
 | `node-graphql` | `@api` → Cucumber + Vitest GraphQL stubs |
 | `terraform` | `tests/*.tftest.hcl` with GWT comments / assert stubs |
 
-### 3. plan
+### 3. research
+
+Consult market / standards best practices for the detected stack **plus security** before planning.
+
+- Open `packages/adapter-shared/content/best-practices-catalog.md` (and/or `.json`) for the stack domains; prefer MCP WebSearch / fetch of catalog URLs when available.
+- Write `.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md` + `sources.json` (urls, what was applied, premises conflicts).
+- **Must cite sources** in subsequent plan tasks; do not invent “best practice” without a catalog source or premises override.
+- Premises win on conflict — note the conflict in `BEST_PRACTICES.md`.
+- Full procedure: **Research (best practices)** section. Optional standalone: `research` / `/sdd research` / `SDD: research`.
+
+### 4. plan
 
 - Write `.sdd/plan/` with small, ordered, testable tasks under premises constraints.
+- Each task that applies a market practice **must cite** a research/`sources.json` id or URL (or an explicit premises override).
 
-### 4. implement
+### 5. implement
 
 - Implement production code (and complete step stubs only when needed) so red tests can go green.
 - Follow TDD: keep tests as the source of truth; do not weaken assertions to pass.
+- Follow `.sdd/research/.../BEST_PRACTICES.md` (and re-open catalog/security sources as needed). Premises still win on conflict.
 
-### 5. verify
+### 6. verify
 
 - Run commands from `sdd.yaml` `runners` — **keys differ by adapter** (`cucumber`/`playwright`, `pytest`, `vitest`, `fmt`/`validate`/`terraform`, or `all`).
 - Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
 - Persist structured results under `.sdd/runs/<id>/`.
 
-### 6. diagnose (on failure)
+### 7. diagnose (on failure)
 
 - Fix implementation against failing tests only.
 - If the **spec** is wrong, stop and ask the human to edit `specs/` — do not silently change specs.
 - Loop back to implement until green or iteration cap.
 
-### 7. report
+### 8. report
 
 - Summarize pass/fail, remaining failures, and paths to reports.
 - Optionally remind the human they can run **demo** to build a stakeholder pack from this verify evidence.
@@ -59,4 +71,4 @@ Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogerio
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket/evidence/demo presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, resolved `evidenceKey`, and whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/evidence/` exist.
+Read the latest `.sdd/runs/*` (and plan/canonical/ticket/evidence/demo/research presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, resolved `evidenceKey`, whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/evidence/` / `.sdd/research/` exist, and research catalog citations when present.

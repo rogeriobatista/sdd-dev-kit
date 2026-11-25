@@ -22,6 +22,7 @@ alwaysApply: true
 - Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
 - `.sdd/canonical/**` — normalized scenarios
 - `.sdd/plan/**` — SDD task plan
+- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) keyed like evidence
 - `.sdd/runs/**` — run reports (internal; linked from evidence meta)
 - `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
 - `.sdd/evidence-id.json` — stable local evidence id when no ticket

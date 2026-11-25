@@ -6,7 +6,7 @@ Single source of SDD **pipeline instructions** and **project scaffold templates*
 
 | Path | Role |
 |------|------|
-| `content/` | Portable protocol: human boundary, init, from-ticket, pipeline phases, demo, hard rules |
+| `content/` | Portable protocol: human boundary, init, from-ticket, pipeline phases, research, demo, hard rules, best-practices catalog |
 | `templates/` | `sdd.yaml` (stack adapter ids documented), `specs/_example.md`, `.sdd/premises.md` |
 | `scripts/render.mjs` | Renders host packs into `adapter-cursor`, `adapter-claude`, `adapter-vscode-copilot` |
 

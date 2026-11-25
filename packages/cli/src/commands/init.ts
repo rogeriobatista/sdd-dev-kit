@@ -97,7 +97,7 @@ function stackPremisesSnippet(stack: StackAdapterId): string {
     "",
     "## Fronteiras",
     "- Humano edita só `specs/` e este arquivo quando necessário",
-    "- Artefatos gerados em `tests/`, `.sdd/canonical`, `.sdd/plan` são regeneráveis",
+    "- Artefatos gerados em `tests/`, `.sdd/canonical`, `.sdd/plan`, `.sdd/research` são regeneráveis",
     "",
   ].join("\n");
 }
@@ -115,6 +115,10 @@ async function installHost(
       [
         path.join(root, "skills", "sdd"),
         path.join(projectRoot, ".cursor", "skills", "sdd"),
+      ],
+      [
+        path.join(root, "skills", "sdd-research"),
+        path.join(projectRoot, ".cursor", "skills", "sdd-research"),
       ],
       [
         path.join(root, "rules", "sdd-human-edits.mdc"),

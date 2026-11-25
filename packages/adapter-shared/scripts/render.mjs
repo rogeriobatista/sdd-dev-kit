@@ -19,6 +19,7 @@ const CONTENT_FILES = [
   "init.md",
   "from-ticket.md",
   "pipeline.md",
+  "research.md",
   "demo.md",
   "hard-rules.md",
 ];
@@ -63,7 +64,8 @@ const sharedBody = readContent();
 
 const templateLocations = `## Template locations in this kit
 
-- Shared source: \`packages/adapter-shared/content/\` (pipeline, from-ticket, human boundary, hard rules)
+- Shared source: \`packages/adapter-shared/content/\` (pipeline, research, from-ticket, human boundary, hard rules, best-practices catalog)
+- Best-practices catalog: \`packages/adapter-shared/content/best-practices-catalog.md\` (+ \`.json\`)
 - Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`)
 - Stack adapters: \`adapter-ts\`, \`adapter-python\`, \`adapter-react-vite\`, \`adapter-node-graphql\`, \`adapter-terraform\`
 - Examples: \`coupon-checkout/\`, \`python-pytest-hello/\`, \`react-vite-playwright/\`, \`node-graphql-api/\`, \`terraform-module/\`
@@ -76,8 +78,9 @@ name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user invokes /sdd, asks to
   init SDD, run the SDD pipeline from natural-language specs, import a Linear or
-  Jira ticket into specs, verify Cucumber/ Playwright, or check SDD status.
-  Subcommands: init | from-ticket | run | verify | demo | status.
+  Jira ticket into specs, research best practices, verify Cucumber/ Playwright,
+  or check SDD status.
+  Subcommands: init | from-ticket | run | research | verify | demo | status.
 ---
 
 # /sdd — Spec-Driven Development
@@ -93,11 +96,13 @@ Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` fr
 | Init | \`/sdd init\` |
 | From ticket | \`/sdd from-ticket <id>\` (\`linear:\` / \`jira:\` prefix; optional \`--run\`) |
 | Run pipeline | \`/sdd run\` |
+| Research (best practices) | \`/sdd research\` (also runs inside \`/sdd run\` before plan) |
 | Verify only | \`/sdd verify\` |
 | Demo (PO/BO/QA) | \`/sdd demo\` (optional run id) |
 | Status | \`/sdd status\` |
 
 When the user says these commands, follow the shared protocol below (same phases as Claude and Copilot adapters).
+On \`run\` / \`plan\` / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
 
 ${sharedBody}
 
@@ -107,6 +112,38 @@ ${templateLocations}
 writeFile(
   path.join(packagesRoot, "adapter-cursor", "skills", "sdd", "SKILL.md"),
   cursorSkill,
+);
+
+const cursorResearchSkill = `---
+name: sdd-research
+description: >-
+  SDD best-practices research. Use when the user invokes /sdd research, SDD: research,
+  or when plan/implement needs market standards for frontend, backend, infra, or security.
+---
+
+# /sdd research — Best practices
+
+Thin Cursor skill: follow the **Research (best practices)** procedure from the main \`sdd\` skill / shared content.
+
+## Catalog (open first)
+
+- \`packages/adapter-shared/content/best-practices-catalog.md\`
+- \`packages/adapter-shared/content/best-practices-catalog.json\` (\`catalogVersion\`)
+
+Select domains for the **detected stack** + **security (always)**. Prefer MCP WebSearch / fetch of catalog URLs; otherwise use the curated links.
+
+## Output (agent-owned)
+
+\`.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md\` + \`sources.json\`
+
+Cite every applied practice in subsequent plan tasks. Premises win on conflict — note it. No scraping of full copyrighted docs; no secrets.
+
+Full steps: shared \`research.md\` (rendered into the \`sdd\` skill).
+`;
+
+writeFile(
+  path.join(packagesRoot, "adapter-cursor", "skills", "sdd-research", "SKILL.md"),
+  cursorResearchSkill,
 );
 
 const cursorRule = `---
@@ -142,6 +179,10 @@ writeFile(
   cursorSkill,
 );
 writeFile(
+  path.join(packagesRoot, "..", ".cursor", "skills", "sdd-research", "SKILL.md"),
+  cursorResearchSkill,
+);
+writeFile(
   path.join(packagesRoot, "..", ".cursor", "rules", "sdd-human-edits.mdc"),
   cursorRule,
 );
@@ -151,8 +192,8 @@ const claudeSkill = `---
 name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user asks for SDD init,
-  from-ticket, run, verify, demo, or status — including natural-language intents like
-  "SDD: run" or "import ticket ENG-42 into specs".
+  from-ticket, run, research, verify, demo, or status — including natural-language
+  intents like "SDD: run" or "import ticket ENG-42 into specs".
 ---
 
 # SDD — Spec-Driven Development (Claude)
@@ -166,11 +207,13 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | Init | \`SDD: init\` or "scaffold this project for SDD" |
 | From ticket | \`SDD: from-ticket ENG-42\` / \`linear:ENG-42\` / \`jira:SHOP-7\` (optional \`--run\`) |
 | Run pipeline | \`SDD: run\` |
+| Research (best practices) | \`SDD: research\` (also inside \`SDD: run\` before plan) |
 | Verify only | \`SDD: verify\` |
 | Demo (PO/BO/QA) | \`SDD: demo\` (optional run id) |
 | Status | \`SDD: status\` |
 
 You may also treat \`/sdd <subcommand>\` the same way when the user types it.
+On \`run\` / \`plan\` / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
 
 ${sharedBody}
 
@@ -190,7 +233,8 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 
 - **SDD: init** — scaffold folders, \`sdd.yaml\`, premises, example spec, host instructions
 - **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\` (MCP when available; else core REST + env vars)
-- **SDD: run** — full pipeline: normalize → executable → plan → implement → verify (diagnose loop)
+- **SDD: run** — full pipeline: normalize → executable → research → plan → implement → verify (diagnose loop)
+- **SDD: research** — best-practices research pack (catalog + sources) before plan; optional standalone
 - **SDD: verify** — stack runners from \`sdd.yaml\` only
 - **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/evidence/<key>/latest/demo/\`
 - **SDD: status** — last run / phase summary
@@ -224,12 +268,14 @@ This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\
 |---------------------|---------|
 | \`SDD: init\` | Scaffold project + install Copilot instruction/prompt files |
 | \`SDD: from-ticket <id>\` | Bootstrap specs from Linear/Jira |
-| \`SDD: run\` | Full pipeline |
+| \`SDD: run\` | Full pipeline (includes research before plan) |
+| \`SDD: research\` | Best-practices research pack (catalog + sources) |
 | \`SDD: verify\` | Run test runners only |
 | \`SDD: demo\` | Stakeholder demo pack from test evidence (PO/BO/QA) |
 | \`SDD: status\` | Summarize \`.sdd/runs\` |
 
-Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-verify\`, \`/sdd-demo\`, \`/sdd-status\`.
+Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-research\`, \`/sdd-verify\`, \`/sdd-demo\`, \`/sdd-status\`.
+On \`run\` / \`plan\` / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
 
 ${sharedBody}
 
@@ -285,9 +331,22 @@ Also respect human-boundary and hard-rules: do not invent acceptance criteria; e
 
 ${fs.readFileSync(path.join(contentDir, "pipeline.md"), "utf8").trim()}
 
+${fs.readFileSync(path.join(contentDir, "research.md"), "utf8").trim()}
+
 ${fs.readFileSync(path.join(contentDir, "human-boundary.md"), "utf8").trim()}
 
 ${fs.readFileSync(path.join(contentDir, "hard-rules.md"), "utf8").trim()}
+`,
+  },
+  {
+    file: "sdd-research.prompt.md",
+    name: "sdd-research",
+    description: "Research market best practices for the detected stack (SDD: research)",
+    body: `Run **SDD: research** — consult the curated best-practices catalog for the detected stack **plus security**, then write \`.sdd/research/<key>/BEST_PRACTICES.md\` + \`sources.json\`.
+
+${fs.readFileSync(path.join(contentDir, "research.md"), "utf8").trim()}
+
+Open \`packages/adapter-shared/content/best-practices-catalog.md\` (and \`.json\`). Prefer MCP WebSearch / fetch of official catalog URLs. Cite sources; premises win on conflict. No scraping of full copyrighted docs; no secrets.
 `,
   },
   {

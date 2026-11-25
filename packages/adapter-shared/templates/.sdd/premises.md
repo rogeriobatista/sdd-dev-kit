@@ -17,7 +17,7 @@
 
 ## Fronteiras
 - Humano edita só `specs/` e este arquivo quando necessário
-- Artefatos em `tests/`, `.sdd/canonical`, `.sdd/plan` são regeneráveis
+- Artefatos em `tests/`, `.sdd/canonical`, `.sdd/plan`, `.sdd/research` são regeneráveis
 
 ## Estilo
 - Preferir cenários curtos e testáveis

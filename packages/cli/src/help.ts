@@ -15,10 +15,13 @@ Uso / Usage:
 Comandos:
   init          Scaffold host adapters + sdd.yaml + premises + stack
   from-ticket   Bootstrap specs/ from Linear or Jira (env vars)
-  run           Status + pipeline guidance (LLM stays host-driven)
+  run           Status + pipeline guidance (LLM stays host-driven; includes research)
   verify        Run sdd.yaml runners (via @rogeriobatista/core)
   demo          Build PO/BO/QA evidence pack
   status        Report stack, runs, ticket, evidence
+
+Research (best practices) is host-driven: /sdd research · SDD: research
+  (catalog: packages/adapter-shared/content/best-practices-catalog.md)
 
 Stacks: typescript | python | react-vite | node-graphql | terraform
 Hosts:  cursor | claude | copilot | all
@@ -61,7 +64,8 @@ export function printCommandHelp(command: string): void {
       console.log(`sdd run — orchestration / status (LLM phases are host-driven)
 
   Prints stack detection + status and reminds you to use Cursor/Claude/Copilot
-  for normalize → implement. Use sdd verify / sdd demo for local test evidence.
+  for normalize → executable → research → plan → implement. Use sdd verify /
+  sdd demo for local test evidence. Standalone research: /sdd research (host).
 `);
       break;
     case "verify":

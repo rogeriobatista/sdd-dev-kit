@@ -4,6 +4,8 @@ export const DEFAULT_PATHS = {
   premises: ".sdd/premises.md",
   canonical: ".sdd/canonical",
   plan: ".sdd/plan",
+  /** Best-practices research packs keyed like evidence: `.sdd/research/<key>/`. */
+  research: ".sdd/research",
   runs: ".sdd/runs",
   /**
    * Legacy per-run demo packs (`.sdd/demo/<runId>/`).

@@ -13,6 +13,7 @@ const REQUIRED_MARKERS = [
   // pipeline phases
   "normalize",
   "executable",
+  "research",
   "plan",
   "implement",
   "verify",
@@ -53,9 +54,10 @@ function assertMarkers(label: string, text: string, markers: string[] = REQUIRED
 }
 
 describe("adapter-shared content", () => {
-  it("ships pipeline, from-ticket, human-boundary, hard-rules, init, stack-detection, demo", () => {
+  it("ships pipeline, research, from-ticket, human-boundary, hard-rules, init, stack-detection, demo", () => {
     for (const name of [
       "pipeline.md",
+      "research.md",
       "from-ticket.md",
       "human-boundary.md",
       "hard-rules.md",
@@ -66,6 +68,48 @@ describe("adapter-shared content", () => {
       const body = readShared(name);
       assert.ok(body.trim().length > 0, `${name} should be non-empty`);
     }
+  });
+
+  it("best-practices catalog exists with required domain sections and version", () => {
+    const md = readShared("best-practices-catalog.md");
+    assertMarkers("best-practices-catalog.md", md, [
+      "catalogVersion",
+      "Frontend",
+      "Backend",
+      "Infra",
+      "Security",
+      "react.dev",
+      "playwright.dev",
+      "graphql.org",
+      "pytest",
+      "12factor",
+      "hashicorp.com/terraform",
+      "owasp.org",
+    ]);
+    const jsonPath = path.join(contentDir, "best-practices-catalog.json");
+    assert.ok(fs.existsSync(jsonPath), "best-practices-catalog.json must exist");
+    const catalog = JSON.parse(fs.readFileSync(jsonPath, "utf8")) as {
+      catalogVersion: number;
+      domains: Record<string, unknown>;
+      stackDomains: Record<string, string[]>;
+    };
+    assert.equal(catalog.catalogVersion, 1);
+    for (const domain of ["frontend", "backend", "infra", "security"]) {
+      assert.ok(catalog.domains[domain], `json domains.${domain} required`);
+    }
+    assert.ok(catalog.stackDomains["react-vite"]?.includes("security"));
+    assert.ok(catalog.stackDomains.terraform?.includes("infra"));
+  });
+
+  it("research content covers catalog, outputs, and premises override", () => {
+    assertMarkers("research", readShared("research.md"), [
+      "best-practices-catalog",
+      "BEST_PRACTICES.md",
+      "sources.json",
+      "premises",
+      "Security",
+      "WebSearch",
+    ]);
   });
 
   it("demo content covers buildDemo, evidence key, and stakeholder audience", () => {
@@ -96,6 +140,7 @@ describe("adapter-shared content", () => {
     assertMarkers("content/pipeline.md", readShared("pipeline.md"), [
       "normalize",
       "executable",
+      "research",
       "plan",
       "implement",
       "verify",
@@ -134,6 +179,10 @@ describe("adapter-shared content", () => {
 describe("rendered host adapters include required sections", () => {
   const targets: { label: string; rel: string }[] = [
     { label: "cursor skill", rel: "adapter-cursor/skills/sdd/SKILL.md" },
+    {
+      label: "cursor research skill",
+      rel: "adapter-cursor/skills/sdd-research/SKILL.md",
+    },
     { label: "cursor rule", rel: "adapter-cursor/rules/sdd-human-edits.mdc" },
     {
       label: "claude skill",
@@ -147,6 +196,10 @@ describe("rendered host adapters include required sections", () => {
     {
       label: "copilot sdd-run prompt",
       rel: "adapter-vscode-copilot/project/.github/prompts/sdd-run.prompt.md",
+    },
+    {
+      label: "copilot sdd-research prompt",
+      rel: "adapter-vscode-copilot/project/.github/prompts/sdd-research.prompt.md",
     },
     {
       label: "copilot sdd-from-ticket prompt",
@@ -167,6 +220,7 @@ describe("rendered host adapters include required sections", () => {
           "specs/",
           "from-ticket",
           "SDD: run",
+          "research",
           "normalize",
         ]);
         // CLAUDE.md is a short pointer; phases live in the skill
@@ -174,6 +228,15 @@ describe("rendered host adapters include required sections", () => {
       }
       if (t.rel.includes("sdd-from-ticket.prompt.md")) {
         assertMarkers(t.label, text, ["from-ticket", "Linear", "Jira", "specs/"]);
+        return;
+      }
+      if (t.rel.includes("sdd-research")) {
+        assertMarkers(t.label, text, [
+          "research",
+          "best-practices-catalog",
+          "BEST_PRACTICES.md",
+          "sources.json",
+        ]);
         return;
       }
       assertMarkers(t.label, text);
@@ -211,6 +274,7 @@ describe("rendered host adapters include required sections", () => {
       "sdd-init.prompt.md",
       "sdd-from-ticket.prompt.md",
       "sdd-run.prompt.md",
+      "sdd-research.prompt.md",
       "sdd-verify.prompt.md",
       "sdd-demo.prompt.md",
       "sdd-status.prompt.md",

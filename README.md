@@ -6,7 +6,7 @@
 
 **Supported stacks:** TypeScript (Cucumber + Playwright) | Python (pytest) | React + Vite (Playwright) | Node GraphQL | Terraform
 
-You write natural-language specs (`prosa` + `Dado`/`Quando`/`Então`). The agent normalizes, generates executable tests, plans, implements, and verifies until green.
+You write natural-language specs (`prosa` + `Dado`/`Quando`/`Então`). The agent normalizes, generates executable tests, researches market best practices, plans, implements, and verifies until green.
 
 ## Distribution (Mac / PC / Cloud Agents)
 
@@ -123,9 +123,27 @@ npm run smoke -w react-vite-playwright            # Playwright + Vite (after set
 | Init | `/sdd init` | `SDD: init` | `SDD: init` / `/sdd-init` |
 | From ticket | `/sdd from-ticket <id>` | `SDD: from-ticket <id>` | `SDD: from-ticket <id>` / `/sdd-from-ticket` |
 | Run | `/sdd run` | `SDD: run` | `SDD: run` / `/sdd-run` |
+| Research | `/sdd research` | `SDD: research` | `SDD: research` / `/sdd-research` |
 | Verify | `/sdd verify` | `SDD: verify` | `SDD: verify` / `/sdd-verify` |
 | Demo (PO/BO/QA) | `/sdd demo` | `SDD: demo` | `SDD: demo` / `/sdd-demo` |
 | Status | `/sdd status` | `SDD: status` | `SDD: status` / `/sdd-status` |
+
+## Best-practices research (plan / implement)
+
+Before **plan** and **implement**, the agent consults a curated catalog of official / standards references (frontend, backend, infra, security) and writes an agent-owned pack:
+
+```text
+.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md
+.sdd/research/<encodedEvidenceKey>/sources.json
+```
+
+| Piece | Location |
+|-------|----------|
+| Catalog | `packages/adapter-shared/content/best-practices-catalog.md` (+ `.json`, `catalogVersion`) |
+| Pipeline phase | `research` (after `executable`, before `plan`) |
+| Standalone | `/sdd research` · `SDD: research` · Cursor skill `sdd-research` |
+
+Rules: cite sources in plan tasks; premises win on conflict (note it); links + short guidance only — no scraping full copyrighted docs; security always included. Design: [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md).
 
 ## Demo from test evidence (PO / BO / QA)
 
@@ -177,7 +195,7 @@ Ambiguous ids like `ENG-42` need `ticketing.defaultProvider: linear|jira` or a `
 
 Offline fixtures (no live API): `packages/core/src/ticketing/fixtures/` — fictional coupon-checkout ticket used by unit tests.
 
-Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md)
+Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md)
 
 ## Repository layout
 
@@ -214,6 +232,7 @@ npm run sync:adapters
 |------|----------|
 | Human edits | `specs/` (+ `.sdd/premises.md`) |
 | Ticket bootstrap | `from-ticket` → draft specs (Linear **and** Jira) |
+| Research | `research` → `.sdd/research/<key>/` from curated best-practices catalog |
 | Demo pack | `demo` → `.sdd/demo/<runId>/` for PO/BO/QA from verify evidence |
 | Trigger | Explicit run (`triggers.watch` default `false`) |
 | Tags | `@api` → API track; `@ui`/`@e2e` → Playwright when supported |

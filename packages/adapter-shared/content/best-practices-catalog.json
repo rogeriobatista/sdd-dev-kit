@@ -1,0 +1,136 @@
+{
+  "catalogVersion": 1,
+  "description": "Curated official/standards references for SDD research. Links + short guidance only; do not scrape full docs.",
+  "stackDomains": {
+    "react-vite": ["frontend", "security"],
+    "typescript": ["backend", "frontend", "security"],
+    "ts": ["backend", "frontend", "security"],
+    "node-graphql": ["backend", "security"],
+    "python": ["backend", "security"],
+    "terraform": ["infra", "security"]
+  },
+  "domains": {
+    "frontend": {
+      "stacks": ["react-vite", "typescript"],
+      "entries": [
+        {
+          "id": "fe-react-docs",
+          "title": "React docs",
+          "url": "https://react.dev/learn",
+          "applyWhen": "Component structure, state, effects"
+        },
+        {
+          "id": "fe-vite",
+          "title": "Vite guide",
+          "url": "https://vite.dev/guide/",
+          "applyWhen": "Build, env, asset handling"
+        },
+        {
+          "id": "fe-playwright",
+          "title": "Playwright best practices",
+          "url": "https://playwright.dev/docs/best-practices",
+          "applyWhen": "Locators, isolation, web-first assertions"
+        },
+        {
+          "id": "fe-a11y",
+          "title": "WAI-ARIA Authoring Practices",
+          "url": "https://www.w3.org/WAI/ARIA/apg/",
+          "applyWhen": "Keyboard, roles, labels"
+        },
+        {
+          "id": "fe-webdev",
+          "title": "web.dev",
+          "url": "https://web.dev/",
+          "applyWhen": "Core UX quality baselines"
+        }
+      ]
+    },
+    "backend": {
+      "stacks": ["typescript", "node-graphql", "python"],
+      "entries": [
+        {
+          "id": "be-ts-handbook",
+          "title": "TypeScript Handbook",
+          "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+          "applyWhen": "Types, modules, strictness"
+        },
+        {
+          "id": "be-node",
+          "title": "Node.js introduction / docs",
+          "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+          "applyWhen": "Runtime, modules, errors"
+        },
+        {
+          "id": "be-graphql",
+          "title": "GraphQL best practices",
+          "url": "https://graphql.org/learn/best-practices/",
+          "applyWhen": "Schema design, nullability, pagination"
+        },
+        {
+          "id": "be-pytest",
+          "title": "pytest good practices",
+          "url": "https://docs.pytest.org/en/stable/explanation/goodpractices.html",
+          "applyWhen": "Fixtures, layout, parametrize"
+        },
+        {
+          "id": "be-12factor",
+          "title": "The Twelve-Factor App",
+          "url": "https://12factor.net/",
+          "applyWhen": "Config, processes, backing services, logs"
+        }
+      ]
+    },
+    "infra": {
+      "stacks": ["terraform"],
+      "entries": [
+        {
+          "id": "infra-tf-style",
+          "title": "Terraform style / language",
+          "url": "https://developer.hashicorp.com/terraform/language/style",
+          "applyWhen": "Naming, structure, readability"
+        },
+        {
+          "id": "infra-tf-test",
+          "title": "Terraform test",
+          "url": "https://developer.hashicorp.com/terraform/language/tests",
+          "applyWhen": "*.tftest.hcl, assertions"
+        },
+        {
+          "id": "infra-tf-modules",
+          "title": "Terraform modules",
+          "url": "https://developer.hashicorp.com/terraform/language/modules",
+          "applyWhen": "Boundaries, inputs/outputs"
+        }
+      ]
+    },
+    "security": {
+      "stacks": ["*"],
+      "entries": [
+        {
+          "id": "sec-owasp-top10",
+          "title": "OWASP Top 10",
+          "url": "https://owasp.org/www-project-top-ten/",
+          "applyWhen": "Threat baseline for apps/APIs"
+        },
+        {
+          "id": "sec-asvs",
+          "title": "OWASP ASVS",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/",
+          "applyWhen": "Verification themes"
+        },
+        {
+          "id": "sec-secrets",
+          "title": "OWASP Secrets Management Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+          "applyWhen": "Tokens, env, never commit secrets"
+        },
+        {
+          "id": "sec-deps",
+          "title": "OWASP Dependency-Check",
+          "url": "https://owasp.org/www-project-dependency-check/",
+          "applyWhen": "Dependency review mindset"
+        }
+      ]
+    }
+  }
+}
