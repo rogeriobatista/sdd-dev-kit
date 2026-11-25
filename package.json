@@ -1,6 +1,6 @@
 {
   "name": "sdd-dev-kit",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "description": "Protocol Kit for Spec-Driven Development — core + multi-host adapters + stack adapters (TS, Python, React/Vite, Node GraphQL, Terraform)",
   "workspaces": [

@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/adapter-terraform",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "SDD Terraform adapter — fmt/validate/test (no cloud apply)",
   "type": "module",
   "main": "./dist/index.js",
@@ -23,7 +23,7 @@
     "pretest": "npm run build"
   },
   "dependencies": {
-    "@rogeriobatista/core": "0.1.4"
+    "@rogeriobatista/core": "0.1.5"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

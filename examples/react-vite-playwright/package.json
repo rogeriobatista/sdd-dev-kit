@@ -1,6 +1,6 @@
 {
   "name": "react-vite-playwright",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "type": "module",
   "description": "SDD example — React + Vite + Playwright",
@@ -14,8 +14,8 @@
     "smoke": "playwright test --config=playwright.smoke.config.ts"
   },
   "dependencies": {
-    "@rogeriobatista/adapter-react-vite": "0.1.4",
-    "@rogeriobatista/core": "0.1.4",
+    "@rogeriobatista/adapter-react-vite": "0.1.5",
+    "@rogeriobatista/core": "0.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
