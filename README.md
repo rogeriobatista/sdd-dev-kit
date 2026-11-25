@@ -8,6 +8,43 @@
 
 You write natural-language specs (`prosa` + `Dado`/`Quando`/`Então`). The agent normalizes, generates executable tests, plans, implements, and verifies until green.
 
+## Distribution (Mac / PC / Cloud Agents)
+
+Packages publish to **GitHub Packages** under [`rogeriobatista/sdd-dev-kit`](https://github.com/rogeriobatista/sdd-dev-kit) with scope `@sdd-dev-kit`.
+
+| Package | Role |
+|---------|------|
+| `@sdd-dev-kit/cli` | Bin `sdd` — init / run / verify / demo / status / from-ticket |
+| `@sdd-dev-kit/core` | Schema, stack detect, ticketing, demo, shell |
+| `@sdd-dev-kit/adapter-*` | Host (cursor/claude/copilot) + stack (ts/python/…) packs |
+
+### Install locally
+
+```bash
+# ~/.npmrc — see .npmrc.example (token via env, never commit)
+@sdd-dev-kit:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+
+npm i -g @sdd-dev-kit/cli
+sdd init --host cursor --stack typescript
+
+# or
+npx @sdd-dev-kit/cli init --host all --stack python
+```
+
+### Cursor Cloud Agents
+
+```bash
+npm i -g @sdd-dev-kit/cli   # after registry auth
+# or: npx @sdd-dev-kit/cli init --host cursor
+```
+
+Optional secrets for ticket bootstrap: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`. Full notes: [docs/cloud-agents.md](docs/cloud-agents.md).
+
+CLI `sdd run` prints status + pipeline guidance; LLM phases stay host-driven (`/sdd run`). Use `sdd verify` / `sdd demo` for local evidence.
+
+### Develop from this repo
+
 ## Quickstart
 
 ### 1. Install
@@ -134,6 +171,7 @@ Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-a
 ## Repository layout
 
 ```text
+packages/cli/                  # @sdd-dev-kit/cli — bin `sdd`
 packages/core/                 # sdd.yaml schema, phases, ticketing, shared tags/shell
 packages/adapter-shared/       # DRY pipeline markdown + scaffold templates + render
 packages/adapter-ts/           # TypeScript — Cucumber + Playwright
@@ -149,6 +187,7 @@ examples/python-pytest-hello/  # Python + pytest
 examples/react-vite-playwright/
 examples/node-graphql-api/
 examples/terraform-module/     # null provider, no cloud
+docs/cloud-agents.md           # Cloud Agent install + secrets
 docs/superpowers/              # design + implementation plan
 ```
 
@@ -173,12 +212,14 @@ npm run sync:adapters
 
 Design: [docs/superpowers/specs/2026-11-24-sdd-dev-kit-design.md](docs/superpowers/specs/2026-11-24-sdd-dev-kit-design.md)
 
+## Publish
+
+CI: `.github/workflows/ci.yml` (PR/push). Release: tag `v*` or **Publish packages** workflow (`.github/workflows/publish.yml`) with `NODE_AUTH_TOKEN` / `GITHUB_TOKEN` (`packages:write`). See `.npmrc.example`.
+
 ## Roadmap (out of MVP)
 
-- Standalone CLI (`sdd init` / `sdd run` / `sdd from-ticket`) outside AI hosts
 - File watch on `specs/**` (`triggers.watch: true`)
 - Additional language adapters (e.g. Java) beyond the first-class set above
-- Cloud / CI agent runner
 - Write-back of status to Linear/Jira
 - Deeper Copilot MCP parity if/when the host exposes it
 

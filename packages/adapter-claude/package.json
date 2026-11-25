@@ -1,10 +1,21 @@
 {
   "name": "@sdd-dev-kit/adapter-claude",
   "version": "0.1.0",
-  "private": true,
   "description": "SDD Claude adapter — CLAUDE.md + .claude/skills for Claude Code / Claude in VS Code",
   "files": [
     "project",
     "README.md"
-  ]
+  ],
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogeriobatista/sdd-dev-kit.git",
+    "directory": "packages/adapter-claude"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "license": "MIT"
 }

@@ -1,10 +1,21 @@
 {
   "name": "@sdd-dev-kit/adapter-vscode-copilot",
   "version": "0.1.0",
-  "private": true,
   "description": "SDD GitHub Copilot adapter — copilot-instructions.md + .github/prompts for VS Code",
   "files": [
     "project",
     "README.md"
-  ]
+  ],
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogeriobatista/sdd-dev-kit.git",
+    "directory": "packages/adapter-vscode-copilot"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "license": "MIT"
 }

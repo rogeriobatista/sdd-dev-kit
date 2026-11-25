@@ -1,0 +1,60 @@
+name: Publish packages
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@sdd-dev-kit"
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      # Prefer repo secret NODE_AUTH_TOKEN (PAT with write:packages) when the
+      # default GITHUB_TOKEN cannot publish under the @sdd-dev-kit scope.
+      # Never commit tokens — Actions secrets only.
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for name in \
+            @sdd-dev-kit/core \
+            @sdd-dev-kit/adapter-shared \
+            @sdd-dev-kit/adapter-ts \
+            @sdd-dev-kit/adapter-python \
+            @sdd-dev-kit/adapter-react-vite \
+            @sdd-dev-kit/adapter-node-graphql \
+            @sdd-dev-kit/adapter-terraform \
+            @sdd-dev-kit/adapter-cursor \
+            @sdd-dev-kit/adapter-claude \
+            @sdd-dev-kit/adapter-vscode-copilot \
+            @sdd-dev-kit/cli
+          do
+            echo "::group::npm publish $name"
+            npm publish -w "$name"
+            echo "::endgroup::"
+          done

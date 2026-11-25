@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "setup": "npm install && npx playwright install chromium",
-    "build": "npm run build -w @sdd-dev-kit/core && npm run build -w @sdd-dev-kit/adapter-ts && npm run build -w @sdd-dev-kit/adapter-python && npm run build -w @sdd-dev-kit/adapter-react-vite && npm run build -w @sdd-dev-kit/adapter-node-graphql && npm run build -w @sdd-dev-kit/adapter-terraform",
+    "build": "npm run build -w @sdd-dev-kit/core && npm run build -w @sdd-dev-kit/adapter-ts && npm run build -w @sdd-dev-kit/adapter-python && npm run build -w @sdd-dev-kit/adapter-react-vite && npm run build -w @sdd-dev-kit/adapter-node-graphql && npm run build -w @sdd-dev-kit/adapter-terraform && npm run build -w @sdd-dev-kit/cli",
     "sync:adapters": "npm run render -w @sdd-dev-kit/adapter-shared",
-    "test": "npm run test -w @sdd-dev-kit/core && npm run test -w @sdd-dev-kit/adapter-shared && npm run test -w @sdd-dev-kit/adapter-ts && npm run test -w @sdd-dev-kit/adapter-python && npm run test -w @sdd-dev-kit/adapter-react-vite && npm run test -w @sdd-dev-kit/adapter-node-graphql && npm run test -w @sdd-dev-kit/adapter-terraform",
+    "test": "npm run test -w @sdd-dev-kit/core && npm run test -w @sdd-dev-kit/adapter-shared && npm run test -w @sdd-dev-kit/adapter-ts && npm run test -w @sdd-dev-kit/adapter-python && npm run test -w @sdd-dev-kit/adapter-react-vite && npm run test -w @sdd-dev-kit/adapter-node-graphql && npm run test -w @sdd-dev-kit/adapter-terraform && npm run test -w @sdd-dev-kit/cli",
     "test:core": "npm run test -w @sdd-dev-kit/core",
+    "test:cli": "npm run test -w @sdd-dev-kit/cli",
     "test:adapters": "npm run test -w @sdd-dev-kit/adapter-shared",
     "smoke": "npm run smoke -w coupon-checkout"
   },

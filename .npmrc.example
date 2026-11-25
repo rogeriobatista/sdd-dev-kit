@@ -1,0 +1,12 @@
+# GitHub Packages — default registry for @sdd-dev-kit/*
+# Copy to ~/.npmrc (user) or project .npmrc. Do NOT commit tokens.
+#
+# Create a PAT with `read:packages` (install) and `write:packages` (publish).
+# For CI, use GITHUB_TOKEN / NODE_AUTH_TOKEN secrets — never commit secrets.
+
+@sdd-dev-kit:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+
+# Optional: if your GitHub username differs from the package scope owner,
+# also set:
+# //npm.pkg.github.com/:username=YOUR_GITHUB_USERNAME

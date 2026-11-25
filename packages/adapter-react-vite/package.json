@@ -9,11 +9,13 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -31,5 +33,17 @@
   },
   "peerDependencies": {
     "@playwright/test": "^1.50.0"
-  }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogeriobatista/sdd-dev-kit.git",
+    "directory": "packages/adapter-react-vite"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "license": "MIT"
 }
