@@ -26,10 +26,17 @@ const REQUIRED_MARKERS = [
   // demo stakeholder pack
   "demo",
   "buildDemo",
+  // docs pack
+  "docs/sdd",
+  "buildDocs",
   // from-ticket bootstrap
   "from-ticket",
   "Linear",
   "Jira",
+  // bugfix / QA / debug
+  "bug report",
+  "reproduce",
+  "REPORT.md",
   // human edit boundary
   "specs/",
   "Dado",
@@ -58,7 +65,7 @@ function assertMarkers(label: string, text: string, markers: string[] = REQUIRED
 }
 
 describe("adapter-shared content", () => {
-  it("ships pipeline, research, from-ticket, human-boundary, hard-rules, init, stack-detection, demo", () => {
+  it("ships pipeline, research, from-ticket, human-boundary, hard-rules, init, stack-detection, demo, docs, bugfix", () => {
     for (const name of [
       "pipeline.md",
       "research.md",
@@ -68,10 +75,61 @@ describe("adapter-shared content", () => {
       "init.md",
       "stack-detection.md",
       "demo.md",
+      "docs.md",
+      "bugfix.md",
     ]) {
       const body = readShared(name);
       assert.ok(body.trim().length > 0, `${name} should be non-empty`);
     }
+  });
+
+  it("docs content covers buildDocs, output layout, and no-invention rule", () => {
+    assertMarkers("docs", readShared("docs.md"), [
+      "buildDocs",
+      "docs/sdd",
+      "PRODUCT.md",
+      "TECHNICAL.md",
+      "CHANGELOG.md",
+      "HANDOFF.md",
+      "ADR",
+      "changelog",
+      "handoff",
+      "invent",
+    ]);
+  });
+
+  it("docs templates exist under templates/docs/sdd", () => {
+    const docsTpl = path.join(sharedRoot, "templates", "docs", "sdd");
+    for (const name of [
+      "README.md",
+      "PRODUCT.md",
+      "TECHNICAL.md",
+      "CHANGELOG.md",
+      "HANDOFF.md",
+      "API.md",
+      path.join("ADR", "_template.md"),
+    ]) {
+      assert.ok(
+        fs.existsSync(path.join(docsTpl, name)),
+        `missing docs template ${name}`,
+      );
+    }
+  });
+
+  it("bugfix content covers TDD rule, artifacts, and intents", () => {
+    assertMarkers("bugfix", readShared("bugfix.md"), [
+      "bug report",
+      "reproduce",
+      "debug",
+      "qa",
+      "fix",
+      "REPORT.md",
+      "DEBUG.md",
+      "QA.md",
+      "regress",
+      ".sdd/bugs/",
+      "parseBugId",
+    ]);
   });
 
   it("best-practices catalog exists with required domain sections and version", () => {
@@ -197,9 +255,22 @@ describe("adapter-shared content", () => {
       "templates/.sdd/dev-spec.md",
       "templates/.sdd/implementation-plan.md",
       "templates/.sdd/design-approach.md",
+      "templates/.sdd/bugs/_templates/REPORT.md",
+      "templates/.sdd/bugs/_templates/DEBUG.md",
+      "templates/.sdd/bugs/_templates/QA.md",
     ]) {
       const p = path.join(sharedRoot, rel);
       assert.ok(fs.existsSync(p), `missing ${rel}`);
+    }
+  });
+
+  it("bug templates are Portuguese client/QA facing", () => {
+    for (const name of ["REPORT.md", "DEBUG.md", "QA.md"]) {
+      const body = fs.readFileSync(
+        path.join(sharedRoot, "templates", ".sdd", "bugs", "_templates", name),
+        "utf8",
+      );
+      assert.match(body, /Severidade|Diagnóstico|sign-off|Passos|Reteste/i);
     }
   });
 });
@@ -308,7 +379,13 @@ describe("rendered host adapters include required sections", () => {
       "sdd-research.prompt.md",
       "sdd-verify.prompt.md",
       "sdd-demo.prompt.md",
+      "sdd-docs.prompt.md",
       "sdd-status.prompt.md",
+      "sdd-bug-report.prompt.md",
+      "sdd-reproduce.prompt.md",
+      "sdd-debug.prompt.md",
+      "sdd-qa.prompt.md",
+      "sdd-fix.prompt.md",
     ]) {
       assert.ok(fs.existsSync(path.join(dir, name)), `missing prompt ${name}`);
     }

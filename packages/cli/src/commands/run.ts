@@ -46,10 +46,12 @@ export async function runPipelineCommand(options: RunOptions = {}): Promise<{
     "  - sdd init / sdd from-ticket  (scaffold + ticket bootstrap → pause for specs)",
     "  - sdd verify                 (runners: all / spec / unit / integration / e2e)",
     "  - sdd demo                   (PO/BO/QA evidence pack)",
+    "  - sdd docs                   (professional docs pack under docs/sdd/)",
     "  - sdd status                 (this report)",
     "",
     "For steps 2–10, invoke the host adapter in Cursor/Claude/Copilot",
-    "(`/sdd run` or `SDD: run`). Optional standalone research: `/sdd research`.",
+    "(`/sdd run` or `SDD: run`). Optional after evidence: `/sdd docs`.",
+    "Optional standalone research: `/sdd research`.",
   ].join("\n");
 
   const exitCode = status.stack.needsClarification ? 2 : 0;

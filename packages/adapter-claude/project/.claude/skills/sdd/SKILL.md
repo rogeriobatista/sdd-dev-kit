@@ -2,13 +2,14 @@
 name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user asks for SDD init,
-  from-ticket, run, research, verify, demo, or status — including natural-language
-  intents like "SDD: run" or "import ticket ENG-42 into specs".
+  from-ticket, run, research, verify, demo, docs, status, or debug/QA/bugfix for
+  client-reported errors — including natural-language intents like "SDD: run"
+  or "import ticket ENG-42 into specs".
 ---
 
 # SDD — Spec-Driven Development (Claude)
 
-Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on `specs/` (step 1); after specs are accepted, `SDD: run` automates steps 2–10 until all test levels pass (no mid-loop human code fixes). Step 11 = continuous best practices.
+Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on `specs/` (step 1; plus bug `REPORT.md`); after specs are accepted, `SDD: run` automates steps 2–10 until all test levels pass (no mid-loop human code fixes). Step 11 = continuous best practices. Optional after evidence: `SDD: docs`. Client bugs: `bug report` → `reproduce` → `debug`/`fix` → `qa` (TDD — no fix without red regression).
 
 ## Claude command map (natural-language intents)
 
@@ -20,10 +21,16 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | Research (best practices) | `SDD: research` (step 11 continuous; also standalone) |
 | Verify only | `SDD: verify` |
 | Demo (PO/BO/QA) | `SDD: demo` (optional run id) |
+| Docs (professional pack) | `SDD: docs` [`changelog` / `api` / `handoff`] |
 | Status | `SDD: status` |
+| Bug report | `SDD: bug report` [`id`] |
+| Reproduce | `SDD: reproduce <id>` |
+| Debug | `SDD: debug <id>` |
+| QA | `SDD: qa <id>` |
+| Fix | `SDD: fix <id>` |
 
 You may also treat `/sdd <subcommand>` the same way when the user types it.
-On `run` / docs / `implement` / `research`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
+On `run` / docs / `implement` / `research` / `debug`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach / DEBUG.
 
 ## Human vs agent ownership
 
@@ -31,6 +38,7 @@ On `run` / docs / `implement` / `research`: open the best-practices catalog for 
 
 - `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here (canonical **step 1**)
 - `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
+- `.sdd/bugs/<id>/REPORT.md` — client bug report (passos, esperado/atual, severidade, ambiente); refine like specs
 - Optional: review that generated Spec Tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
 
 ### Agent-owned / regenerable (do not ask the human to edit)
@@ -42,22 +50,28 @@ On `run` / docs / `implement` / `research`: open the best-practices catalog for 
 - `tests/unit/**` — unit tests — **step 6**
 - `tests/integration/**` — integration tests — **step 7**
 - `tests/e2e/**` — e2e tests — **step 8**
+- Regression tests created by `/sdd reproduce` under `tests/`
 - `.sdd/canonical/**` — normalized scenarios (supports step 2)
 - `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) — **step 11 support**
 - `.sdd/runs/**` — run reports (internal; linked from evidence meta)
 - `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path) — **step 10**
 - `.sdd/evidence-id.json` — stable local evidence id when no ticket
 - `.sdd/demo/**` — legacy per-run demo copies (prefer `.sdd/evidence/<key>/latest/demo/`)
+- `.sdd/bugs/<id>/{DEBUG,QA}.md` + `meta.json` — debug log, QA sign-off, bug provenance
+- `docs/sdd/**` — professional documentation pack (PRODUCT / TECHNICAL / CHANGELOG / HANDOFF / ADR / API) — optional after evidence; `/sdd docs`
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap (includes `evidenceKey` / `evidencePath`)
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
-- Production code under the SDD implement loop (**step 9**)
+- Production code under the SDD implement loop (**step 9**) and `/sdd fix`
 
 ### Agent must not
 
 - Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
 - Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
+- Invent bug reproduction steps missing from the client `REPORT.md`
+- Invent product features or acceptance criteria in `docs/sdd/**` that are missing from `specs/` / premises
 - Suggest that the human manually fix generated Spec/unit/integration/e2e tests or production code to green the suite
 - Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until all test levels pass or cap; only exit early for **spec** gaps
+- Enter `/sdd fix` without a failing regression from `/sdd reproduce` first (TDD for bugs)
 - Put ticketing secrets on argv or in the repo; use env vars only
 
 ## Stack detection (from specification docs)
@@ -89,7 +103,7 @@ Use `@rogeriobatista/core` `detectStack(projectRoot)` → `{ stack, source, conf
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
 2. Ensure folders appropriate to the stack (canonical 11-step layout):
-   - Shared: `specs/`, `.sdd/` (premises, canonical, research, runs, evidence, demo, stack.json, empty `dev-spec.md` / `implementation-plan.md` / `design-approach.md`), `src/` (or module root for Terraform)
+   - Shared: `specs/`, `.sdd/` (premises, canonical, research, runs, evidence, demo, bugs + `_templates`, stack.json, empty `dev-spec.md` / `implementation-plan.md` / `design-approach.md`), `src/` (or module root for Terraform)
    - Test layers: `tests/unit/`, `tests/integration/`, `tests/e2e/` (create even if a stack fills them later)
    - Spec Tests: TS / node-graphql → `tests/features` + `tests/steps` (or `tests/spec` when configured); python → `tests/`; react-vite → e2e (+ unit); terraform → `tests/` for `*.tftest.hcl`
 3. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`). Set **stack-specific `runners`** including layer keys when available (`spec`/`cucumber`, `unit`, `integration`, `e2e`/`playwright`, or `all`). Optionally include a commented `ticketing:` section for Linear/Jira.
@@ -164,9 +178,12 @@ detect stack → spec-tests → dev-spec → implementation-plan → design-appr
   → unit-tests → integration-tests → e2e-tests
   → implement → verify (all layers) ⇄ diagnose*
   → evidence
+  → (optional) docs
 ```
 
 Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Do **not** stop mid-loop to ask the human to fix code. If failures look like **wrong/ambiguous specs**, exit the loop and ask the human to iterate on `specs/` (the only human gate).
+
+**Optional docs (after evidence):** `docs` / `/sdd docs` / `SDD: docs` builds `docs/sdd/` (PRODUCT, TECHNICAL, CHANGELOG, HANDOFF, ADR, API) from specs + Dev Spec + design + research + evidence (+ bugs when present). Must not invent features absent from specs — mark gaps. Subcommands: `changelog`, `api`, `handoff`. Full procedure: **Docs**.
 
 **Before step 2:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 
@@ -372,6 +389,135 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 - **No secrets** in demo/evidence output (scrub tokens/keys from stderr snippets)
 - Keep the pack **offline-friendly** (relative paths)
 
+## Docs (documentation pack)
+
+Generate or refresh a **professional documentation pack** from specs, Dev Spec, plan, design, research, evidence, and (if present) bug folders — **without inventing features** not in `specs/` / premises.
+
+### Usage (host-agnostic)
+
+- `docs` — full pack under `docs/sdd/`
+- `docs changelog` — update CHANGELOG from runs / evidence / tickets
+- `docs api` — API/module stubs from stack (GraphQL schema / exports) when applicable
+- `docs handoff` — PO/BO/QA/dev handoff in Portuguese
+- Cursor: `/sdd docs` · Claude / Copilot: `SDD: docs`
+
+CLI: `sdd docs` / `sdd docs changelog` / `sdd docs api` / `sdd docs handoff`
+
+### Pipeline placement
+
+**Optional** after evidence (step 10), or explicit command. Not required inside the auto-loop steps 2–10.
+
+```text
+… → evidence → (optional) docs
+```
+
+### Output (agent-owned)
+
+```
+docs/sdd/
+  README.md           # índice profissional
+  PRODUCT.md          # o que foi pedido (from specs)
+  TECHNICAL.md        # from dev-spec + design-approach (+ plan)
+  CHANGELOG.md        # from runs / evidence / tickets
+  HANDOFF.md          # para solicitante (PT)
+  ADR/                # architecture decision records from design/research
+  API.md              # optional (sdd docs api)
+```
+
+Link stakeholders to `.sdd/evidence/<key>/latest/demo/`. Prefer `buildDocs({ projectRoot, mode? })` from `@rogeriobatista/core`.
+
+### Steps
+
+1. Resolve `evidenceKey` via `resolveEvidenceKey(projectRoot)` (or `--id`).
+2. Collect sources that exist: `specs/`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`, `.sdd/research/`, `.sdd/runs/`, `.sdd/evidence/`, `.sdd/ticket.json`, optional bug folders under `.sdd/bugs/` or `docs` inputs.
+3. Call `buildDocs({ projectRoot, mode: "all"|"changelog"|"api"|"handoff" })`.
+4. Report paths written. Do **not** invent AC or product features missing from specs — mark gaps instead.
+
+### Hard rules for docs
+
+- Specs / premises are source of truth — **no invented features**.
+- Portuguese for HANDOFF and stakeholder-facing copy.
+- No secrets (scrub tokens/keys).
+- Templates: `packages/adapter-shared/templates/docs/sdd/` (PT).
+
+## Debug, QA e bugfix (erros reportados pelo cliente)
+
+Fluxo paralelo ao pipeline canônico 1–11. Use quando o cliente (ou QA) reporta um erro: capturar → reproduzir com teste falhando → diagnosticar → corrigir em loop TDD → sign-off QA → atualizar evidence.
+
+### Intents / comandos
+
+| Intent | Cursor | Claude | Copilot | CLI |
+|--------|--------|--------|---------|-----|
+| Capturar relatório | `/sdd bug report` | `SDD: bug report` | `SDD: bug report` / `/sdd-bug-report` | `sdd bug-report [id]` |
+| Regressão falhando | `/sdd reproduce` | `SDD: reproduce` | `SDD: reproduce` / `/sdd-reproduce` | `sdd reproduce <id>` |
+| Diagnóstico guiado | `/sdd debug` | `SDD: debug` | `SDD: debug` / `/sdd-debug` | `sdd debug <id>` |
+| Checklist QA | `/sdd qa` | `SDD: qa` | `SDD: qa` / `/sdd-qa` | `sdd qa <id>` |
+| Corrigir (após reproduce) | `/sdd fix` | `SDD: fix` | `SDD: fix` / `/sdd-fix` | `sdd fix <id>` |
+
+### Bug id
+
+1. Preferir ticket: `linear:ENG-42` / `jira:SHOP-7` (alinha `evidenceKey` com o sistema de evidence existente).
+2. Sem ticket: gerar estável `bug_<uuid>` sob `.sdd/bugs/`.
+3. No disco: `:` → `_` (ex.: `.sdd/bugs/linear_ENG-42/`), igual a evidence.
+
+Helpers: `parseBugId`, `resolveBugPaths`, `ensureBugReport`, `encodeBugIdForPath` em `@rogeriobatista/core`.
+
+### Layout de artefatos
+
+```text
+.sdd/bugs/<encodedId>/
+  REPORT.md     # humano pode refinar (como specs/)
+  DEBUG.md      # diagnóstico (agente)
+  QA.md         # sign-off QA (agente + humano)
+  meta.json     # bugId, evidenceKey, status, regressionTest
+```
+
+Templates PT (cliente/QA): `packages/adapter-shared/templates/.sdd/bugs/_templates/{REPORT,DEBUG,QA}.md`.
+
+### Procedimentos
+
+#### bug report
+
+1. Resolver id (`parseBugId` / `ensureBugReport`).
+2. Criar `.sdd/bugs/<id>/REPORT.md` + `meta.json` (status `reported`).
+3. Se veio de ticket: preencher link Linear/Jira; `evidenceKey` = id do ticket.
+4. **Pausar** para o humano enriquecer passos / esperado / atual / severidade / ambiente / anexos (sem secrets).
+5. Não inventar passos que o cliente não descreveu.
+
+#### reproduce
+
+1. Ler `REPORT.md`. **Hard rule:** não entrar em `fix` sem regressão vermelha.
+2. Preferir Spec Test ou e2e que trave o bug sob `tests/` (feature/scenario ou teste dedicado).
+3. Rodar até falhar de forma estável; registrar caminho em `meta.json` → `regressionTest`.
+4. Opcional: espelhar cenário em `specs/` só se o humano pedir (specs são human-owned).
+
+#### debug
+
+1. Usar evidence, logs redigidos, testes falhando, e catalog de research/boas práticas na dúvida.
+2. Escrever `.sdd/bugs/<id>/DEBUG.md` (hipótese, evidências, causa raiz, próximos passos).
+3. Sem secrets; citar fontes de research quando aplicável.
+
+#### qa
+
+1. Preencher `.sdd/bugs/<id>/QA.md`: matriz de regressão, severidade, notas de reteste, checklist.
+2. Só marcar aprovado quando a regressão do bug **e** a suite existente passam.
+3. Confirmar que `.sdd/evidence/<key>/latest/demo/` foi atualizado após o fix.
+
+#### fix
+
+1. **Pré-condição:** `reproduce` já deixou um teste falhando. Se não, **STOP** → rode `reproduce` primeiro (TDD para bugs).
+2. Entrar no loop implement → verify (regressão + suite) até verde ou diagnose cap.
+3. Atualizar evidence pack da mesma `evidenceKey` (`updateEvidencePack` / `sdd demo`).
+4. Atualizar `meta.json` status; seguir com `qa`.
+
+### Hard rules (bugfix)
+
+- **Nunca** “fix” sem regressão falhando primeiro.
+- Human-owned: `REPORT.md` (refinar como specs). Agent-owned: DEBUG/QA/meta, testes de regressão, código.
+- Evidence cliente atualizado após fix (`latest/demo`).
+- Boas práticas sob incerteza (catalog existente + step 11).
+- Sem secrets em REPORT/DEBUG/QA/anexos/argv.
+
 ## Hard rules
 
 - **Never** edit `specs/` unless the human explicitly asks — **exception:** from-ticket may write a **draft** spec from the ticket (bootstrap only).
@@ -385,16 +531,18 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
-- Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
-- Canonical artifacts: Spec Tests under `tests/features` or `tests/spec`; Dev Spec / Implementation Plan / Design Approach under `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`; test layers `tests/unit/`, `tests/integration/`, `tests/e2e/`; evidence under `.sdd/evidence/<key>/latest/`.
-- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses. Evidence/demo update is step 10 (after green or after the auto-loop ends with a report).
-- **Research / best practices (step 11 — continuous):** during steps 2–10, open the curated catalog (`best-practices-catalog`) for the detected stack **plus security** whenever there is doubt. Cite sources in Dev Spec / Implementation Plan / Design Approach; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.
+- Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo / docs / bug-report / reproduce / debug / qa / fix) — not file watch.
+- Canonical artifacts: Spec Tests under `tests/features` or `tests/spec`; Dev Spec / Implementation Plan / Design Approach under `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`; test layers `tests/unit/`, `tests/integration/`, `tests/e2e/`; evidence under `.sdd/evidence/<key>/latest/`; docs under `docs/sdd/`; client bugs under `.sdd/bugs/<id>/`.
+- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses. Evidence/demo update is step 10 (after green or after the auto-loop ends with a report). After `/sdd fix`, refresh the pack for that bug/ticket evidence key.
+- **Docs (optional after evidence):** `docs` / `/sdd docs` generates `docs/sdd/` from specs + Dev Spec + design + research + evidence (+ bugs when present). Must **not** invent features absent from specs/premises; mark gaps instead. Subcommands: `changelog`, `api`, `handoff`.
+- **Bugfix TDD:** never “fix” client bugs without a failing regression from `/sdd reproduce` first. Human refines `REPORT.md`; agent owns DEBUG/QA/meta, regression tests, and code.
+- **Research / best practices (step 11 — continuous):** during steps 2–10 (and during `/sdd debug` when uncertain), open the curated catalog (`best-practices-catalog`) for the detected stack **plus security** whenever there is doubt. Cite sources in Dev Spec / Implementation Plan / Design Approach / DEBUG; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.
 
 ## Template locations in this kit
 
-- Shared source: `packages/adapter-shared/content/` (pipeline, research, from-ticket, human boundary, hard rules, best-practices catalog)
+- Shared source: `packages/adapter-shared/content/` (pipeline, research, from-ticket, docs, bugfix, human boundary, hard rules, best-practices catalog)
 - Best-practices catalog: `packages/adapter-shared/content/best-practices-catalog.md` (+ `.json`)
-- Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`)
+- Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`, `docs/sdd/`, `.sdd/bugs/_templates/`)
 - Stack adapters: `adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, `adapter-terraform`
 - Examples: `coupon-checkout/`, `python-pytest-hello/`, `react-vite-playwright/`, `node-graphql-api/`, `terraform-module/`
 - Offline ticket fixture: `packages/core/src/ticketing/fixtures/`

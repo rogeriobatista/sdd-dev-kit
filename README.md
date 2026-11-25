@@ -14,8 +14,8 @@ Packages publish to **GitHub Packages** under [`rogeriobatista/sdd-dev-kit`](htt
 
 | Package | Role |
 |---------|------|
-| `@rogeriobatista/cli` | Bin `sdd` — init / run / verify / demo / status / from-ticket |
-| `@rogeriobatista/core` | Schema, stack detect, ticketing, demo, shell |
+| `@rogeriobatista/cli` | Bin `sdd` — init / run / verify / demo / docs / status / from-ticket / bug-report / reproduce / debug / qa / fix |
+| `@rogeriobatista/core` | Schema, stack detect, ticketing, demo, docs, shell |
 | `@rogeriobatista/adapter-*` | Host (cursor/claude/copilot) + stack (ts/python/…) packs |
 
 ### Install locally (GitHub Packages)
@@ -126,7 +126,13 @@ npm run smoke -w react-vite-playwright            # Playwright + Vite (after set
 | Research | `/sdd research` | `SDD: research` | `SDD: research` / `/sdd-research` |
 | Verify | `/sdd verify` | `SDD: verify` | `SDD: verify` / `/sdd-verify` |
 | Demo (PO/BO/QA) | `/sdd demo` | `SDD: demo` | `SDD: demo` / `/sdd-demo` |
+| Docs | `/sdd docs` | `SDD: docs` | `SDD: docs` / `/sdd-docs` |
 | Status | `/sdd status` | `SDD: status` | `SDD: status` / `/sdd-status` |
+| Bug report | `/sdd bug report` | `SDD: bug report` | `SDD: bug report` / `/sdd-bug-report` |
+| Reproduce | `/sdd reproduce` | `SDD: reproduce` | `SDD: reproduce` / `/sdd-reproduce` |
+| Debug | `/sdd debug` | `SDD: debug` | `SDD: debug` / `/sdd-debug` |
+| QA | `/sdd qa` | `SDD: qa` | `SDD: qa` / `/sdd-qa` |
+| Fix | `/sdd fix` | `SDD: fix` | `SDD: fix` / `/sdd-fix` |
 
 ## Canonical 11-step flow
 
@@ -146,6 +152,29 @@ npm run smoke -w react-vite-playwright            # Playwright + Vite (after set
 
 Step 1 only is human-iterative; steps 2–10 run in `/sdd run`; step 11 applies during 2–10. Design: [canonical 11-step flow](docs/superpowers/specs/2026-11-25-sdd-canonical-11-step-flow-design.md).
 
+## Debug, QA e bugfix
+
+Ferramentas para erros reportados pelo cliente (fluxo paralelo ao pipeline 1–11):
+
+```text
+bug report → reproduce (teste vermelho) → debug → fix → qa (+ evidence latest)
+```
+
+| Artefato | Papel |
+|----------|-------|
+| `.sdd/bugs/<id>/REPORT.md` | Relatório PT (humano refina como specs) |
+| `.sdd/bugs/<id>/DEBUG.md` | Diagnóstico guiado |
+| `.sdd/bugs/<id>/QA.md` | Checklist / sign-off QA |
+| `.sdd/bugs/<id>/meta.json` | `bugId`, `evidenceKey`, `regressionTest`, status |
+
+**Bug id:** preferir `linear:ENG-42` / `jira:SHOP-7` (alinha evidence); senão `bug_<uuid>`.
+
+**Hard rule:** nunca `fix` sem regressão falhando de `reproduce` (TDD para bugs). Após o fix, atualizar `.sdd/evidence/<key>/latest/demo/`.
+
+CLI: `sdd bug-report [id]`, `sdd reproduce <id>`, `sdd debug <id>`, `sdd qa <id>`, `sdd fix <id>`.
+
+Design: [debug / QA / bugfix](docs/superpowers/specs/2026-11-25-sdd-debug-qa-bugfix-design.md).
+
 ## Best-practices research (step 11 — continuous)
 
 During steps 2–10 (especially Dev Spec / Implementation Plan / Design Approach / implement), the agent consults a curated catalog of official / standards references (frontend, backend, infra, security) and writes an agent-owned pack:
@@ -162,6 +191,25 @@ During steps 2–10 (especially Dev Spec / Implementation Plan / Design Approach
 | Standalone | `/sdd research` · `SDD: research` · Cursor skill `sdd-research` |
 
 Rules: cite sources in Dev Spec / Implementation Plan / Design Approach; premises win on conflict (note it); links + short guidance only — no scraping full copyrighted docs; security always included. Design: [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md).
+
+## Documentation pack (professional)
+
+Optional after evidence (or anytime via explicit command). Generates a Portuguese-friendly pack from specs + Dev Spec + design + research + evidence — **without inventing features** absent from `specs/`.
+
+```text
+sdd docs
+sdd docs changelog
+sdd docs api
+sdd docs handoff
+/sdd docs
+```
+
+```text
+docs/sdd/
+  README.md  PRODUCT.md  TECHNICAL.md  CHANGELOG.md  HANDOFF.md  ADR/  API.md
+```
+
+Links to `.sdd/evidence/<key>/latest/demo/`. Design: [documentation tooling](docs/superpowers/specs/2026-11-25-sdd-documentation-tooling-design.md).
 
 ## Demo from test evidence (PO / BO / QA)
 
@@ -213,7 +261,7 @@ Ambiguous ids like `ENG-42` need `ticketing.defaultProvider: linear|jira` or a `
 
 Offline fixtures (no live API): `packages/core/src/ticketing/fixtures/` — fictional coupon-checkout ticket used by unit tests.
 
-Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md) · [spec iteration + auto-loop](docs/superpowers/specs/2026-11-25-sdd-spec-iteration-auto-loop-design.md) · [canonical 11-step flow](docs/superpowers/specs/2026-11-25-sdd-canonical-11-step-flow-design.md)
+Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md) · [spec iteration + auto-loop](docs/superpowers/specs/2026-11-25-sdd-spec-iteration-auto-loop-design.md) · [canonical 11-step flow](docs/superpowers/specs/2026-11-25-sdd-canonical-11-step-flow-design.md) · [documentation tooling](docs/superpowers/specs/2026-11-25-sdd-documentation-tooling-design.md) · [debug / QA / bugfix](docs/superpowers/specs/2026-11-25-sdd-debug-qa-bugfix-design.md)
 
 ## Repository layout
 

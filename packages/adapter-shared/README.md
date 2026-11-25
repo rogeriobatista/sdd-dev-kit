@@ -6,8 +6,8 @@ Single source of SDD **pipeline instructions** and **project scaffold templates*
 
 | Path | Role |
 |------|------|
-| `content/` | Portable protocol: canonical 11-step flow, human gate (`specs/`), from-ticket pause, research, demo, hard rules, catalog |
-| `templates/` | `sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md` |
+| `content/` | Portable protocol: canonical 11-step flow, human gate (`specs/`), from-ticket pause, research, demo, bugfix/QA/debug, hard rules, catalog |
+| `templates/` | `sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`, `.sdd/bugs/_templates/{REPORT,DEBUG,QA}.md` |
 | `scripts/render.mjs` | Renders host packs into `adapter-cursor`, `adapter-claude`, `adapter-vscode-copilot` |
 
 Init content asks the agent to **choose a stack** (`typescript` / `python` / `react-vite` / `node-graphql` / `terraform`) and wire the matching package’s runners.

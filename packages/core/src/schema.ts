@@ -18,6 +18,8 @@ export const SddPathsSchema = z.object({
   runs: z.string().min(1).default(DEFAULT_PATHS.runs),
   demo: z.string().min(1).default(DEFAULT_PATHS.demo),
   evidence: z.string().min(1).default(DEFAULT_PATHS.evidence),
+  docs: z.string().min(1).default(DEFAULT_PATHS.docs),
+  bugs: z.string().min(1).default(DEFAULT_PATHS.bugs),
   features: z.string().min(1).default(DEFAULT_PATHS.features),
   spec: z.string().min(1).default(DEFAULT_PATHS.spec),
   steps: z.string().min(1).default(DEFAULT_PATHS.steps),

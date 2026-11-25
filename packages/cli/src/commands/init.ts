@@ -238,6 +238,30 @@ async function writeSharedTemplates(
       src: path.join(templates, ".sdd", "design-approach.md"),
       dest: path.join(projectRoot, ".sdd", "design-approach.md"),
     },
+    {
+      src: path.join(templates, ".sdd", "bugs", "_templates", "REPORT.md"),
+      dest: path.join(
+        projectRoot,
+        ".sdd",
+        "bugs",
+        "_templates",
+        "REPORT.md",
+      ),
+    },
+    {
+      src: path.join(templates, ".sdd", "bugs", "_templates", "DEBUG.md"),
+      dest: path.join(
+        projectRoot,
+        ".sdd",
+        "bugs",
+        "_templates",
+        "DEBUG.md",
+      ),
+    },
+    {
+      src: path.join(templates, ".sdd", "bugs", "_templates", "QA.md"),
+      dest: path.join(projectRoot, ".sdd", "bugs", "_templates", "QA.md"),
+    },
   ];
 
   // Prefer stack-specific sdd.yaml from the stack package when available
@@ -281,6 +305,8 @@ async function writeSharedTemplates(
       ".sdd/runs",
       ".sdd/evidence",
       ".sdd/demo",
+      ".sdd/bugs",
+      ".sdd/bugs/_templates",
       "tests/unit",
       "tests/integration",
       "tests/e2e",

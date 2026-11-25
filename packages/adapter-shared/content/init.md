@@ -6,7 +6,7 @@
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
 2. Ensure folders appropriate to the stack (canonical 11-step layout):
-   - Shared: `specs/`, `.sdd/` (premises, canonical, research, runs, evidence, demo, stack.json, empty `dev-spec.md` / `implementation-plan.md` / `design-approach.md`), `src/` (or module root for Terraform)
+   - Shared: `specs/`, `.sdd/` (premises, canonical, research, runs, evidence, demo, bugs + `_templates`, stack.json, empty `dev-spec.md` / `implementation-plan.md` / `design-approach.md`), `src/` (or module root for Terraform)
    - Test layers: `tests/unit/`, `tests/integration/`, `tests/e2e/` (create even if a stack fills them later)
    - Spec Tests: TS / node-graphql → `tests/features` + `tests/steps` (or `tests/spec` when configured); python → `tests/`; react-vite → e2e (+ unit); terraform → `tests/` for `*.tftest.hcl`
 3. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`). Set **stack-specific `runners`** including layer keys when available (`spec`/`cucumber`, `unit`, `integration`, `e2e`/`playwright`, or `all`). Optionally include a commented `ticketing:` section for Linear/Jira.

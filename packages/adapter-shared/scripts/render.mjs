@@ -21,6 +21,8 @@ const CONTENT_FILES = [
   "pipeline.md",
   "research.md",
   "demo.md",
+  "docs.md",
+  "bugfix.md",
   "hard-rules.md",
 ];
 
@@ -64,9 +66,9 @@ const sharedBody = readContent();
 
 const templateLocations = `## Template locations in this kit
 
-- Shared source: \`packages/adapter-shared/content/\` (pipeline, research, from-ticket, human boundary, hard rules, best-practices catalog)
+- Shared source: \`packages/adapter-shared/content/\` (pipeline, research, from-ticket, docs, bugfix, human boundary, hard rules, best-practices catalog)
 - Best-practices catalog: \`packages/adapter-shared/content/best-practices-catalog.md\` (+ \`.json\`)
-- Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`, \`.sdd/dev-spec.md\`, \`.sdd/implementation-plan.md\`, \`.sdd/design-approach.md\`)
+- Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`, \`.sdd/dev-spec.md\`, \`.sdd/implementation-plan.md\`, \`.sdd/design-approach.md\`, \`docs/sdd/\`, \`.sdd/bugs/_templates/\`)
 - Stack adapters: \`adapter-ts\`, \`adapter-python\`, \`adapter-react-vite\`, \`adapter-node-graphql\`, \`adapter-terraform\`
 - Examples: \`coupon-checkout/\`, \`python-pytest-hello/\`, \`react-vite-playwright/\`, \`node-graphql-api/\`, \`terraform-module/\`
 - Offline ticket fixture: \`packages/core/src/ticketing/fixtures/\`
@@ -79,15 +81,18 @@ description: >-
   Spec-Driven Development Protocol Kit. Use when the user invokes /sdd, asks to
   init SDD, run the SDD pipeline from natural-language specs, import a Linear or
   Jira ticket into specs, research best practices, verify Cucumber/ Playwright,
-  or check SDD status.
-  Subcommands: init | from-ticket | run | research | verify | demo | status.
+  documentation packs, debug/QA/bugfix for client-reported errors, or check SDD status.
+  Subcommands: init | from-ticket | run | research | verify | demo | docs | status |
+  bug-report | reproduce | debug | qa | fix.
 ---
 
 # /sdd — Spec-Driven Development
 
-Protocol Kit orchestration for **Cursor**. The human edits **only** \`specs/*.md\` (prosa + Dado/Quando/Então) and optionally \`.sdd/premises.md\`. Everything else is generated or agent-owned.
+Protocol Kit orchestration for **Cursor**. The human edits **only** \`specs/*.md\` (prosa + Dado/Quando/Então) and optionally \`.sdd/premises.md\` (and may refine \`.sdd/bugs/<id>/REPORT.md\`). Everything else is generated or agent-owned.
 
-Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` from Linear or Jira, then **pauses for human spec iteration** (unless \`--run\` and specs are already complete). After specs are accepted, \`/sdd run\` runs **canonical steps 2–10** automatically until all test levels pass — do not stop mid-loop to ask the human to fix code. Step 11 (best practices) is continuous during those steps.
+Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` from Linear or Jira, then **pauses for human spec iteration** (unless \`--run\` and specs are already complete). After specs are accepted, \`/sdd run\` runs **canonical steps 2–10** automatically until all test levels pass — do not stop mid-loop to ask the human to fix code. Step 11 (best practices) is continuous during those steps. Optional after evidence: \`/sdd docs\`.
+
+For client-reported errors use the **bugfix** intents: \`bug report\` → \`reproduce\` (failing regression) → \`debug\` / \`fix\` → \`qa\` — never fix without a red regression first.
 
 ## Cursor command map
 
@@ -99,10 +104,16 @@ Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` fr
 | Research (best practices) | \`/sdd research\` (step 11 continuous policy; also standalone) |
 | Verify only | \`/sdd verify\` |
 | Demo (PO/BO/QA) | \`/sdd demo\` (optional run id) |
+| Docs (professional pack) | \`/sdd docs\` [\`changelog\` / \`api\` / \`handoff\`] |
 | Status | \`/sdd status\` |
+| Bug report | \`/sdd bug report\` [\`linear:…\` / \`jira:…\` / omit → \`bug_<uuid>\`] |
+| Reproduce | \`/sdd reproduce <id>\` |
+| Debug | \`/sdd debug <id>\` |
+| QA sign-off | \`/sdd qa <id>\` |
+| Fix (after reproduce) | \`/sdd fix <id>\` |
 
 When the user says these commands, follow the shared protocol below (same phases as Claude and Copilot adapters).
-On \`run\` / docs / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
+On \`run\` / docs / \`implement\` / \`research\` / \`debug\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach / DEBUG.
 
 ${sharedBody}
 
@@ -163,7 +174,9 @@ ${fs.readFileSync(path.join(contentDir, "human-boundary.md"), "utf8").trim()}
 ## Pipeline trigger
 
 - MVP: explicit \`/sdd run\` (and optional \`/sdd from-ticket\` bootstrap)
-- Human iterates only on \`specs/\` (step 1); \`/sdd run\` automates steps 2–10 until all test levels pass (or diagnose cap); step 11 = continuous best practices
+- Human iterates only on \`specs/\` (step 1) and may refine \`.sdd/bugs/<id>/REPORT.md\`; \`/sdd run\` automates steps 2–10 until all test levels pass (or diagnose cap); step 11 = continuous best practices
+- Optional after evidence: \`/sdd docs\` → \`docs/sdd/\` (no invented features)
+- Client bugs: \`/sdd bug report\` → \`reproduce\` → \`debug\`/\`fix\` → \`qa\` (never fix without a failing regression)
 - Do not enable file watch as the default workflow
 `;
 
@@ -193,13 +206,14 @@ const claudeSkill = `---
 name: sdd
 description: >-
   Spec-Driven Development Protocol Kit. Use when the user asks for SDD init,
-  from-ticket, run, research, verify, demo, or status — including natural-language
-  intents like "SDD: run" or "import ticket ENG-42 into specs".
+  from-ticket, run, research, verify, demo, docs, status, or debug/QA/bugfix for
+  client-reported errors — including natural-language intents like "SDD: run"
+  or "import ticket ENG-42 into specs".
 ---
 
 # SDD — Spec-Driven Development (Claude)
 
-Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on \`specs/\` (step 1); after specs are accepted, \`SDD: run\` automates steps 2–10 until all test levels pass (no mid-loop human code fixes). Step 11 = continuous best practices.
+Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on \`specs/\` (step 1; plus bug \`REPORT.md\`); after specs are accepted, \`SDD: run\` automates steps 2–10 until all test levels pass (no mid-loop human code fixes). Step 11 = continuous best practices. Optional after evidence: \`SDD: docs\`. Client bugs: \`bug report\` → \`reproduce\` → \`debug\`/\`fix\` → \`qa\` (TDD — no fix without red regression).
 
 ## Claude command map (natural-language intents)
 
@@ -211,10 +225,16 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | Research (best practices) | \`SDD: research\` (step 11 continuous; also standalone) |
 | Verify only | \`SDD: verify\` |
 | Demo (PO/BO/QA) | \`SDD: demo\` (optional run id) |
+| Docs (professional pack) | \`SDD: docs\` [\`changelog\` / \`api\` / \`handoff\`] |
 | Status | \`SDD: status\` |
+| Bug report | \`SDD: bug report\` [\`id\`] |
+| Reproduce | \`SDD: reproduce <id>\` |
+| Debug | \`SDD: debug <id>\` |
+| QA | \`SDD: qa <id>\` |
+| Fix | \`SDD: fix <id>\` |
 
 You may also treat \`/sdd <subcommand>\` the same way when the user types it.
-On \`run\` / docs / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
+On \`run\` / docs / \`implement\` / \`research\` / \`debug\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach / DEBUG.
 
 ${sharedBody}
 
@@ -238,7 +258,9 @@ This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \
 - **SDD: research** — best-practices pack (step 11 continuous policy; optional standalone)
 - **SDD: verify** — stack runners from \`sdd.yaml\` (spec/unit/integration/e2e/all)
 - **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/evidence/<key>/latest/demo/\`
+- **SDD: docs** — professional docs pack → \`docs/sdd/\` (optional after evidence; no invented features)
 - **SDD: status** — last run / phase summary
+- **SDD: bug report** / **reproduce** / **debug** / **qa** / **fix** — client-reported error workflow (TDD: no fix without red regression)
 
 Full procedures live in \`.claude/skills/sdd/SKILL.md\` (invoke the \`sdd\` skill when the user asks for any of the above).
 
@@ -273,10 +295,16 @@ This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\
 | \`SDD: research\` | Best-practices research pack (catalog + sources) |
 | \`SDD: verify\` | Run test runners only (spec/unit/integration/e2e/all) |
 | \`SDD: demo\` | Stakeholder demo pack from test evidence (PO/BO/QA) |
+| \`SDD: docs\` | Professional docs pack under \`docs/sdd/\` (no invented features) |
 | \`SDD: status\` | Summarize \`.sdd/runs\` |
+| \`SDD: bug report\` | Capture client bug → \`.sdd/bugs/<id>/REPORT.md\` |
+| \`SDD: reproduce <id>\` | Failing regression under \`tests/\` (required before fix) |
+| \`SDD: debug <id>\` | Guided diagnose → \`DEBUG.md\` |
+| \`SDD: qa <id>\` | QA checklist / sign-off → \`QA.md\` |
+| \`SDD: fix <id>\` | Implement loop after reproduce; update evidence |
 
-Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-research\`, \`/sdd-verify\`, \`/sdd-demo\`, \`/sdd-status\`.
-On \`run\` / docs / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
+Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-research\`, \`/sdd-verify\`, \`/sdd-demo\`, \`/sdd-docs\`, \`/sdd-status\`, \`/sdd-bug-report\`, \`/sdd-reproduce\`, \`/sdd-debug\`, \`/sdd-qa\`, \`/sdd-fix\`.
+On \`run\` / docs / \`implement\` / \`research\` / \`debug\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach / DEBUG.
 
 ${sharedBody}
 
@@ -375,7 +403,75 @@ Prefer \`buildDemo({ projectRoot, runId?, evidenceKey? })\` from \`@rogeriobatis
     file: "sdd-status.prompt.md",
     name: "sdd-status",
     description: "Report SDD pipeline status from .sdd/runs",
-    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket/evidence/demo presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, resolved evidenceKey, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` / \`.sdd/evidence/\` exist. Do not modify files.
+    body: `Run **SDD: status** — read the latest \`.sdd/runs/*\` (and plan/canonical/ticket/evidence/demo presence). Report phase statuses, last exit codes, adapter id + stack detection source (premises/specs/stack.json/sdd.yaml), any stack warnings, resolved evidenceKey, and whether \`.sdd/ticket.json\` / \`.sdd/stack.json\` / \`.sdd/evidence/\` / \`docs/sdd/\` / \`.sdd/bugs/\` exist. Do not modify files.
+`,
+  },
+  {
+    file: "sdd-docs.prompt.md",
+    name: "sdd-docs",
+    description: "Generate professional documentation pack (SDD: docs)",
+    argumentHint: "[all|changelog|api|handoff] [--id <evidenceKey>]",
+    body: `Run **SDD: docs** — generate/update the professional documentation pack under \`docs/sdd/\`.
+
+${fs.readFileSync(path.join(contentDir, "docs.md"), "utf8").trim()}
+
+Prefer \`buildDocs({ projectRoot, mode? })\` from \`@rogeriobatista/core\`. Do **not** invent features missing from specs. Report paths written and link to \`.sdd/evidence/<key>/latest/demo/\`.
+`,
+  },
+  {
+    file: "sdd-bug-report.prompt.md",
+    name: "sdd-bug-report",
+    description: "Capture a client bug report into .sdd/bugs (SDD: bug report)",
+    argumentHint: "[linear:ENG-42 | jira:SHOP-7 | omit → bug_<uuid>] [--title …]",
+    body: `Run **SDD: bug report** — capture the client-reported error into \`.sdd/bugs/<id>/REPORT.md\` + \`meta.json\`.
+
+${fs.readFileSync(path.join(contentDir, "bugfix.md"), "utf8").trim()}
+
+Prefer \`ensureBugReport\` / \`parseBugId\` from \`@rogeriobatista/core\`. Pause for human to refine REPORT (like specs). No secrets.
+`,
+  },
+  {
+    file: "sdd-reproduce.prompt.md",
+    name: "sdd-reproduce",
+    description: "Turn a bug REPORT into a failing regression test (SDD: reproduce)",
+    argumentHint: "<bugId>",
+    body: `Run **SDD: reproduce** for the given bug id.
+
+Hard rule: create a failing Spec Test or e2e under \`tests/\` that locks the bug before any fix. Record path in \`meta.json\` → \`regressionTest\`. Do not invent steps missing from REPORT.md.
+
+${fs.readFileSync(path.join(contentDir, "bugfix.md"), "utf8").trim()}
+`,
+  },
+  {
+    file: "sdd-debug.prompt.md",
+    name: "sdd-debug",
+    description: "Guided diagnose for a client bug (SDD: debug)",
+    argumentHint: "<bugId>",
+    body: `Run **SDD: debug** — write \`.sdd/bugs/<id>/DEBUG.md\` using REPORT, failing tests, redacted logs, evidence, and research catalog on uncertainty. No secrets.
+
+${fs.readFileSync(path.join(contentDir, "bugfix.md"), "utf8").trim()}
+`,
+  },
+  {
+    file: "sdd-qa.prompt.md",
+    name: "sdd-qa",
+    description: "QA checklist / sign-off for a bug (SDD: qa)",
+    argumentHint: "<bugId>",
+    body: `Run **SDD: qa** — fill \`.sdd/bugs/<id>/QA.md\` (regression matrix, severity, retest notes). Approve only when bug regression and existing suite pass; confirm evidence/demo latest updated.
+
+${fs.readFileSync(path.join(contentDir, "bugfix.md"), "utf8").trim()}
+`,
+  },
+  {
+    file: "sdd-fix.prompt.md",
+    name: "sdd-fix",
+    description: "Fix a bug after reproduce (TDD) (SDD: fix)",
+    argumentHint: "<bugId>",
+    body: `Run **SDD: fix** — only after \`reproduce\` left a failing regression (\`meta.regressionTest\`). Loop implement→verify until regression + suite green; update evidence pack for the bug evidenceKey; then QA.
+
+${fs.readFileSync(path.join(contentDir, "bugfix.md"), "utf8").trim()}
+
+${fs.readFileSync(path.join(contentDir, "hard-rules.md"), "utf8").trim()}
 `,
   },
 ];

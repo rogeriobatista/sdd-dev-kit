@@ -1,7 +1,7 @@
 {
   "name": "@rogeriobatista/cli",
-  "version": "0.1.3",
-  "description": "SDD Protocol Kit CLI — sdd init | run | verify | demo | status | from-ticket",
+  "version": "0.1.4",
+  "description": "SDD Protocol Kit CLI — sdd init | run | verify | demo | status | from-ticket | bug-report | reproduce | debug | qa | fix",
   "type": "module",
   "bin": {
     "sdd": "./dist/bin.js"
@@ -25,16 +25,16 @@
     "pretest": "npm run build"
   },
   "dependencies": {
-    "@rogeriobatista/adapter-claude": "0.1.3",
-    "@rogeriobatista/adapter-cursor": "0.1.3",
-    "@rogeriobatista/adapter-node-graphql": "0.1.3",
-    "@rogeriobatista/adapter-python": "0.1.3",
-    "@rogeriobatista/adapter-react-vite": "0.1.3",
-    "@rogeriobatista/adapter-shared": "0.1.3",
-    "@rogeriobatista/adapter-terraform": "0.1.3",
-    "@rogeriobatista/adapter-ts": "0.1.3",
-    "@rogeriobatista/adapter-vscode-copilot": "0.1.3",
-    "@rogeriobatista/core": "0.1.3"
+    "@rogeriobatista/adapter-claude": "0.1.4",
+    "@rogeriobatista/adapter-cursor": "0.1.4",
+    "@rogeriobatista/adapter-node-graphql": "0.1.4",
+    "@rogeriobatista/adapter-python": "0.1.4",
+    "@rogeriobatista/adapter-react-vite": "0.1.4",
+    "@rogeriobatista/adapter-shared": "0.1.4",
+    "@rogeriobatista/adapter-terraform": "0.1.4",
+    "@rogeriobatista/adapter-ts": "0.1.4",
+    "@rogeriobatista/adapter-vscode-copilot": "0.1.4",
+    "@rogeriobatista/core": "0.1.4"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

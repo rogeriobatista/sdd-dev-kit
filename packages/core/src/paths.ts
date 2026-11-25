@@ -24,12 +24,22 @@ export const DEFAULT_PATHS = {
    * `.sdd/evidence/<evidenceKey>/latest/demo/`.
    */
   evidence: ".sdd/evidence",
+  /**
+   * Professional documentation pack (optional after evidence):
+   * `docs/sdd/{README,PRODUCT,TECHNICAL,CHANGELOG,HANDOFF,ADR,API}.md`.
+   */
+  docs: "docs/sdd",
   /** Stable local evidence id when no ticket provenance exists. */
   evidenceId: ".sdd/evidence-id.json",
   /** Provenance written by `/sdd from-ticket`. */
   ticket: ".sdd/ticket.json",
   /** Stack detection provenance / optional override (`detectStack`). */
   stack: ".sdd/stack.json",
+  /**
+   * Client-reported bugs / QA / debug workspaces:
+   * `.sdd/bugs/<encodedBugId>/{REPORT,DEBUG,QA}.md` + `meta.json`.
+   */
+  bugs: ".sdd/bugs",
   /**
    * Step 2 — executable Spec Tests (Cucumber features by default).
    * Stacks may use `tests/spec/` via sdd.yaml; keep `features` name stable in schema.

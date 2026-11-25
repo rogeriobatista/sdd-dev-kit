@@ -25,9 +25,12 @@ detect stack → spec-tests → dev-spec → implementation-plan → design-appr
   → unit-tests → integration-tests → e2e-tests
   → implement → verify (all layers) ⇄ diagnose*
   → evidence
+  → (optional) docs
 ```
 
 Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Do **not** stop mid-loop to ask the human to fix code. If failures look like **wrong/ambiguous specs**, exit the loop and ask the human to iterate on `specs/` (the only human gate).
+
+**Optional docs (after evidence):** `docs` / `/sdd docs` / `SDD: docs` builds `docs/sdd/` (PRODUCT, TECHNICAL, CHANGELOG, HANDOFF, ADR, API) from specs + Dev Spec + design + research + evidence (+ bugs when present). Must not invent features absent from specs — mark gaps. Subcommands: `changelog`, `api`, `handoff`. Full procedure: **Docs**.
 
 **Before step 2:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 

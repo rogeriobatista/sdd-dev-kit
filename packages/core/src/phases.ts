@@ -21,6 +21,12 @@ export const DEMO_PHASE = "demo" as const;
 export const RESEARCH_PHASE = "research" as const;
 
 /**
+ * Optional documentation pack after evidence (`/sdd docs`).
+ * Not part of the required auto-loop; may run after step 10 or via explicit command.
+ */
+export const DOCS_PHASE = "docs" as const;
+
+/**
  * Ordered automated-loop phases for `/sdd run` (canonical steps 2–10).
  * After specs are accepted, the host agent runs these without stopping to ask
  * the human to fix code. Step 9 = implement → verify → diagnose until pass or cap.
@@ -42,21 +48,41 @@ export const PHASES = [
 /** Alias: `/sdd run` is an auto-loop for steps 2–10 until all test levels pass (or max iterations). */
 export const AUTO_LOOP_PHASES = PHASES;
 
-/** Phases where the human iterates (specs gate + ticket draft bootstrap). */
+/** Parallel workflow for client-reported errors (not part of canonical 1–11). */
+export const BUG_REPORT_PHASE = "bug-report" as const;
+export const REPRODUCE_PHASE = "reproduce" as const;
+export const DEBUG_PHASE = "debug" as const;
+export const QA_PHASE = "qa" as const;
+export const FIX_PHASE = "fix" as const;
+
+export const BUGFIX_PHASES = [
+  BUG_REPORT_PHASE,
+  REPRODUCE_PHASE,
+  DEBUG_PHASE,
+  QA_PHASE,
+  FIX_PHASE,
+] as const;
+
+export type BugfixPhaseName = (typeof BUGFIX_PHASES)[number];
+
+/** Phases where the human iterates (specs gate + ticket draft + bug REPORT). */
 export const HUMAN_ITERATIVE_PHASES = [
   SPECS_PHASE,
   FROM_TICKET_PHASE,
+  BUG_REPORT_PHASE,
 ] as const;
 
 export type PhaseName = (typeof PHASES)[number];
 
-/** All named phases including specs gate, ticket bootstrap, research policy, and demo. */
+/** All named phases including specs gate, ticket bootstrap, research, demo, docs, bugfix. */
 export const ALL_PHASES = [
   SPECS_PHASE,
   FROM_TICKET_PHASE,
   ...PHASES,
   RESEARCH_PHASE,
   DEMO_PHASE,
+  DOCS_PHASE,
+  ...BUGFIX_PHASES,
 ] as const;
 
 export type AnyPhaseName = (typeof ALL_PHASES)[number];

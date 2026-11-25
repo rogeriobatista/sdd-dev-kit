@@ -4,11 +4,25 @@ import { formatInitReport, runInit } from "./commands/init.js";
 import { formatVerifyReport, runVerifyCommand } from "./commands/verify.js";
 import { formatDemoReport, runDemoCommand } from "./commands/demo.js";
 import {
+  formatDocsReport,
+  parseDocsMode,
+  runDocsCommand,
+} from "./commands/docs.js";
+import {
   formatFromTicketReport,
   runFromTicketCommand,
 } from "./commands/from-ticket.js";
 import { formatStatusReport, runStatus } from "./commands/status.js";
 import { runPipelineCommand } from "./commands/run.js";
+import {
+  formatBugReportCli,
+  formatGuidanceResult,
+  runBugReportCommand,
+  runDebugCommand,
+  runFixCommand,
+  runQaCommand,
+  runReproduceCommand,
+} from "./commands/bugfix.js";
 
 export type CliResult = { exitCode: number };
 
@@ -67,6 +81,17 @@ export async function runCli(argv: string[] = process.argv): Promise<CliResult> 
         console.log(formatDemoReport(result));
         return { exitCode: 0 };
       }
+      case "docs": {
+        const mode = parseDocsMode(parsed.positional[0]);
+        const result = await runDocsCommand({
+          projectRoot: cwd,
+          mode,
+          evidenceKey: flagString(parsed.flags, "id"),
+          writeRootChangelog: !flagBool(parsed.flags, "no-root-changelog"),
+        });
+        console.log(formatDocsReport(result));
+        return { exitCode: 0 };
+      }
       case "from-ticket": {
         const ticketId = parsed.positional[0];
         if (!ticketId) {
@@ -94,6 +119,69 @@ export async function runCli(argv: string[] = process.argv): Promise<CliResult> 
         console.log(statusText);
         console.log(guidance);
         return { exitCode };
+      }
+      case "bug-report":
+      case "bug": {
+        // Support `sdd bug report` → command bug, positional "report"
+        let bugId = parsed.positional[0];
+        if (parsed.command === "bug" && bugId?.toLowerCase() === "report") {
+          bugId = parsed.positional[1];
+        } else if (parsed.command === "bug" && bugId) {
+          // `sdd bug linear:ENG-42` treated as bug-report with id
+        } else if (parsed.command === "bug" && !bugId) {
+          bugId = undefined;
+        }
+        const result = await runBugReportCommand({
+          projectRoot: cwd,
+          bugId,
+          title: flagString(parsed.flags, "title"),
+        });
+        console.log(formatBugReportCli(result));
+        return { exitCode: 0 };
+      }
+      case "reproduce": {
+        const bugId = parsed.positional[0];
+        if (!bugId) {
+          console.error("Missing bug id. Example: sdd reproduce linear:ENG-42");
+          printCommandHelp("reproduce");
+          return { exitCode: 1 };
+        }
+        const result = await runReproduceCommand({ projectRoot: cwd, bugId });
+        console.log(formatGuidanceResult(result));
+        return { exitCode: 0 };
+      }
+      case "debug": {
+        const bugId = parsed.positional[0];
+        if (!bugId) {
+          console.error("Missing bug id. Example: sdd debug linear:ENG-42");
+          printCommandHelp("debug");
+          return { exitCode: 1 };
+        }
+        const result = await runDebugCommand({ projectRoot: cwd, bugId });
+        console.log(formatGuidanceResult(result));
+        return { exitCode: 0 };
+      }
+      case "qa": {
+        const bugId = parsed.positional[0];
+        if (!bugId) {
+          console.error("Missing bug id. Example: sdd qa linear:ENG-42");
+          printCommandHelp("qa");
+          return { exitCode: 1 };
+        }
+        const result = await runQaCommand({ projectRoot: cwd, bugId });
+        console.log(formatGuidanceResult(result));
+        return { exitCode: 0 };
+      }
+      case "fix": {
+        const bugId = parsed.positional[0];
+        if (!bugId) {
+          console.error("Missing bug id. Example: sdd fix linear:ENG-42");
+          printCommandHelp("fix");
+          return { exitCode: 1 };
+        }
+        const result = await runFixCommand({ projectRoot: cwd, bugId });
+        console.log(formatGuidanceResult(result));
+        return { exitCode: result.blocked ? 2 : 0 };
       }
       case "help": {
         printRootHelp();

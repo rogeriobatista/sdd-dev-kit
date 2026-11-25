@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   DEFAULT_PATHS,
   detectStack,
+  listBugIds,
   listRunIds,
   resolveEvidenceKey,
   resolveSddPath,
@@ -30,6 +31,7 @@ export type StatusReport = {
   ticket: unknown | null;
   evidenceKey: string | null;
   evidencePath: string | null;
+  bugs: string[];
   premisesExists: boolean;
   specsCount: number;
 };
@@ -121,6 +123,7 @@ export async function runStatus(
     ticket,
     evidenceKey,
     evidencePath,
+    bugs: listBugIds(projectRoot),
     premisesExists,
     specsCount,
   };
@@ -139,6 +142,7 @@ export function formatStatusReport(s: StatusReport): string {
     `ticket: ${s.ticket ? "yes (.sdd/ticket.json)" : "no"}`,
     `evidenceKey: ${s.evidenceKey ?? "(none)"}`,
     `evidencePath: ${s.evidencePath ?? "(none)"}`,
+    `bugs: ${s.bugs.length ? s.bugs.join(", ") : "(none)"}`,
   ];
   if (s.stack.needsClarification) {
     lines.push(
