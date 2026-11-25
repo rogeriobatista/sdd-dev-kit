@@ -1,6 +1,6 @@
 {
   "name": "node-graphql-api",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "type": "module",
   "description": "SDD example — Node TS GraphQL + Vitest",
@@ -13,8 +13,8 @@
     "smoke": "vitest run"
   },
   "dependencies": {
-    "@rogeriobatista/adapter-node-graphql": "0.1.2",
-    "@rogeriobatista/core": "0.1.2",
+    "@rogeriobatista/adapter-node-graphql": "0.1.3",
+    "@rogeriobatista/core": "0.1.3",
     "graphql": "^16.10.0",
     "graphql-yoga": "^5.12.0"
   },

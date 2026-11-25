@@ -89,15 +89,21 @@ function stackPremisesSnippet(stack: StackAdapterId): string {
     ...lines[stack],
     "",
     "## Tags",
-    "- `@api` → track de API / domínio",
+    "- `@api` → track de API / domínio (Spec Tests)",
     "- `@ui` / `@e2e` → Playwright quando o adapter suportar",
+    "",
+    "## Camadas de teste",
+    "- Spec Tests: `tests/features` ou `tests/spec`",
+    "- Unit: `tests/unit`",
+    "- Integration: `tests/integration`",
+    "- E2E: `tests/e2e`",
     "",
     "## Idioma dos specs",
     "- Português: `Dado` / `Quando` / `Então` / `E`",
     "",
     "## Fronteiras",
-    "- Humano edita só `specs/` e este arquivo quando necessário",
-    "- Artefatos gerados em `tests/`, `.sdd/canonical`, `.sdd/plan`, `.sdd/research` são regeneráveis",
+    "- Humano edita só `specs/` e este arquivo quando necessário (step 1)",
+    "- Regeneráveis: Spec/unit/integration/e2e tests, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`, canonical, research, evidence",
     "",
   ].join("\n");
 }
@@ -220,6 +226,18 @@ async function writeSharedTemplates(
       dest: path.join(projectRoot, ".sdd", "premises.md"),
       contents: stack ? stackPremisesSnippet(stack) : undefined,
     },
+    {
+      src: path.join(templates, ".sdd", "dev-spec.md"),
+      dest: path.join(projectRoot, ".sdd", "dev-spec.md"),
+    },
+    {
+      src: path.join(templates, ".sdd", "implementation-plan.md"),
+      dest: path.join(projectRoot, ".sdd", "implementation-plan.md"),
+    },
+    {
+      src: path.join(templates, ".sdd", "design-approach.md"),
+      dest: path.join(projectRoot, ".sdd", "design-approach.md"),
+    },
   ];
 
   // Prefer stack-specific sdd.yaml from the stack package when available
@@ -259,9 +277,13 @@ async function writeSharedTemplates(
       ".sdd",
       ".sdd/canonical",
       ".sdd/plan",
+      ".sdd/research",
       ".sdd/runs",
       ".sdd/evidence",
       ".sdd/demo",
+      "tests/unit",
+      "tests/integration",
+      "tests/e2e",
       "src",
     ]) {
       await mkdir(path.join(projectRoot, rel), { recursive: true });

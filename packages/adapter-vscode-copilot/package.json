@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/adapter-vscode-copilot",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "SDD GitHub Copilot adapter — copilot-instructions.md + .github/prompts for VS Code",
   "files": [
     "project",

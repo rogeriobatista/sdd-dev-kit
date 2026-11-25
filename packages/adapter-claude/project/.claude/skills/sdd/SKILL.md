@@ -8,7 +8,7 @@ description: >-
 
 # SDD — Spec-Driven Development (Claude)
 
-Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on `specs/`; after specs are accepted, `SDD: run` is an automated loop until spec tests pass (no mid-loop human code fixes).
+Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on `specs/` (step 1); after specs are accepted, `SDD: run` automates steps 2–10 until all test levels pass (no mid-loop human code fixes). Step 11 = continuous best practices.
 
 ## Claude command map (natural-language intents)
 
@@ -17,42 +17,47 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | Init | `SDD: init` or "scaffold this project for SDD" |
 | From ticket | `SDD: from-ticket ENG-42` / `linear:ENG-42` / `jira:SHOP-7` (optional `--run`) |
 | Run pipeline | `SDD: run` |
-| Research (best practices) | `SDD: research` (also inside `SDD: run` before plan) |
+| Research (best practices) | `SDD: research` (step 11 continuous; also standalone) |
 | Verify only | `SDD: verify` |
 | Demo (PO/BO/QA) | `SDD: demo` (optional run id) |
 | Status | `SDD: status` |
 
 You may also treat `/sdd <subcommand>` the same way when the user types it.
-On `run` / `plan` / `implement` / `research`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
+On `run` / docs / `implement` / `research`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
 
 ## Human vs agent ownership
 
 ### Human-owned (edit freely) — **only human iteration surface**
 
-- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here
+- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here (canonical **step 1**)
 - `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
-- Optional: review that generated executable tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
+- Optional: review that generated Spec Tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
-- Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
-- `.sdd/canonical/**` — normalized scenarios
-- `.sdd/plan/**` — SDD task plan
-- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) keyed like evidence
+- Executable Spec Tests (`tests/features/**`, `tests/spec/**`, `tests/steps/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, …) — **step 2**
+- `.sdd/dev-spec.md` — Dev Spec — **step 3**
+- `.sdd/implementation-plan.md` — Dev Implementation Plan — **step 4** (legacy `.sdd/plan/**` optional)
+- `.sdd/design-approach.md` — Design & Approach — **step 5**
+- `tests/unit/**` — unit tests — **step 6**
+- `tests/integration/**` — integration tests — **step 7**
+- `tests/e2e/**` — e2e tests — **step 8**
+- `.sdd/canonical/**` — normalized scenarios (supports step 2)
+- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) — **step 11 support**
 - `.sdd/runs/**` — run reports (internal; linked from evidence meta)
-- `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
+- `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path) — **step 10**
 - `.sdd/evidence-id.json` — stable local evidence id when no ticket
 - `.sdd/demo/**` — legacy per-run demo copies (prefer `.sdd/evidence/<key>/latest/demo/`)
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap (includes `evidenceKey` / `evidencePath`)
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
-- Production code under the SDD implement phase (agent implements to make tests pass)
+- Production code under the SDD implement loop (**step 9**)
 
 ### Agent must not
 
 - Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
 - Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
-- Suggest that the human manually fix generated features/steps/e2e or production code to green the suite
-- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until pass or cap; only exit early for **spec** gaps
+- Suggest that the human manually fix generated Spec/unit/integration/e2e tests or production code to green the suite
+- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until all test levels pass or cap; only exit early for **spec** gaps
 - Put ticketing secrets on argv or in the repo; use env vars only
 
 ## Stack detection (from specification docs)
@@ -83,19 +88,17 @@ Use `@rogeriobatista/core` `detectStack(projectRoot)` → `{ stack, source, conf
    - If missing/ambiguous: **STOP** and ask the human to declare stack in `.sdd/premises.md` (`## Stack`). Do not invent.
    - Canonical ids: `typescript` (alias `ts`), `python`, `react-vite`, `node-graphql`, `terraform`.
    - Write `adapter:` in `sdd.yaml` (or `adapters.stack:`) and `.sdd/stack.json` provenance after confirmation.
-2. Ensure folders appropriate to the stack:
-   - Shared: `specs/`, `.sdd/` (premises, canonical, plan, research, runs, evidence, demo, stack.json), `src/` (or module root for Terraform)
-   - TS / node-graphql: `tests/features`, `tests/steps`, and e2e when UI applies
-   - python: `tests/`
-   - react-vite: `tests/e2e` (+ optional `tests/unit`)
-   - terraform: `tests/` for `*.tftest.hcl`
-3. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`). Set **stack-specific `runners`** (see adapter README). Optionally include a commented `ticketing:` section for Linear/Jira.
-4. Write `.sdd/premises.md` and `specs/_example.md` from shared templates if missing — **declare Stack explicitly** (adapter id + tech) so detection is demonstrable.
+2. Ensure folders appropriate to the stack (canonical 11-step layout):
+   - Shared: `specs/`, `.sdd/` (premises, canonical, research, runs, evidence, demo, stack.json, empty `dev-spec.md` / `implementation-plan.md` / `design-approach.md`), `src/` (or module root for Terraform)
+   - Test layers: `tests/unit/`, `tests/integration/`, `tests/e2e/` (create even if a stack fills them later)
+   - Spec Tests: TS / node-graphql → `tests/features` + `tests/steps` (or `tests/spec` when configured); python → `tests/`; react-vite → e2e (+ unit); terraform → `tests/` for `*.tftest.hcl`
+3. Write `sdd.yaml` from kit defaults if missing (`triggers.watch: false`, `loop.maxDiagnoseIterations: 3`). Set **stack-specific `runners`** including layer keys when available (`spec`/`cucumber`, `unit`, `integration`, `e2e`/`playwright`, or `all`). Optionally include a commented `ticketing:` section for Linear/Jira.
+4. Write `.sdd/premises.md` and `specs/_example.md` from shared templates if missing — **declare Stack explicitly** (adapter id + tech) so detection is demonstrable. Mention the three test layers (unit / integration / e2e) plus Spec Tests.
 5. Scaffold via the matching package (`@rogeriobatista/adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, or `adapter-terraform`) or copy from `examples/`.
 6. Install the **host adapter** instruction files for this project (Cursor skill/rules, Claude `CLAUDE.md` + `.claude/skills`, or Copilot `.github/copilot-instructions.md` + prompts) — do not overwrite existing human specs.
 7. Do **not** overwrite existing human specs.
 
-Report the tree, the chosen `adapter` (and detection `source`), and tell the user: edit `specs/` (the **only human iteration surface**), or run from-ticket and pause for spec review, then `/sdd run` / `SDD: run` for the **automated loop** (detect → normalize → executable → research → plan → implement → verify → diagnose*) until spec tests pass.
+Report the tree, the chosen `adapter` (and detection `source`), and tell the user: edit `specs/` (the **only human iteration surface** / step 1), or run from-ticket and pause for spec review, then `/sdd run` / `SDD: run` for the **automated steps 2–10** (spec-tests → … → evidence; step 11 = continuous best practices) until all test levels pass.
 
 ## From-ticket — bootstrap NL specs from Linear or Jira
 
@@ -134,104 +137,114 @@ Bootstrap NL specs from a **Linear** or **Jira** ticket, then **pause for human 
 - **Cursor / Claude:** prefer MCP Linear/Jira tools when configured; otherwise use core REST/GraphQL providers with env vars.
 - **GitHub Copilot (VS Code):** MCP may be unavailable or limited — use `@rogeriobatista/core` providers / REST with env vars (`LINEAR_API_KEY`, `JIRA_*`). Document env setup; never put secrets in chat or repo files.
 
-## Pipeline phases (run)
+## Pipeline phases (run) — canonical 11-step flow
 
-**Human iteration surface (ONLY):** creating/adjusting NL specs in `specs/` (and clarifying acceptance). Optional review that generated executable tests match intent — if they do not, fix `specs/` and re-materialize; **never** hand-patch generated tests or production code to green the suite.
+**Lock this order.** Step 1 is the only human iteration gate. Steps 2–10 run automatically in `/sdd run` / `SDD: run` after specs are accepted. Step 11 is continuous policy (not a separate stop).
 
-**Automated loop (no human mid-loop):** after specs are accepted/written, `/sdd run` / `SDD: run` runs:
+| Step | Actor | Action | Artifact |
+|------|-------|--------|----------|
+| 1 | **Human** | Natural language mixed with BDD (Cucumber-style) | `specs/` |
+| 2 | Kit | Create **executable Spec Tests** validating the described rules | `tests/spec/` or `tests/features/` (per stack / `sdd.yaml`) |
+| 3 | Kit | Create **Dev Spec** document for the implementation | `.sdd/dev-spec.md` |
+| 4 | Kit | Create **Dev Implementation Plan** document | `.sdd/implementation-plan.md` |
+| 5 | Kit | Create **Design & Approach** definitions | `.sdd/design-approach.md` |
+| 6 | Kit | Create **unit tests** | `tests/unit/` |
+| 7 | Kit | Create **integration tests** | `tests/integration/` |
+| 8 | Kit | Create **e2e tests** | `tests/e2e/` |
+| 9 | Kit | Develop in a loop until **all test levels** pass (spec + unit + integration + e2e) | `src/` + `.sdd/runs/` |
+| 10 | Kit | Create **evidence** proving the ask was met | `.sdd/evidence/<key>/latest/` |
+| 11 | Kit | **During all steps:** any doubt → market best practices | `.sdd/research/<key>/` |
+
+**Human iteration surface (ONLY):** creating/adjusting NL specs in `specs/` (and clarifying acceptance). Optional review that generated Spec Tests match intent — if they do not, fix `specs/` and re-materialize; **never** hand-patch generated tests or production code to green the suite.
+
+**Automated loop (no human mid-loop):** after specs are accepted/written, `/sdd run` / `SDD: run` runs steps 2→10:
 
 ```text
-detect stack → normalize → executable → research → plan → implement → verify
-                                                      ↑_________________|
-                                                      diagnose → implement*
+detect stack → spec-tests → dev-spec → implementation-plan → design-approach
+  → unit-tests → integration-tests → e2e-tests
+  → implement → verify (all layers) ⇄ diagnose*
+  → evidence
 ```
 
-Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Do **not** stop mid-loop to ask the human to fix code. If failures look like **wrong/ambiguous specs**, exit the loop and ask the human to iterate on `specs/` (the only human gate). On green (or after the loop ends with a report), remind about **demo** / evidence update.
+Cap diagnose→implement at `loop.maxDiagnoseIterations` (default 3). Do **not** stop mid-loop to ask the human to fix code. If failures look like **wrong/ambiguous specs**, exit the loop and ask the human to iterate on `specs/` (the only human gate).
 
-**Before normalize/executable:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
+**Before step 2:** run **stack detection** (`detectStack` on premises + specs). If missing/ambiguous, **STOP** and ask the human to declare stack in `.sdd/premises.md`. After a clear result, update `.sdd/stack.json` and align `sdd.yaml` `adapter` when safe. Prefer the detected stack over a stale hard-coded yaml-only choice; if falling back to `sdd.yaml`, warn in status.
 
-### 1. normalize
+**Step 11 (continuous):** open the best-practices catalog + write/update `.sdd/research/<key>/` whenever there is doubt during steps 2–10. Premises win on conflict. Full procedure: **Research (best practices)**. Optional standalone: `research` / `/sdd research` / `SDD: research`.
 
-- Read all `specs/*.md` (ignore `_example.md` unless it is the only content and user intends to use it).
-- Read `.sdd/premises.md`.
-- Produce `.sdd/canonical/*.json` with stable scenario ids, Portuguese steps (`Dado`/`Quando`/`Então`/`E`), and tags.
-- **If ambiguous:** stop the auto-loop. Ask the human to clarify in `specs/`. Do **not** invent business rules.
+### 2. spec-tests
 
-### 2. executable
+Normalize `specs/` into `.sdd/canonical/*.json` (stable ids, Portuguese `Dado`/`Quando`/`Então`/`E`, tags), then materialize **executable Spec Tests** with the stack adapter (regenerate freely; never ask the human to edit these files to green the suite):
 
-Materialize from canonical using the stack adapter (regenerate freely; never ask the human to edit these files to green the suite):
-
-| Adapter | Materialize target |
+| Adapter | Spec Tests target |
 |---------|-------------------|
-| `typescript` / `ts` | `@api` → Cucumber features/steps; `@ui`/`@e2e` → Playwright |
-| `python` | pytest stubs under `tests/test_*.py` |
-| `react-vite` | `@ui`/`@e2e` → Playwright; `@api` → optional Vitest unit stubs |
+| `typescript` / `ts` | `@api` → Cucumber under `tests/features` (or `tests/spec` if configured); `@ui`/`@e2e` also inform step 8 |
+| `python` | pytest stubs under `tests/` / Spec layer as configured |
+| `react-vite` | Spec/API stubs as tagged; UI primarily step 8 Playwright |
 | `node-graphql` | `@api` → Cucumber + Vitest GraphQL stubs |
 | `terraform` | `tests/*.tftest.hcl` with GWT comments / assert stubs |
 
-### 3. research
+**If ambiguous:** stop the auto-loop. Ask the human to clarify in `specs/`. Do **not** invent business rules.
 
-Consult market / standards best practices for the detected stack **plus security** before planning.
+### 3. dev-spec
 
-- Open `packages/adapter-shared/content/best-practices-catalog.md` (and/or `.json`) for the stack domains; prefer MCP WebSearch / fetch of catalog URLs when available.
-- Write `.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md` + `sources.json` (urls, what was applied, premises conflicts).
-- **Must cite sources** in subsequent plan tasks; do not invent “best practice” without a catalog source or premises override.
-- Premises win on conflict — note the conflict in `BEST_PRACTICES.md`.
-- Full procedure: **Research (best practices)** section. Optional standalone: `research` / `/sdd research` / `SDD: research`.
+Write `.sdd/dev-spec.md` — technical Dev Spec derived from accepted `specs/` + premises (scope, interfaces, constraints). Agent-owned; regenerate freely. Cite research sources when applying market practices.
 
-### 4. plan
+### 4. implementation-plan
 
-- Write `.sdd/plan/` with small, ordered, testable tasks under premises constraints.
-- Each task that applies a market practice **must cite** a research/`sources.json` id or URL (or an explicit premises override).
+Write `.sdd/implementation-plan.md` — ordered, testable implementation tasks under premises constraints. Each task that applies a market practice **must cite** a research/`sources.json` id or URL (or an explicit premises override). Legacy `.sdd/plan/` may mirror tasks; the stable artifact name is `implementation-plan.md`.
 
-### 5. implement
+### 5. design-approach
 
-- Implement production code (and complete step stubs only when needed) so red tests can go green.
-- Follow TDD: keep tests as the source of truth; do not weaken assertions to pass.
-- Follow `.sdd/research/.../BEST_PRACTICES.md` (and re-open catalog/security sources as needed). Premises still win on conflict.
+Write `.sdd/design-approach.md` — Design & Approach definitions (architecture choices, patterns, trade-offs) for the implementation. Premises win on conflict with catalog practices.
 
-### 6. verify
+### 6. unit-tests
 
-- Run commands from `sdd.yaml` `runners` — **keys differ by adapter** (`cucumber`/`playwright`, `pytest`, `vitest`, `fmt`/`validate`/`terraform`, or `all`).
-- Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply).
-- Persist structured results under `.sdd/runs/<id>/`.
+Create/update **unit tests** under `tests/unit/` (or the path in `sdd.yaml` `paths.unit`). Do not ask the human to edit these to green the suite.
 
-### 7. diagnose (on failure) — auto-loop
+### 7. integration-tests
 
-- Fix **implementation** against failing tests only; loop back to implement → verify.
-- **Do not** ask the human to fix code mid-loop.
-- If the **spec** is wrong/ambiguous (requirement gap), **exit the loop** and ask the human to edit `specs/` — do not silently change specs.
-- Continue until green or `loop.maxDiagnoseIterations` (default 3).
+Create/update **integration tests** under `tests/integration/` (or `paths.integration`).
 
-### 8. report
+### 8. e2e-tests
 
-- Summarize pass/fail, remaining failures, and paths to reports.
-- **Cap exceeded:** write the run report. If failures look like requirement gaps / ambiguous acceptance, point the human back to `specs/` (only human gate). Otherwise report remaining test failures for the next auto-loop after any needed spec fix.
-- After green (or after the loop ends with a report), prefer `updateEvidencePack` and optionally remind the human to run **demo** for the PO/BO/QA pack.
+Create/update **e2e tests** under `tests/e2e/` (Playwright etc. when the adapter supports UI). Terraform / headless stacks may use stack-appropriate e2e equivalents or skip when not applicable — note it in the run report.
+
+### 9. implement → verify → diagnose (loop)
+
+- **implement:** production code (and complete step stubs only when needed) so red tests can go green. Follow TDD; do not weaken assertions. Follow research + premises.
+- **verify:** run commands from `sdd.yaml` `runners` covering **all test levels** when present: `spec` (or `cucumber`), `unit`, `integration`, `e2e` (or `playwright`), or `runners.all`. Keys differ by adapter (`pytest`, `vitest`, `fmt`/`validate`/`terraform`, …). Terraform verify must **not** require cloud credentials (fmt / validate / `terraform test` only — no apply). Persist structured results under `.sdd/runs/<id>/`.
+- **diagnose (on failure):** fix **implementation** against failing tests only; loop back to implement → verify. **Do not** ask the human to fix code mid-loop. If the **spec** is wrong/ambiguous, **exit the loop** and ask the human to edit `specs/`. Continue until green or `loop.maxDiagnoseIterations` (default 3).
+
+### 10. evidence
+
+- Summarize pass/fail, remaining failures, and paths to reports under `.sdd/runs/`.
+- Update the stakeholder evidence pack via `updateEvidencePack` / `buildDemo` → `.sdd/evidence/<key>/latest/` (demo under `latest/demo/`).
+- **Cap exceeded:** write the run report. If failures look like requirement gaps, point the human back to `specs/`. Otherwise report remaining test failures for the next auto-loop after any needed spec fix.
 
 ## Verify (tests only)
 
-Run `runners.all` (or the stack-specific runner the user names). Do not normalize or implement.
+Run `runners.all` (or named layer keys: `spec`, `unit`, `integration`, `e2e`, or stack-specific names). Do not rewrite specs or implement.
 
-## Demo (after verify)
+## Demo (after evidence)
 
-Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Runs **after** green (or after the auto-loop ends with a report) — not mid-loop; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`). After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
+Build a PO/BO/QA demo pack from the latest (or named) run evidence via `@rogeriobatista/core` `buildDemo({ projectRoot, runId?, evidenceKey? })` → `.sdd/evidence/<key>/latest/demo/` (`index.html`, `SUMMARY.md`, `manifest.json`). Key comes from ticket / `evidence.key` / stable local id. Full procedure is in the **Demo** section. Runs as part of / after step 10 — not mid-loop for steps 2–8; invoke explicitly (`demo` / `/sdd demo` / `SDD: demo`) when refreshing the pack. After verify, prefer calling `updateEvidencePack` so `latest/raw` stays current even before demo.
 
 ## Status
 
-Read the latest `.sdd/runs/*` (and plan/canonical/ticket/evidence/demo/research presence). Report phase statuses, last exit codes, **adapter id + detection source** (premises / specs / stack.json / sdd.yaml fallback), any stack warnings, resolved `evidenceKey`, whether `.sdd/ticket.json` / `.sdd/stack.json` / `.sdd/evidence/` / `.sdd/research/` exist, and research catalog citations when present.
+Read the latest `.sdd/runs/*` and presence of `dev-spec.md` / `implementation-plan.md` / `design-approach.md` / canonical / ticket / evidence / research / test layers. Report phase statuses (steps 1–11), last exit codes, **adapter id + detection source**, any stack warnings, resolved `evidenceKey`, and research catalog citations when present.
 
 ## Research (best practices)
 
-Consult **market / standards best practices** for the detected stack before writing the plan and before implementing. Do **not** invent “best practice” claims without a catalog/source citation or an explicit `.sdd/premises.md` override.
+Consult **market / standards best practices** for the detected stack whenever there is doubt during the pipeline (**canonical step 11 — continuous policy**, not a separate stop). Do **not** invent “best practice” claims without a catalog/source citation or an explicit `.sdd/premises.md` override.
 
 ### When to run
 
 | Trigger | Behavior |
 |---------|----------|
-| `/sdd run` / `SDD: run` | **Required** phase after `executable`, before `plan` (also re-check relevant sources during `implement`) |
+| `/sdd run` / `SDD: run` | **Continuous** during steps 2–10 (especially before/while writing Dev Spec, Implementation Plan, Design Approach, tests, and implement). Refresh the research pack when sources change or doubt arises |
 | `/sdd research` / `SDD: research` | **Optional standalone** — refresh research pack without running the full pipeline |
-| `plan` / `implement` | Must open research output (or run research first if missing) |
+| `dev-spec` / `implementation-plan` / `design-approach` / `implement` | Must open research output (or run research first if missing) |
 
 ### Steps
 
@@ -245,7 +258,7 @@ Consult **market / standards best practices** for the detected stack before writ
 6. **Write agent-owned outputs** under `.sdd/research/<encodedEvidenceKey>/`:
    - `BEST_PRACTICES.md` — stakeholder-friendly summary (Portuguese OK) of practices **applied** to this work, conflicts with premises, and source citations
    - `sources.json` — machine list of `{ id, url, title, domain, applied: true|false, note? }` plus `catalogVersion`, `stack`, `evidenceKey`, `researchedAt`
-7. **Cite in plan:** every plan task that relies on a practice must reference a source `id` or URL from `sources.json` / the catalog. Premises overrides must be noted as such.
+7. **Cite in docs/tasks:** every Dev Spec / Implementation Plan / Design Approach item that relies on a practice must reference a source `id` or URL from `sources.json` / the catalog. Premises overrides must be noted as such.
 8. **Conflicts:** if a catalog practice conflicts with `.sdd/premises.md`, **premises win**. Record the conflict in `BEST_PRACTICES.md` (do not silently ignore premises).
 
 ### Output layout
@@ -362,25 +375,26 @@ Missing evidence is OK — still produce the narrative from the run report + spe
 ## Hard rules
 
 - **Never** edit `specs/` unless the human explicitly asks — **exception:** from-ticket may write a **draft** spec from the ticket (bootstrap only).
-- **Never** ask the human to edit generated tests, plan, canonical, or production code for the happy path.
-- **Human iteration surface (ONLY):** `specs/` (+ clarifying acceptance; optional review that executable tests match intent). All other `/sdd run` phases are an **automated loop** until spec tests pass or the diagnose cap — do **not** stop mid-loop to ask the human to fix code.
+- **Never** ask the human to edit generated tests, Dev Spec, implementation plan, design approach, canonical, or production code for the happy path.
+- **Human iteration surface (ONLY):** `specs/` (+ clarifying acceptance; optional review that Spec Tests match intent). Steps 2–10 of `/sdd run` are an **automated loop** until all test levels pass or the diagnose cap — do **not** stop mid-loop to ask the human to fix code.
 - If failures look like **wrong/ambiguous specs**, exit the auto-loop and ask the human to iterate on `specs/` — the only human gate.
 - Specs language: Portuguese keywords `Dado`, `Quando`, `Então`, `E`.
-- Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
+- Tags (default TS/UI stacks): `@api` → API/Cucumber/pytest Spec track; `@ui`/`@e2e` → Playwright when the adapter supports UI.
 - Stack adapters are first-class: `typescript` | `python` | `react-vite` | `node-graphql` | `terraform` (alias `ts` → `typescript`).
 - **Stack comes from specification docs** (premises → specs → optional stack.json / sdd.yaml fallback). If missing/ambiguous: stop and ask the human — never invent a stack from app source as the primary signal.
 - Terraform verify: no cloud apply / no secrets required for default runners.
 - Watch is **out of MVP**; ignore enabling watch unless the human explicitly requests post-MVP work.
 - Ticketing secrets: env vars only (`LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`).
 - Pipeline trigger is explicit (init / from-ticket / run / verify / status / demo) — not file watch.
-- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses. Demo/evidence update runs **after** green or after the auto-loop ends with a report.
-- **Research / best practices:** before `plan`/`implement`, open the curated catalog (`best-practices-catalog`) for the detected stack **plus security**. Cite sources in plan tasks; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.
+- Canonical artifacts: Spec Tests under `tests/features` or `tests/spec`; Dev Spec / Implementation Plan / Design Approach under `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`; test layers `tests/unit/`, `tests/integration/`, `tests/e2e/`; evidence under `.sdd/evidence/<key>/latest/`.
+- Evidence packs (`.sdd/evidence/<key>/latest/demo/`) are for PO/BO/QA: Portuguese business language from specs, no code dumps, no secrets, offline-relative paths. Same key updates in place as development progresses. Evidence/demo update is step 10 (after green or after the auto-loop ends with a report).
+- **Research / best practices (step 11 — continuous):** during steps 2–10, open the curated catalog (`best-practices-catalog`) for the detected stack **plus security** whenever there is doubt. Cite sources in Dev Spec / Implementation Plan / Design Approach; do not invent uncited practices. Premises override catalog on conflict (note it). Links + short guidance only — no scraping copyrighted full docs into the repo.
 
 ## Template locations in this kit
 
 - Shared source: `packages/adapter-shared/content/` (pipeline, research, from-ticket, human boundary, hard rules, best-practices catalog)
 - Best-practices catalog: `packages/adapter-shared/content/best-practices-catalog.md` (+ `.json`)
-- Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`)
+- Shared scaffold: `packages/adapter-shared/templates/` (`sdd.yaml`, `specs/_example.md`, `.sdd/premises.md`, `.sdd/dev-spec.md`, `.sdd/implementation-plan.md`, `.sdd/design-approach.md`)
 - Stack adapters: `adapter-ts`, `adapter-python`, `adapter-react-vite`, `adapter-node-graphql`, `adapter-terraform`
 - Examples: `coupon-checkout/`, `python-pytest-hello/`, `react-vite-playwright/`, `node-graphql-api/`, `terraform-module/`
 - Offline ticket fixture: `packages/core/src/ticketing/fixtures/`

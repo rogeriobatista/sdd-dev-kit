@@ -22,6 +22,14 @@ describe("SddManifestSchema", () => {
     );
     assert.equal(manifest.paths.specs, DEFAULT_PATHS.specs);
     assert.equal(manifest.paths.features, DEFAULT_PATHS.features);
+    assert.equal(manifest.paths.devSpec, DEFAULT_PATHS.devSpec);
+    assert.equal(
+      manifest.paths.implementationPlan,
+      DEFAULT_PATHS.implementationPlan,
+    );
+    assert.equal(manifest.paths.designApproach, DEFAULT_PATHS.designApproach);
+    assert.equal(manifest.paths.unit, DEFAULT_PATHS.unit);
+    assert.equal(manifest.paths.integration, DEFAULT_PATHS.integration);
     assert.equal(manifest.runners.cucumber, "npm run sdd:verify:cucumber");
   });
 

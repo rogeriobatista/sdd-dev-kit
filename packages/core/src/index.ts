@@ -10,6 +10,7 @@ export {
   AUTO_LOOP_PHASES,
   ALL_PHASES,
   HUMAN_ITERATIVE_PHASES,
+  CANONICAL_FLOW_STEPS,
   SPECS_PHASE,
   FROM_TICKET_PHASE,
   RESEARCH_PHASE,
@@ -22,8 +23,8 @@ export {
   type PhaseName,
   type AnyPhaseName,
   type HumanIterativePhaseName,
+  type CanonicalFlowStep,
 } from "./phases.js";
-
 export type {
   PhaseStatus,
   ScenarioTag,

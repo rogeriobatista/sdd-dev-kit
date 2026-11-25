@@ -26,8 +26,8 @@ npx @rogeriobatista/cli init
 |---------|---------|
 | `sdd init [--host cursor\|claude\|copilot\|all] [--stack <id>]` | Host adapters + `sdd.yaml` + premises + stack scaffold |
 | `sdd from-ticket <id> [--run]` | Bootstrap `specs/` from Linear/Jira (env vars) |
-| `sdd run` | Status + auto-loop guidance (human gate = specs/; LLM host-driven) |
-| `sdd verify [runner]` | Run `sdd.yaml` runners via core |
+| `sdd run` | Status + canonical steps 1–10 guidance (human gate = specs/; LLM host-driven) |
+| `sdd verify [runner]` | Run `sdd.yaml` runners (`all` / `spec` / `unit` / `integration` / `e2e`) |
 | `sdd demo [runId] [--id <key>]` | Stakeholder evidence pack |
 | `sdd status` | Last run / stack / ticket / evidence |
 

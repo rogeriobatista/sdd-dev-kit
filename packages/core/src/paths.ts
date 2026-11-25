@@ -3,7 +3,14 @@ export const DEFAULT_PATHS = {
   specs: "specs",
   premises: ".sdd/premises.md",
   canonical: ".sdd/canonical",
+  /** Legacy task-plan directory; prefer `implementationPlan` for step 4. */
   plan: ".sdd/plan",
+  /** Step 3 — Dev Spec document. */
+  devSpec: ".sdd/dev-spec.md",
+  /** Step 4 — Dev Implementation Plan document. */
+  implementationPlan: ".sdd/implementation-plan.md",
+  /** Step 5 — Design & Approach definitions. */
+  designApproach: ".sdd/design-approach.md",
   /** Best-practices research packs keyed like evidence: `.sdd/research/<key>/`. */
   research: ".sdd/research",
   runs: ".sdd/runs",
@@ -23,8 +30,19 @@ export const DEFAULT_PATHS = {
   ticket: ".sdd/ticket.json",
   /** Stack detection provenance / optional override (`detectStack`). */
   stack: ".sdd/stack.json",
+  /**
+   * Step 2 — executable Spec Tests (Cucumber features by default).
+   * Stacks may use `tests/spec/` via sdd.yaml; keep `features` name stable in schema.
+   */
   features: "tests/features",
+  /** Alternate Spec Tests root when a stack prefers `tests/spec/`. */
+  spec: "tests/spec",
   steps: "tests/steps",
+  /** Step 6 — unit tests. */
+  unit: "tests/unit",
+  /** Step 7 — integration tests. */
+  integration: "tests/integration",
+  /** Step 8 — e2e tests (Playwright etc.). */
   e2e: "tests/e2e",
   src: "src",
   manifest: "sdd.yaml",

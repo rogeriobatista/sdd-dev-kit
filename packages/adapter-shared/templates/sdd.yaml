@@ -10,16 +10,29 @@ paths:
   premises: .sdd/premises.md
   canonical: .sdd/canonical
   plan: .sdd/plan
+  devSpec: .sdd/dev-spec.md
+  implementationPlan: .sdd/implementation-plan.md
+  designApproach: .sdd/design-approach.md
+  research: .sdd/research
   runs: .sdd/runs
   demo: .sdd/demo
   evidence: .sdd/evidence
+  # Spec Tests (step 2): features default; use tests/spec when preferred
   features: tests/features
+  spec: tests/spec
   steps: tests/steps
+  unit: tests/unit
+  integration: tests/integration
   e2e: tests/e2e
   src: src
 runners:
+  # Prefer layer keys for verify (step 9). Stack adapters may remap.
   cucumber: npm run sdd:verify:cucumber
+  # spec: npm run sdd:verify:cucumber
+  # unit: npm run sdd:verify:unit
+  # integration: npm run sdd:verify:integration
   playwright: npm run sdd:verify:playwright
+  # e2e: npm run sdd:verify:playwright
   all: npm run sdd:verify:all
 triggers:
   watch: false

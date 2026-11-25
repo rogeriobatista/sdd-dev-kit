@@ -6,4 +6,8 @@
 - pytest
 
 ## Tags
-- `@api` / untagged → pytest
+- `@api` / untagged → pytest (Spec Tests)
+
+## Camadas de teste
+- Spec / domain: `tests/` (pytest)
+- Prefer also: `tests/unit`, `tests/integration` when splitting layers; e2e when UI applies

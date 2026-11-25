@@ -6,7 +6,7 @@
 
 **Supported stacks:** TypeScript (Cucumber + Playwright) | Python (pytest) | React + Vite (Playwright) | Node GraphQL | Terraform
 
-You iterate on natural-language specs (`prosa` + `Dado`/`Quando`/`Então`) — the **only human gate**. After specs are accepted, the agent runs an **automated loop**: detect stack → normalize → executable tests → research → plan → implement → verify → diagnose until green (or max iterations).
+You iterate on natural-language specs (`prosa` + `Dado`/`Quando`/`Então`) — **step 1, the only human gate**. After specs are accepted, `/sdd run` automates **steps 2–10** (Spec Tests → Dev Spec → Implementation Plan → Design & Approach → unit → integration → e2e → implement/verify loop → evidence) until all test levels pass. **Step 11** is continuous market best practices (not a separate stop).
 
 ## Distribution (Mac / PC / Cloud Agents)
 
@@ -54,7 +54,7 @@ npm i -g @rogeriobatista/cli
 
 Optional secrets for ticket bootstrap: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_API_TOKEN`, `JIRA_EMAIL`. Full notes: [docs/cloud-agents.md](docs/cloud-agents.md).
 
-CLI `sdd run` prints status + auto-loop guidance (human gate = `specs/`); LLM phases stay host-driven (`/sdd run`). Use `sdd verify` / `sdd demo` for local evidence.
+CLI `sdd run` prints status + canonical steps 1–10 guidance (human gate = `specs/`); LLM phases stay host-driven (`/sdd run`). Use `sdd verify` / `sdd demo` for local evidence.
 
 ## Quickstart
 
@@ -75,7 +75,7 @@ Pick the harness you use. Instruction packs live under `packages/`; shared pipel
 1. Copy `packages/adapter-cursor/skills/sdd` → project `.cursor/skills/sdd/` (or user skills).
 2. Copy `packages/adapter-cursor/rules/sdd-human-edits.mdc` → `.cursor/rules/`.
 3. In the target app: **`/sdd init`** (choose stack when prompted)
-4. Iterate on `specs/*.md` (or **`/sdd from-ticket <id>`** then review) — then **`/sdd run`** for the auto-loop
+4. Iterate on `specs/*.md` (or **`/sdd from-ticket <id>`** then review) — then **`/sdd run`** for steps 2–10
 
 #### Claude (VS Code / Claude Code)
 
@@ -128,9 +128,27 @@ npm run smoke -w react-vite-playwright            # Playwright + Vite (after set
 | Demo (PO/BO/QA) | `/sdd demo` | `SDD: demo` | `SDD: demo` / `/sdd-demo` |
 | Status | `/sdd status` | `SDD: status` | `SDD: status` / `/sdd-status` |
 
-## Best-practices research (plan / implement)
+## Canonical 11-step flow
 
-Before **plan** and **implement**, the agent consults a curated catalog of official / standards references (frontend, backend, infra, security) and writes an agent-owned pack:
+| Step | Actor | Action | Artifact |
+|------|-------|--------|----------|
+| 1 | Human | NL + BDD | `specs/` |
+| 2 | Kit | Executable Spec Tests | `tests/spec/` or `tests/features/` |
+| 3 | Kit | Dev Spec | `.sdd/dev-spec.md` |
+| 4 | Kit | Dev Implementation Plan | `.sdd/implementation-plan.md` |
+| 5 | Kit | Design & Approach | `.sdd/design-approach.md` |
+| 6 | Kit | Unit tests | `tests/unit/` |
+| 7 | Kit | Integration tests | `tests/integration/` |
+| 8 | Kit | E2E tests | `tests/e2e/` |
+| 9 | Kit | Implement until all levels green | `src/` + `.sdd/runs/` |
+| 10 | Kit | Evidence | `.sdd/evidence/<key>/latest/` |
+| 11 | Kit | Continuous best practices | `.sdd/research/<key>/` |
+
+Step 1 only is human-iterative; steps 2–10 run in `/sdd run`; step 11 applies during 2–10. Design: [canonical 11-step flow](docs/superpowers/specs/2026-11-25-sdd-canonical-11-step-flow-design.md).
+
+## Best-practices research (step 11 — continuous)
+
+During steps 2–10 (especially Dev Spec / Implementation Plan / Design Approach / implement), the agent consults a curated catalog of official / standards references (frontend, backend, infra, security) and writes an agent-owned pack:
 
 ```text
 .sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md
@@ -140,10 +158,10 @@ Before **plan** and **implement**, the agent consults a curated catalog of offic
 | Piece | Location |
 |-------|----------|
 | Catalog | `packages/adapter-shared/content/best-practices-catalog.md` (+ `.json`, `catalogVersion`) |
-| Pipeline phase | `research` (after `executable`, before `plan`) |
+| Policy | Continuous during `/sdd run` (not a separate stop) |
 | Standalone | `/sdd research` · `SDD: research` · Cursor skill `sdd-research` |
 
-Rules: cite sources in plan tasks; premises win on conflict (note it); links + short guidance only — no scraping full copyrighted docs; security always included. Design: [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md).
+Rules: cite sources in Dev Spec / Implementation Plan / Design Approach; premises win on conflict (note it); links + short guidance only — no scraping full copyrighted docs; security always included. Design: [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md).
 
 ## Demo from test evidence (PO / BO / QA)
 
@@ -195,7 +213,7 @@ Ambiguous ids like `ENG-42` need `ticketing.defaultProvider: linear|jira` or a `
 
 Offline fixtures (no live API): `packages/core/src/ticketing/fixtures/` — fictional coupon-checkout ticket used by unit tests.
 
-Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md) · [spec iteration + auto-loop](docs/superpowers/specs/2026-11-25-sdd-spec-iteration-auto-loop-design.md)
+Design: [multi-host adapters](docs/superpowers/specs/2026-11-24-sdd-multi-host-adapters-design.md) · [ticketing](docs/superpowers/specs/2026-11-24-sdd-ticketing-design.md) · [stack adapters](docs/superpowers/specs/2026-11-24-sdd-stack-adapters-design.md) · [stack from specs](docs/superpowers/specs/2026-11-24-sdd-stack-from-specs-design.md) · [demo from evidence](docs/superpowers/specs/2026-11-24-sdd-demo-from-evidence-design.md) · [best-practices research](docs/superpowers/specs/2026-11-25-sdd-best-practices-research-design.md) · [spec iteration + auto-loop](docs/superpowers/specs/2026-11-25-sdd-spec-iteration-auto-loop-design.md) · [canonical 11-step flow](docs/superpowers/specs/2026-11-25-sdd-canonical-11-step-flow-design.md)
 
 ## Repository layout
 
@@ -230,13 +248,13 @@ npm run sync:adapters
 
 | Item | Behavior |
 |------|----------|
-| Human iteration | **Only** `specs/` (+ `.sdd/premises.md`); clarify acceptance here |
+| Human iteration | **Only** step 1 `specs/` (+ `.sdd/premises.md`); clarify acceptance here |
 | Ticket bootstrap | `from-ticket` → draft specs → **pause for human** (unless `--run` + complete) |
-| Auto-loop (`run`) | detect → normalize → executable → research → plan → implement → verify → diagnose* until pass |
-| Research | `research` → `.sdd/research/<key>/` from curated best-practices catalog |
-| Demo pack | After green / loop report → `.sdd/evidence/<key>/latest/demo/` for PO/BO/QA |
+| Auto-loop (`run`) | Steps 2–10: spec-tests → dev-spec → implementation-plan → design-approach → unit → integration → e2e → implement/verify/diagnose* → evidence |
+| Research | Step 11 continuous → `.sdd/research/<key>/` from curated best-practices catalog |
+| Demo pack | Step 10 → `.sdd/evidence/<key>/latest/demo/` for PO/BO/QA |
 | Trigger | Explicit run (`triggers.watch` default `false`) |
-| Tags | `@api` → API track; `@ui`/`@e2e` → Playwright when supported |
+| Tags | `@api` → Spec/API track; `@ui`/`@e2e` → Playwright when supported |
 | Loop cap | 3 diagnose→implement iterations; on cap → report; point to specs if requirement gaps |
 | Spec language | Portuguese GWT |
 | Stacks | First-class adapters; detected from premises/specs (`detectStack`) |

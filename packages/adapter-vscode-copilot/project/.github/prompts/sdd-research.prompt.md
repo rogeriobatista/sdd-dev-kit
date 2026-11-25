@@ -7,15 +7,15 @@ Run **SDD: research** — consult the curated best-practices catalog for the det
 
 ## Research (best practices)
 
-Consult **market / standards best practices** for the detected stack before writing the plan and before implementing. Do **not** invent “best practice” claims without a catalog/source citation or an explicit `.sdd/premises.md` override.
+Consult **market / standards best practices** for the detected stack whenever there is doubt during the pipeline (**canonical step 11 — continuous policy**, not a separate stop). Do **not** invent “best practice” claims without a catalog/source citation or an explicit `.sdd/premises.md` override.
 
 ### When to run
 
 | Trigger | Behavior |
 |---------|----------|
-| `/sdd run` / `SDD: run` | **Required** phase after `executable`, before `plan` (also re-check relevant sources during `implement`) |
+| `/sdd run` / `SDD: run` | **Continuous** during steps 2–10 (especially before/while writing Dev Spec, Implementation Plan, Design Approach, tests, and implement). Refresh the research pack when sources change or doubt arises |
 | `/sdd research` / `SDD: research` | **Optional standalone** — refresh research pack without running the full pipeline |
-| `plan` / `implement` | Must open research output (or run research first if missing) |
+| `dev-spec` / `implementation-plan` / `design-approach` / `implement` | Must open research output (or run research first if missing) |
 
 ### Steps
 
@@ -29,7 +29,7 @@ Consult **market / standards best practices** for the detected stack before writ
 6. **Write agent-owned outputs** under `.sdd/research/<encodedEvidenceKey>/`:
    - `BEST_PRACTICES.md` — stakeholder-friendly summary (Portuguese OK) of practices **applied** to this work, conflicts with premises, and source citations
    - `sources.json` — machine list of `{ id, url, title, domain, applied: true|false, note? }` plus `catalogVersion`, `stack`, `evidenceKey`, `researchedAt`
-7. **Cite in plan:** every plan task that relies on a practice must reference a source `id` or URL from `sources.json` / the catalog. Premises overrides must be noted as such.
+7. **Cite in docs/tasks:** every Dev Spec / Implementation Plan / Design Approach item that relies on a practice must reference a source `id` or URL from `sources.json` / the catalog. Premises overrides must be noted as such.
 8. **Conflicts:** if a catalog practice conflicts with `.sdd/premises.md`, **premises win**. Record the conflict in `BEST_PRACTICES.md` (do not silently ignore premises).
 
 ### Output layout

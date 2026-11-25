@@ -8,27 +8,46 @@ export const SddPathsSchema = z.object({
   premises: z.string().min(1).default(DEFAULT_PATHS.premises),
   canonical: z.string().min(1).default(DEFAULT_PATHS.canonical),
   plan: z.string().min(1).default(DEFAULT_PATHS.plan),
+  devSpec: z.string().min(1).default(DEFAULT_PATHS.devSpec),
+  implementationPlan: z
+    .string()
+    .min(1)
+    .default(DEFAULT_PATHS.implementationPlan),
+  designApproach: z.string().min(1).default(DEFAULT_PATHS.designApproach),
+  research: z.string().min(1).default(DEFAULT_PATHS.research),
   runs: z.string().min(1).default(DEFAULT_PATHS.runs),
   demo: z.string().min(1).default(DEFAULT_PATHS.demo),
   evidence: z.string().min(1).default(DEFAULT_PATHS.evidence),
   features: z.string().min(1).default(DEFAULT_PATHS.features),
+  spec: z.string().min(1).default(DEFAULT_PATHS.spec),
   steps: z.string().min(1).default(DEFAULT_PATHS.steps),
+  unit: z.string().min(1).default(DEFAULT_PATHS.unit),
+  integration: z.string().min(1).default(DEFAULT_PATHS.integration),
   e2e: z.string().min(1).default(DEFAULT_PATHS.e2e),
   src: z.string().min(1).default(DEFAULT_PATHS.src),
 });
 
 /**
  * Verify commands. `all` is required; cucumber/playwright keep TS defaults.
+ * Prefer layer keys for step 9 verify: `spec`, `unit`, `integration`, `e2e`.
  * Stack adapters may set pytest / vitest / terraform / fmt / validate or any
  * extra string key via catchall.
  */
 export const SddRunnersSchema = z
   .object({
     all: z.string().min(1).default("npm run sdd:verify:all"),
+    /** Step 2 / layer — executable Spec Tests (often aliases cucumber). */
+    spec: z.string().min(1).optional(),
     cucumber: z
       .string()
       .min(1)
       .default("npm run sdd:verify:cucumber"),
+    /** Step 6 — unit layer. */
+    unit: z.string().min(1).optional(),
+    /** Step 7 — integration layer. */
+    integration: z.string().min(1).optional(),
+    /** Step 8 — e2e layer (often aliases playwright). */
+    e2e: z.string().min(1).optional(),
     playwright: z
       .string()
       .min(1)
@@ -40,7 +59,6 @@ export const SddRunnersSchema = z
     validate: z.string().min(1).optional(),
   })
   .catchall(z.string().min(1));
-
 /** First-class stack adapter ids (portable core; runners live in packages/). */
 export const STACK_ADAPTER_IDS = [
   "typescript",

@@ -1,6 +1,6 @@
 {
   "name": "@rogeriobatista/adapter-cursor",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "SDD Cursor adapter — /sdd skills, rules, and templates",
   "files": [
     "skills",

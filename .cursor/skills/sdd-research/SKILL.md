@@ -20,6 +20,6 @@ Select domains for the **detected stack** + **security (always)**. Prefer MCP We
 
 `.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md` + `sources.json`
 
-Cite every applied practice in subsequent plan tasks. Premises win on conflict — note it. No scraping of full copyrighted docs; no secrets.
+Cite every applied practice in Dev Spec / Implementation Plan / Design Approach. Premises win on conflict — note it. No scraping of full copyrighted docs; no secrets. Step 11 is continuous during `/sdd run`, not a separate stop.
 
 Full steps: shared `research.md` (rendered into the `sdd` skill).

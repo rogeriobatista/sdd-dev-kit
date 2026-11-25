@@ -1,4 +1,4 @@
-export const CLI_VERSION = "0.1.2";
+export const CLI_VERSION = "0.1.3";
 
 export function printRootHelp(): void {
   console.log(`sdd — SDD Protocol Kit CLI (v${CLI_VERSION})
@@ -15,12 +15,12 @@ Uso / Usage:
 Comandos:
   init          Scaffold host adapters + sdd.yaml + premises + stack
   from-ticket   Bootstrap specs/ from Linear or Jira (env vars)
-  run           Status + auto-loop guidance (human gate = specs/; LLM host-driven)
-  verify        Run sdd.yaml runners (via @rogeriobatista/core)
+  run           Status + canonical steps 1–10 guidance (LLM host-driven)
+  verify        Run sdd.yaml runners (spec/unit/integration/e2e/all)
   demo          Build PO/BO/QA evidence pack
   status        Report stack, runs, ticket, evidence
 
-Research (best practices) is host-driven: /sdd research · SDD: research
+Research (best practices) is host-driven step 11 (continuous): /sdd research · SDD: research
   (catalog: packages/adapter-shared/content/best-practices-catalog.md)
 
 Stacks: typescript | python | react-vite | node-graphql | terraform
@@ -57,32 +57,44 @@ export function printCommandHelp(command: string): void {
   sdd from-ticket linear:ENG-42
   sdd from-ticket jira:SHOP-7 --run
 
-  Default: draft specs/ then pause for human spec iteration (only human gate).
-  --run: enter the auto-loop only if specs are already complete/testable.
+  Default: draft specs/ then pause for human spec iteration (only human gate / step 1).
+  --run: enter steps 2–10 only if specs are already complete/testable.
   Requires env vars (see sdd --help). Does not invent acceptance criteria.
 `);
       break;
     case "run":
-      console.log(`sdd run — orchestration / status (host-driven auto-loop)
+      console.log(`sdd run — orchestration / status (host-driven canonical flow)
 
-  Human iteration surface (ONLY): specs/ (create/adjust NL scenarios + acceptance).
-  After specs are accepted, /sdd run / SDD: run is an automated loop:
-    detect stack → normalize → executable → research → plan → implement → verify
-      → (diagnose → implement)* until green or loop.maxDiagnoseIterations.
+  Canonical steps (LOCK THIS):
+    1. Human: NL + BDD in specs/
+    2. Kit: executable Spec Tests (tests/spec or tests/features)
+    3. Kit: Dev Spec (.sdd/dev-spec.md)
+    4. Kit: Dev Implementation Plan (.sdd/implementation-plan.md)
+    5. Kit: Design & Approach (.sdd/design-approach.md)
+    6. Kit: unit tests (tests/unit/)
+    7. Kit: integration tests (tests/integration/)
+    8. Kit: e2e tests (tests/e2e/)
+    9. Kit: implement + verify all layers until green (loop + cap)
+   10. Kit: evidence (.sdd/evidence/<key>/latest/)
+   11. Continuous: market best practices (.sdd/research/<key>/) — not a separate stop
 
-  Do not stop mid-loop to ask the human to fix code. If specs are wrong/ambiguous,
-  exit and ask the human to edit specs/. demo/evidence after green or loop report.
+  Step 1 is the only human gate. Steps 2–10 run via /sdd run / SDD: run after specs
+  are accepted. Do not stop mid-loop to ask the human to fix code. If specs are
+  wrong/ambiguous, exit and ask the human to edit specs/.
 
   This CLI command prints stack detection + status + the above guidance.
   LLM work stays on the host adapter. Use sdd verify / sdd demo for local evidence.
-  Standalone research: /sdd research (host).
 `);
       break;
     case "verify":
       console.log(`sdd verify [runner] — run sdd.yaml runners
 
-  sdd verify           # runners.all
-  sdd verify cucumber  # runners.cucumber (when present)
+  sdd verify              # runners.all (all test levels when wired)
+  sdd verify spec         # Spec Tests layer (when present)
+  sdd verify unit         # unit layer
+  sdd verify integration  # integration layer
+  sdd verify e2e          # e2e layer
+  sdd verify cucumber     # stack-specific alias (when present)
 `);
       break;
     case "demo":

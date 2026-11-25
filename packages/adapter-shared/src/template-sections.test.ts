@@ -10,15 +10,19 @@ const packagesRoot = path.resolve(sharedRoot, "..");
 const contentDir = path.join(sharedRoot, "content");
 
 const REQUIRED_MARKERS = [
-  // pipeline phases
-  "normalize",
-  "executable",
-  "research",
-  "plan",
+  // canonical 11-step pipeline
+  "spec-tests",
+  "dev-spec",
+  "implementation-plan",
+  "design-approach",
+  "unit-tests",
+  "integration-tests",
+  "e2e-tests",
   "implement",
   "verify",
   "diagnose",
-  "report",
+  "evidence",
+  "research",
   // demo stakeholder pack
   "demo",
   "buildDemo",
@@ -136,19 +140,24 @@ describe("adapter-shared content", () => {
     ]);
   });
 
-  it("shared pipeline documents all phases and auto-loop semantics", () => {
+  it("shared pipeline documents canonical 11-step flow and auto-loop semantics", () => {
     assertMarkers("content/pipeline.md", readShared("pipeline.md"), [
-      "normalize",
-      "executable",
-      "research",
-      "plan",
+      "spec-tests",
+      "dev-spec",
+      "implementation-plan",
+      "design-approach",
+      "unit-tests",
+      "integration-tests",
+      "e2e-tests",
       "implement",
       "verify",
       "diagnose",
-      "report",
+      "evidence",
       "Human iteration surface",
       "Automated loop",
       "maxDiagnoseIterations",
+      ".sdd/dev-spec.md",
+      "tests/unit/",
     ]);
   });
 
@@ -185,6 +194,9 @@ describe("adapter-shared content", () => {
       "templates/sdd.yaml",
       "templates/specs/_example.md",
       "templates/.sdd/premises.md",
+      "templates/.sdd/dev-spec.md",
+      "templates/.sdd/implementation-plan.md",
+      "templates/.sdd/design-approach.md",
     ]) {
       const p = path.join(sharedRoot, rel);
       assert.ok(fs.existsSync(p), `missing ${rel}`);
@@ -237,7 +249,7 @@ describe("rendered host adapters include required sections", () => {
           "from-ticket",
           "SDD: run",
           "research",
-          "normalize",
+          "spec-tests",
         ]);
         // CLAUDE.md is a short pointer; phases live in the skill
         return;
@@ -264,6 +276,9 @@ describe("rendered host adapters include required sections", () => {
       "sdd.yaml",
       path.join("specs", "_example.md"),
       path.join(".sdd", "premises.md"),
+      path.join(".sdd", "dev-spec.md"),
+      path.join(".sdd", "implementation-plan.md"),
+      path.join(".sdd", "design-approach.md"),
     ]) {
       const shared = fs.readFileSync(path.join(sharedRoot, "templates", rel), "utf8");
       const cursor = fs.readFileSync(

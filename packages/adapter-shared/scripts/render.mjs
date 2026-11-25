@@ -66,7 +66,7 @@ const templateLocations = `## Template locations in this kit
 
 - Shared source: \`packages/adapter-shared/content/\` (pipeline, research, from-ticket, human boundary, hard rules, best-practices catalog)
 - Best-practices catalog: \`packages/adapter-shared/content/best-practices-catalog.md\` (+ \`.json\`)
-- Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`)
+- Shared scaffold: \`packages/adapter-shared/templates/\` (\`sdd.yaml\`, \`specs/_example.md\`, \`.sdd/premises.md\`, \`.sdd/dev-spec.md\`, \`.sdd/implementation-plan.md\`, \`.sdd/design-approach.md\`)
 - Stack adapters: \`adapter-ts\`, \`adapter-python\`, \`adapter-react-vite\`, \`adapter-node-graphql\`, \`adapter-terraform\`
 - Examples: \`coupon-checkout/\`, \`python-pytest-hello/\`, \`react-vite-playwright/\`, \`node-graphql-api/\`, \`terraform-module/\`
 - Offline ticket fixture: \`packages/core/src/ticketing/fixtures/\`
@@ -87,7 +87,7 @@ description: >-
 
 Protocol Kit orchestration for **Cursor**. The human edits **only** \`specs/*.md\` (prosa + Dado/Quando/Então) and optionally \`.sdd/premises.md\`. Everything else is generated or agent-owned.
 
-Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` from Linear or Jira, then **pauses for human spec iteration** (unless \`--run\` and specs are already complete). After specs are accepted, \`/sdd run\` is an **automated loop** until spec tests pass — do not stop mid-loop to ask the human to fix code.
+Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` from Linear or Jira, then **pauses for human spec iteration** (unless \`--run\` and specs are already complete). After specs are accepted, \`/sdd run\` runs **canonical steps 2–10** automatically until all test levels pass — do not stop mid-loop to ask the human to fix code. Step 11 (best practices) is continuous during those steps.
 
 ## Cursor command map
 
@@ -96,13 +96,13 @@ Ticket import (\`/sdd from-ticket\`) is a **bootstrap**: it drafts \`specs/\` fr
 | Init | \`/sdd init\` |
 | From ticket | \`/sdd from-ticket <id>\` (\`linear:\` / \`jira:\` prefix; optional \`--run\`) |
 | Run pipeline | \`/sdd run\` |
-| Research (best practices) | \`/sdd research\` (also runs inside \`/sdd run\` before plan) |
+| Research (best practices) | \`/sdd research\` (step 11 continuous policy; also standalone) |
 | Verify only | \`/sdd verify\` |
 | Demo (PO/BO/QA) | \`/sdd demo\` (optional run id) |
 | Status | \`/sdd status\` |
 
 When the user says these commands, follow the shared protocol below (same phases as Claude and Copilot adapters).
-On \`run\` / \`plan\` / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
+On \`run\` / docs / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
 
 ${sharedBody}
 
@@ -136,7 +136,7 @@ Select domains for the **detected stack** + **security (always)**. Prefer MCP We
 
 \`.sdd/research/<encodedEvidenceKey>/BEST_PRACTICES.md\` + \`sources.json\`
 
-Cite every applied practice in subsequent plan tasks. Premises win on conflict — note it. No scraping of full copyrighted docs; no secrets.
+Cite every applied practice in Dev Spec / Implementation Plan / Design Approach. Premises win on conflict — note it. No scraping of full copyrighted docs; no secrets. Step 11 is continuous during \`/sdd run\`, not a separate stop.
 
 Full steps: shared \`research.md\` (rendered into the \`sdd\` skill).
 `;
@@ -163,7 +163,7 @@ ${fs.readFileSync(path.join(contentDir, "human-boundary.md"), "utf8").trim()}
 ## Pipeline trigger
 
 - MVP: explicit \`/sdd run\` (and optional \`/sdd from-ticket\` bootstrap)
-- Human iterates only on \`specs/\`; \`/sdd run\` is an automated loop until spec tests pass (or diagnose cap)
+- Human iterates only on \`specs/\` (step 1); \`/sdd run\` automates steps 2–10 until all test levels pass (or diagnose cap); step 11 = continuous best practices
 - Do not enable file watch as the default workflow
 `;
 
@@ -199,7 +199,7 @@ description: >-
 
 # SDD — Spec-Driven Development (Claude)
 
-Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on \`specs/\`; after specs are accepted, \`SDD: run\` is an automated loop until spec tests pass (no mid-loop human code fixes).
+Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contract as Cursor and Copilot: human iterates only on \`specs/\` (step 1); after specs are accepted, \`SDD: run\` automates steps 2–10 until all test levels pass (no mid-loop human code fixes). Step 11 = continuous best practices.
 
 ## Claude command map (natural-language intents)
 
@@ -208,13 +208,13 @@ Protocol Kit orchestration for **Claude Code / Claude in VS Code**. Same contrac
 | Init | \`SDD: init\` or "scaffold this project for SDD" |
 | From ticket | \`SDD: from-ticket ENG-42\` / \`linear:ENG-42\` / \`jira:SHOP-7\` (optional \`--run\`) |
 | Run pipeline | \`SDD: run\` |
-| Research (best practices) | \`SDD: research\` (also inside \`SDD: run\` before plan) |
+| Research (best practices) | \`SDD: research\` (step 11 continuous; also standalone) |
 | Verify only | \`SDD: verify\` |
 | Demo (PO/BO/QA) | \`SDD: demo\` (optional run id) |
 | Status | \`SDD: status\` |
 
 You may also treat \`/sdd <subcommand>\` the same way when the user types it.
-On \`run\` / \`plan\` / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
+On \`run\` / docs / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
 
 ${sharedBody}
 
@@ -228,15 +228,15 @@ writeFile(
 
 const claudeMd = `# SDD Protocol Kit (Claude)
 
-This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \`.sdd/premises.md\` when changing project rules). The agent owns generated tests, plan, canonical, and implementation under the SDD pipeline.
+This project uses Spec-Driven Development. You edit **only** \`specs/*.md\` (+ \`.sdd/premises.md\` when changing project rules). The agent owns Spec Tests, Dev Spec, Implementation Plan, Design Approach, unit/integration/e2e tests, canonical, research, evidence, and implementation under the SDD pipeline.
 
 ## Commands (say these in chat)
 
 - **SDD: init** — scaffold folders, \`sdd.yaml\`, premises, example spec, host instructions
 - **SDD: from-ticket \`<id>\`** — Linear/Jira → draft \`specs/*.md\`, then pause for human spec iteration (unless \`--run\` + complete specs)
-- **SDD: run** — auto-loop after specs: detect → normalize → executable → research → plan → implement → verify (diagnose→implement until pass)
-- **SDD: research** — best-practices research pack (catalog + sources) before plan; optional standalone
-- **SDD: verify** — stack runners from \`sdd.yaml\` only
+- **SDD: run** — canonical steps 2–10 after specs (spec-tests → … → evidence; implement/verify until all layers pass)
+- **SDD: research** — best-practices pack (step 11 continuous policy; optional standalone)
+- **SDD: verify** — stack runners from \`sdd.yaml\` (spec/unit/integration/e2e/all)
 - **SDD: demo** — stakeholder pack (PO/BO/QA) from test evidence → \`.sdd/evidence/<key>/latest/demo/\`
 - **SDD: status** — last run / phase summary
 
@@ -261,7 +261,7 @@ writeFile(
 // --- Copilot ---
 const copilotInstructions = `# SDD Protocol Kit (GitHub Copilot)
 
-This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\` (+ \`.sdd/premises.md\` when changing project rules). Copilot runs the SDD pipeline; do not ask the human to hand-edit generated features, steps, e2e, canonical, or plan.
+This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\` (+ \`.sdd/premises.md\` when changing project rules). Copilot runs the SDD pipeline; do not ask the human to hand-edit generated Spec/unit/integration/e2e tests, Dev Spec, Implementation Plan, Design Approach, or canonical.
 
 ## Chat intents (= \`/sdd\` elsewhere)
 
@@ -269,14 +269,14 @@ This repository uses Spec-Driven Development. Humans edit **only** \`specs/*.md\
 |---------------------|---------|
 | \`SDD: init\` | Scaffold project + install Copilot instruction/prompt files |
 | \`SDD: from-ticket <id>\` | Bootstrap specs → pause for human iteration (unless \`--run\`) |
-| \`SDD: run\` | Auto-loop until spec tests pass (research before plan; diagnose cap) |
+| \`SDD: run\` | Canonical steps 2–10 until all test levels pass (step 11 continuous; diagnose cap) |
 | \`SDD: research\` | Best-practices research pack (catalog + sources) |
-| \`SDD: verify\` | Run test runners only |
+| \`SDD: verify\` | Run test runners only (spec/unit/integration/e2e/all) |
 | \`SDD: demo\` | Stakeholder demo pack from test evidence (PO/BO/QA) |
 | \`SDD: status\` | Summarize \`.sdd/runs\` |
 
 Optional slash prompts (when prompt files are installed under \`.github/prompts/\`): \`/sdd-init\`, \`/sdd-from-ticket\`, \`/sdd-run\`, \`/sdd-research\`, \`/sdd-verify\`, \`/sdd-demo\`, \`/sdd-status\`.
-On \`run\` / \`plan\` / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in plan tasks.
+On \`run\` / docs / \`implement\` / \`research\`: open the best-practices catalog for the detected stack **plus security**; cite sources in Dev Spec / Implementation Plan / Design Approach.
 
 ${sharedBody}
 
@@ -354,7 +354,7 @@ Open \`packages/adapter-shared/content/best-practices-catalog.md\` (and \`.json\
     file: "sdd-verify.prompt.md",
     name: "sdd-verify",
     description: "Run SDD verify only (stack runners from sdd.yaml)",
-    body: `Run **SDD: verify** only — execute \`sdd.yaml\` runners (\`all\`, or stack-specific keys such as cucumber/playwright/pytest/vitest/terraform). Do not normalize or implement.
+    body: `Run **SDD: verify** only — execute \`sdd.yaml\` runners covering test layers when present (\`all\`, \`spec\`, \`unit\`, \`integration\`, \`e2e\`, or stack-specific keys such as cucumber/playwright/pytest/vitest/terraform). Do not rewrite specs or implement.
 
 Persist results under \`.sdd/runs/\` when possible and summarize exit codes. After verify, call \`updateEvidencePack({ projectRoot, runId })\` from \`@rogeriobatista/core\` so \`.sdd/evidence/<key>/latest/raw\` stays current for the ticket (or stable local) evidence key.
 `,

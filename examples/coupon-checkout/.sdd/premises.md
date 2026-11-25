@@ -15,9 +15,12 @@ Checkout com aplicação de cupom percentual no carrinho.
 - `@ui` / `@e2e` → Playwright
 - Sem tag → Cucumber
 
-## Pastas
-Conforme `sdd.yaml` (layout canônico do Protocol Kit).
+## Pastas / camadas de teste
+Conforme `sdd.yaml` (layout canônico do Protocol Kit):
+- Spec Tests: `tests/features` (step 2)
+- Unit: `tests/unit` · Integration: `tests/integration` · E2E: `tests/e2e`
 
 ## Regras
-- Humano edita só `specs/` (+ este arquivo se mudar as regras do jogo)
+- Humano edita só `specs/` (+ este arquivo se mudar as regras do jogo) — step 1
 - Pipeline não inventa regra de cupom: ambiguidade → ajustar specs
+- Dúvidas técnicas → best practices (step 11); premises vencem em conflito

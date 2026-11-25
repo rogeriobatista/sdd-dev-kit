@@ -2,28 +2,33 @@
 
 ### Human-owned (edit freely) — **only human iteration surface**
 
-- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here
+- `specs/**/*.md` — natural-language scenarios (prosa + Dado/Quando/Então/E); create/adjust acceptance here (canonical **step 1**)
 - `.sdd/premises.md` — project rules (stack, tags, style) when the human chooses to change them
-- Optional: review that generated executable tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
+- Optional: review that generated Spec Tests match intent — if not, fix `specs/` and re-run materialize; do **not** hand-edit generated tests to green
 
 ### Agent-owned / regenerable (do not ask the human to edit)
 
-- Generated tests for the active stack (`tests/features/**`, `tests/steps/**`, `tests/e2e/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, `tests/unit/**`, …)
-- `.sdd/canonical/**` — normalized scenarios
-- `.sdd/plan/**` — SDD task plan
-- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) keyed like evidence
+- Executable Spec Tests (`tests/features/**`, `tests/spec/**`, `tests/steps/**`, `tests/test_*.py`, `tests/*.tftest.hcl`, …) — **step 2**
+- `.sdd/dev-spec.md` — Dev Spec — **step 3**
+- `.sdd/implementation-plan.md` — Dev Implementation Plan — **step 4** (legacy `.sdd/plan/**` optional)
+- `.sdd/design-approach.md` — Design & Approach — **step 5**
+- `tests/unit/**` — unit tests — **step 6**
+- `tests/integration/**` — integration tests — **step 7**
+- `tests/e2e/**` — e2e tests — **step 8**
+- `.sdd/canonical/**` — normalized scenarios (supports step 2)
+- `.sdd/research/**` — best-practices research packs (`BEST_PRACTICES.md`, `sources.json`) — **step 11 support**
 - `.sdd/runs/**` — run reports (internal; linked from evidence meta)
-- `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path)
+- `.sdd/evidence/**` — stakeholder evidence packs keyed by ticket / stable id (`latest/demo/` is the PO/BO/QA path) — **step 10**
 - `.sdd/evidence-id.json` — stable local evidence id when no ticket
 - `.sdd/demo/**` — legacy per-run demo copies (prefer `.sdd/evidence/<key>/latest/demo/`)
 - `.sdd/ticket.json` — provenance from from-ticket bootstrap (includes `evidenceKey` / `evidencePath`)
 - `.sdd/stack.json` — stack detection provenance (agent-owned; human declares stack in premises/specs)
-- Production code under the SDD implement phase (agent implements to make tests pass)
+- Production code under the SDD implement loop (**step 9**)
 
 ### Agent must not
 
 - Edit `specs/` without an explicit human request — **except** writing a draft via from-ticket bootstrap
 - Invent business rules or acceptance criteria missing from the ticket/specs — stop and ask for a specs change
-- Suggest that the human manually fix generated features/steps/e2e or production code to green the suite
-- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until pass or cap; only exit early for **spec** gaps
+- Suggest that the human manually fix generated Spec/unit/integration/e2e tests or production code to green the suite
+- Stop the `/sdd run` auto-loop mid-way to ask the human to fix implementation — keep diagnose→implement→verify until all test levels pass or cap; only exit early for **spec** gaps
 - Put ticketing secrets on argv or in the repo; use env vars only
