@@ -18,13 +18,23 @@ Packages publish to **GitHub Packages** under [`rogeriobatista/sdd-dev-kit`](htt
 | `@rogeriobatista/core` | Schema, stack detect, ticketing, demo, shell |
 | `@rogeriobatista/adapter-*` | Host (cursor/claude/copilot) + stack (ts/python/…) packs |
 
-### Install locally
+### Install locally (GitHub Packages)
 
-```bash
-# ~/.npmrc — see .npmrc.example (token via env, never commit)
+To **download** any `@rogeriobatista/*` package you **must** configure both lines below (user `~/.npmrc` or project `.npmrc` — see `.npmrc.example`). Never commit a real token.
+
+```ini
 @rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
 
+| Line | Why it is required |
+|------|--------------------|
+| `@rogeriobatista:registry=…` | Tells npm to resolve the `@rogeriobatista` scope on GitHub Packages (not registry.npmjs.org) |
+| `//npm.pkg.github.com/:_authToken=…` | Auth for **private** packages — PAT / `GITHUB_TOKEN` with at least `read:packages` |
+
+Without this, `npm i` / `npx` fails with **404** (wrong registry / scope not found) or **401** (missing/invalid token). Export `GITHUB_TOKEN` (or `NODE_AUTH_TOKEN`) in the environment; do not paste the value into the file.
+
+```bash
 npm i -g @rogeriobatista/cli
 sdd init --host cursor --stack typescript
 
@@ -32,10 +42,13 @@ sdd init --host cursor --stack typescript
 npx @rogeriobatista/cli init --host all --stack python
 ```
 
+**Alternative (no Packages):** clone this repo and use the local workspace — `npm run setup`, then `npx sdd …` after building the CLI (see Quickstart). No GitHub Packages auth needed.
+
 ### Cursor Cloud Agents
 
 ```bash
-npm i -g @rogeriobatista/cli   # after registry auth
+# after the .npmrc registry + token lines above
+npm i -g @rogeriobatista/cli
 # or: npx @rogeriobatista/cli init --host cursor
 ```
 
@@ -43,11 +56,9 @@ Optional secrets for ticket bootstrap: `LINEAR_API_KEY`, `JIRA_BASE_URL`, `JIRA_
 
 CLI `sdd run` prints status + pipeline guidance; LLM phases stay host-driven (`/sdd run`). Use `sdd verify` / `sdd demo` for local evidence.
 
-### Develop from this repo
-
 ## Quickstart
 
-### 1. Install
+### 1. Install (from this clone — no Packages)
 
 ```bash
 npm run setup

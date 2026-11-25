@@ -1,8 +1,16 @@
-# GitHub Packages — default registry for @rogeriobatista/*
-# Copy to ~/.npmrc (user) or project .npmrc. Do NOT commit tokens.
+# GitHub Packages — REQUIRED to download @rogeriobatista/*
+# Copy to ~/.npmrc (user) or project .npmrc. Do NOT commit real tokens.
 #
-# Create a PAT with `read:packages` (install) and `write:packages` (publish).
-# For CI, use GITHUB_TOKEN / NODE_AUTH_TOKEN secrets — never commit secrets.
+# Both lines below are mandatory for install/npx from Packages:
+#   1) @rogeriobatista:registry=…  — resolve the scope on GitHub Packages
+#      (without it, npm looks on registry.npmjs.org → typically 404)
+#   2) //npm.pkg.github.com/:_authToken=… — auth for private packages
+#      (PAT / GITHUB_TOKEN with at least `read:packages`; without it → 401)
+#
+# Export GITHUB_TOKEN (or NODE_AUTH_TOKEN) in the environment; keep ${…} in the file.
+# For publish CI, use write:packages + NODE_AUTH_TOKEN / GITHUB_TOKEN secrets.
+#
+# Alternative without Packages: clone the repo and use `npm run setup` + local npx.
 
 @rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}

@@ -4,22 +4,29 @@ Use the published CLI so Cursor Cloud Agents (Mac/PC workers or cloud VMs) can s
 
 ## Install
 
-Default registry is **GitHub Packages** for scope `@rogeriobatista`.
+To **download** `@rogeriobatista/*` from **GitHub Packages** you **must** configure registry + auth. Without both, `npm i` / `npx` fails with **404** (scope not resolved on npmjs) or **401** (private package, no token).
 
-### Auth
+### Auth (required for Packages)
 
-1. Create a GitHub PAT with `read:packages` (and `write:packages` only if publishing).
-2. Configure npm (agent environment secret or install step):
+1. Create a GitHub PAT with at least `read:packages` (add `write:packages` only if publishing).
+2. Configure npm (agent environment secret or install step) — both lines are mandatory:
 
-```bash
-# .npmrc (never commit the token value)
+```ini
+# .npmrc (never commit the token value — use ${GITHUB_TOKEN})
 @rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
+| Line | Role |
+|------|------|
+| `@rogeriobatista:registry=…` | Resolve the `@rogeriobatista` scope on GitHub Packages |
+| `//npm.pkg.github.com/:_authToken=…` | Authenticate private package downloads (`read:packages`) |
+
 3. Expose the token as an environment secret named `GITHUB_TOKEN` or `NODE_AUTH_TOKEN`.
 
-### Global or npx
+See `.npmrc.example` in the repo root.
+
+### Global or npx (after registry + token)
 
 ```bash
 npm i -g @rogeriobatista/cli
@@ -29,7 +36,9 @@ sdd init --host cursor --stack typescript
 npx @rogeriobatista/cli init --host cursor --stack typescript
 ```
 
-From a local clone of this repo (dev):
+### Alternative: clone (no Packages)
+
+If you cannot use GitHub Packages, clone this repo and run locally — no registry token needed:
 
 ```bash
 npm run setup
@@ -52,10 +61,15 @@ Configure **names only** under `ticketing:` in `sdd.yaml`. Never put secrets on 
 ## Suggested Cloud Agent install snippet
 
 ```bash
+# Requires GITHUB_TOKEN (or NODE_AUTH_TOKEN) in the environment with read:packages
+# Prefer copying .npmrc.example → ~/.npmrc (both registry + _authToken lines)
 npm config set @rogeriobatista:registry https://npm.pkg.github.com
+npm config set //npm.pkg.github.com/:_authToken "${GITHUB_TOKEN}"
 npm i -g @rogeriobatista/cli
 sdd status || sdd init --host cursor
 ```
+
+Omit Packages entirely by cloning the monorepo and using `npm run setup` + local `npx sdd` (see Alternative above).
 
 Heavy LLM phases (`normalize` → `implement`) stay host-driven (`/sdd run`). The CLI covers `init`, `from-ticket`, `verify`, `demo`, and `status`.
 

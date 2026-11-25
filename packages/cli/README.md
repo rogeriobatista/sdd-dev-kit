@@ -4,17 +4,21 @@ CLI for the SDD Protocol Kit (`sdd`).
 
 ## Install
 
-GitHub Packages (default):
+To **download** from GitHub Packages you **must** set both lines (see root `.npmrc.example`). Registry resolves the `@rogeriobatista` scope; token (`read:packages` min) authenticates private packages. Without them, `npm i` / `npx` fails with **404** / **401**.
 
-```bash
-# ~/.npmrc or project .npmrc
+```ini
+# ~/.npmrc or project .npmrc — never commit a real token
 @rogeriobatista:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
 
+```bash
 npm i -g @rogeriobatista/cli
 # or
 npx @rogeriobatista/cli init
 ```
+
+**Alternative:** clone the monorepo and use `npm run setup` + local `npx sdd` (no Packages auth).
 
 ## Commands
 
